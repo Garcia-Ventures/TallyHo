@@ -1,0 +1,59 @@
+{
+  "name": "tally-ho",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && vite build",
+    "dev": "vite",
+    "format": "prettier --write .",
+    "format:ci": "prettier --check .",
+    "lint": "eslint . --cache",
+    "lint:fix": "eslint . --cache --fix",
+    "lint:report": "eslint . --cache -o ./eslintReport.html -f html",
+    "prepare": "husky",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@gv-tech/design-tokens": "^2.26.1",
+    "@gv-tech/ui-web": "^2.26.1",
+    "canvas-confetti": "^1.9.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.475.0",
+    "next-themes": "^0.4.6",
+    "radix-ui": "^1.4.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.0.1"
+  },
+  "devDependencies": {
+    "@eng618/prettier-config": "^2.10.1",
+    "@gv-tech/eslint-config": "^0.1.14",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/canvas-confetti": "^1.9.0",
+    "@types/node": "^22.13.4",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^10.8.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.2.0",
+    "postcss": "^8.5.2",
+    "prettier": "^3.9.6",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3",
+    "vite": "^6.1.0"
+  },
+  "private": true,
+  "lint-staged": {
+    "*.(js|ts|mjs|cjs)?(x)": [
+      "prettier --write",
+      "eslint --cache --fix"
+    ],
+    "*.(md)?(x)": [
+      "prettier --write"
+    ]
+  },
+  "prettier": "@eng618/prettier-config"
+}

@@ -1,0 +1,83 @@
+@import 'tailwindcss';
+@import '@gv-tech/design-tokens/theme.css';
+
+@layer base {
+  :root {
+    --paper-bg: #fdfbf7;
+    --paper-card: #f7f4ee;
+    --paper-border: #e5e0d8;
+    --ink-primary: #2c302e;
+    --ink-muted: #5a605c;
+    --stamp-red: #c84b31;
+
+    /* Override GV Tech design system root tokens for Tally Ho paper warmth */
+    --background: 40 40% 98%;
+    --color-background: #fdfbf7;
+    --foreground: 150 4% 18%;
+    --color-foreground: #2c302e;
+    --card: 38 33% 95%;
+    --color-card: #f7f4ee;
+    --card-foreground: 150 4% 18%;
+    --color-card-foreground: #2c302e;
+    --primary: 150 4% 18%;
+    --color-primary: #2c302e;
+    --primary-foreground: 40 40% 98%;
+    --color-primary-foreground: #fdfbf7;
+    --border: 35 20% 87%;
+    --color-border: #e5e0d8;
+  }
+
+  body {
+    background-color: var(--paper-bg);
+    color: var(--ink-primary);
+    background-image: radial-gradient(#2c302e 0.4px, transparent 0.4px), radial-gradient(#2c302e 0.4px, #fdfbf7 0.4px);
+    background-size: 20px 20px;
+    background-position:
+      0 0,
+      10px 10px;
+    font-family: 'Nunito', 'Outfit', sans-serif;
+  }
+}
+
+/* Paper score pad vertical line rules */
+.paper-sheet {
+  background-color: #f7f4ee;
+  background-image: linear-gradient(#e5e0d8 1px, transparent 1px);
+  background-size: 100% 2.2rem;
+  box-shadow:
+    0 4px 20px rgba(44, 48, 46, 0.06),
+    0 1px 3px rgba(44, 48, 46, 0.04);
+}
+
+.ink-underline {
+  border-bottom: 2px dashed #c84b31;
+}
+
+.paper-card {
+  background-color: #f7f4ee;
+  border: 1px solid #e5e0d8;
+  box-shadow: 0 2px 8px rgba(44, 48, 46, 0.04);
+}
+
+/* Tabular mono numerals for score alignment */
+.score-num {
+  font-family: 'Space Mono', 'JetBrains Mono', monospace;
+  font-feature-settings: 'tnum';
+  font-variant-numeric: tabular-nums;
+}
+
+/* Custom Scrollbar for score sheet */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f7f4ee;
+}
+::-webkit-scrollbar-thumb {
+  background: #d5cec2;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #8e9490;
+}

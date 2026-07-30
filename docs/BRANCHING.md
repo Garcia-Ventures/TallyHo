@@ -11,12 +11,14 @@ This repository follows a **Git Flow-inspired branching model** with two primary
 ### Primary Branches
 
 #### `main` Branch
+
 - **Purpose**: Production-ready code
 - **Deployment**: All production deployments originate from this branch
 - **Status**: Should always be in a deployable state
 - **Updates**: Only receives merges from `develop` after thorough testing
 
 #### `develop` Branch
+
 - **Purpose**: Integration branch for features and fixes
 - **Deployment**: Can be deployed to staging/test environments
 - **Status**: Contains the latest development changes
@@ -25,6 +27,7 @@ This repository follows a **Git Flow-inspired branching model** with two primary
 ### Supporting Branches
 
 #### Feature Branches
+
 - **Naming**: `feature/<feature-name>` or `feat/<feature-name>`
 - **Purpose**: Develop new features
 - **Branch from**: `develop`
@@ -32,6 +35,7 @@ This repository follows a **Git Flow-inspired branching model** with two primary
 - **Lifetime**: Delete after merge
 
 #### Bug Fix Branches
+
 - **Naming**: `fix/<bug-description>` or `bugfix/<bug-description>`
 - **Purpose**: Fix bugs in development
 - **Branch from**: `develop`
@@ -39,6 +43,7 @@ This repository follows a **Git Flow-inspired branching model** with two primary
 - **Lifetime**: Delete after merge
 
 #### Hotfix Branches
+
 - **Naming**: `hotfix/<issue-description>`
 - **Purpose**: Fix critical production issues
 - **Branch from**: `main`
@@ -53,33 +58,33 @@ gitGraph
     branch develop
     checkout develop
     commit id: "Setup develop"
-    
+
     branch feature/new-feature
     checkout feature/new-feature
     commit id: "Feature work"
     commit id: "Feature complete"
-    
+
     checkout develop
     merge feature/new-feature
     commit id: "Integration testing"
-    
+
     checkout main
     merge develop tag: "v1.0.0"
-    
+
     checkout develop
     branch fix/bug-fix
     commit id: "Bug fix"
-    
+
     checkout develop
     merge fix/bug-fix
-    
+
     checkout main
     branch hotfix/critical-fix
     commit id: "Hotfix"
-    
+
     checkout main
     merge hotfix/critical-fix tag: "v1.0.1"
-    
+
     checkout develop
     merge hotfix/critical-fix
 ```
@@ -89,6 +94,7 @@ gitGraph
 ### Working on a New Feature
 
 1. **Create a feature branch from `develop`**
+
    ```bash
    git checkout develop
    git pull origin develop
@@ -101,6 +107,7 @@ gitGraph
    - Write tests for your changes
 
 3. **Push your branch and create a Pull Request**
+
    ```bash
    git push origin feature/my-new-feature
    ```
@@ -137,6 +144,7 @@ gitGraph
 ### Emergency Hotfixes
 
 1. **Create hotfix branch from `main`**
+
    ```bash
    git checkout main
    git pull origin main
@@ -167,6 +175,7 @@ To enforce this branching strategy, it's recommended to enable branch protection
 ### Recommended Protection Rules
 
 #### For `main` Branch:
+
 - ✅ Require pull request reviews before merging (at least 1-2 reviewers)
 - ✅ Require status checks to pass before merging
 - ✅ Require branches to be up to date before merging
@@ -176,6 +185,7 @@ To enforce this branching strategy, it's recommended to enable branch protection
 - ✅ Do not allow bypassing the above settings
 
 #### For `develop` Branch:
+
 - ✅ Require pull request reviews before merging (at least 1 reviewer)
 - ✅ Require status checks to pass before merging
 - ✅ Require branches to be up to date before merging
@@ -209,10 +219,10 @@ graph LR
     D -->|No| B
     E -->|Merge| F[main Branch]
     F -->|Deploy| G[Production Environment]
-    
+
     H[Hotfix Branch] -->|Emergency Fix| F
     H -->|Sync| B
-    
+
     style F fill:#ff6b6b
     style B fill:#4ecdc4
     style G fill:#ff6b6b
