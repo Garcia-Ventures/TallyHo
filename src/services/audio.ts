@@ -20,8 +20,16 @@ class SoundService {
     return this.ctx;
   }
 
+  public playPenClick(): void {
+    this.playKeypadTap();
+  }
+
+  public playPaperRustle(): void {
+    this.playRoundSubmit();
+  }
+
   public playKeypadTap(): void {
-    const settings = storage.getUserSettings();
+    const settings = storage.getSettings();
     if (!settings.soundEnabled) {
       return;
     }
@@ -55,7 +63,7 @@ class SoundService {
   }
 
   public playRoundSubmit(): void {
-    const settings = storage.getUserSettings();
+    const settings = storage.getSettings();
     if (!settings.soundEnabled) {
       return;
     }
@@ -66,7 +74,6 @@ class SoundService {
         return;
       }
 
-      // Two quick warm paper rustle tones
       const now = ctx.currentTime;
       [440, 660, 880].forEach((freq, i) => {
         const osc = ctx.createOscillator();
@@ -92,7 +99,7 @@ class SoundService {
   }
 
   public playVictoryFanfare(): void {
-    const settings = storage.getUserSettings();
+    const settings = storage.getSettings();
     if (!settings.soundEnabled) {
       return;
     }
@@ -131,7 +138,7 @@ class SoundService {
   }
 
   public playUndo(): void {
-    const settings = storage.getUserSettings();
+    const settings = storage.getSettings();
     if (!settings.soundEnabled) {
       return;
     }
@@ -165,7 +172,7 @@ class SoundService {
   }
 
   public triggerHaptic(pattern: number | number[] = 15): void {
-    const settings = storage.getUserSettings();
+    const settings = storage.getSettings();
     if (!settings.hapticsEnabled) {
       return;
     }
@@ -181,3 +188,4 @@ class SoundService {
 }
 
 export const audio = new SoundService();
+export const soundEffects = audio;

@@ -7,25 +7,18 @@ import { UserSettings } from '../types/game';
 
 interface NavbarProps {
   hasActiveGame: boolean;
-  onOpenNewGame: () => void;
-  onOpenHistory: () => void;
-  onOpenSettings: () => void;
-  onReturnHome: () => void;
+  onNewGame: () => void;
+  onViewHistory: () => void;
+  onReturnHome?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({
-  hasActiveGame,
-  onOpenNewGame,
-  onOpenHistory,
-  onOpenSettings,
-  onReturnHome,
-}) => {
-  const [settings, setSettings] = React.useState<UserSettings>(storage.getUserSettings());
+export const Navbar: React.FC<NavbarProps> = ({ hasActiveGame, onNewGame, onViewHistory, onReturnHome }) => {
+  const [settings, setSettings] = React.useState<UserSettings>(storage.getSettings());
 
   const toggleSound = () => {
     const updated = { ...settings, soundEnabled: !settings.soundEnabled };
     setSettings(updated);
-    storage.saveUserSettings(updated);
+    storage.saveSettings(updated);
     audio.playKeypadTap();
   };
 
@@ -36,7 +29,9 @@ export const Navbar: React.FC<NavbarProps> = ({
         <button
           onClick={() => {
             audio.playKeypadTap();
-            onReturnHome();
+            if (onReturnHome) {
+              onReturnHome();
+            }
           }}
           className="group flex items-center gap-2.5 text-left focus:outline-none"
         >
@@ -78,7 +73,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             onClick={() => {
               audio.playKeypadTap();
-              onOpenHistory();
+              onViewHistory();
             }}
             className="flex items-center gap-1.5 rounded-lg p-2 text-xs font-bold text-[#5A605C] transition-colors hover:bg-[#EFEAE1] hover:text-[#2C302E] sm:px-3 sm:py-2"
           >
@@ -90,7 +85,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <Button
             onClick={() => {
               audio.playKeypadTap();
-              onOpenNewGame();
+              onNewGame();
             }}
             className="flex items-center gap-1.5 rounded-xl bg-[#2C302E] px-3.5 py-2 text-xs font-bold text-[#FDFBF7] shadow-sm transition-all hover:bg-[#1E2120] hover:shadow sm:text-sm"
           >

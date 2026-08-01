@@ -66,6 +66,45 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* 3D Paper Card Flip Animation (Single rotation) */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* Dialog Overlay Backdrop */
+[data-slot="dialog-overlay"] {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 50 !important;
+  background-color: rgba(44, 48, 46, 0.65) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+}
+
+/* Dialog Content Exact Midpoint Centering */
+[data-slot="dialog-content"] {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  translate: -50% -50% !important;
+  transform: none !important;
+  margin: 0 !important;
+  z-index: 51 !important;
+}
+
 /* Custom Scrollbar for score sheet */
 ::-webkit-scrollbar {
   width: 6px;

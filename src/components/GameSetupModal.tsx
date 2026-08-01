@@ -1,364 +1,450 @@
-import { Button, Input } from '@gv-tech/ui-web';
-import { Check, Flag, Plus, Sparkles, Trash2, Trophy, Users, X } from 'lucide-react';
-import React, { useState } from 'react';
-import { audio } from '../services/audio';
+import { Badge, Button, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@gv-tech/ui-web';
+import React, { useEffect, useState } from 'react';
+import { soundEffects } from '../services/audio';
 import { storage } from '../services/storage';
-import { GamePreset, GameSession, Player, PLAYER_COLORS, ScoringMode } from '../types/game';
+import { GAME_PRESETS, GamePreset, Player, PLAYER_COLORS, RoundScoringType, ScoringMode } from '../types/game';
 
 interface GameSetupModalProps {
-  initialPreset?: GamePreset | null;
   isOpen: boolean;
   onClose: () => void;
-  onStartGame: (game: GameSession) => void;
+  preset: GamePreset | null;
+  onStartGame: (setup: {
+    name: string;
+    presetId?: string;
+    scoringMode: ScoringMode;
+    roundScoringType: RoundScoringType;
+    targetScore?: number;
+    targetRounds?: number;
+    players: Player[];
+  }) => void;
 }
 
-export const GameSetupModal: React.FC<GameSetupModalProps> = ({ initialPreset, isOpen, onClose, onStartGame }) => {
-  if (!isOpen) {
-    return null;
-  }
+export const GameSetupModal: React.FC<GameSetupModalProps> = ({ isOpen, onClose, preset, onStartGame }) => {
+  const [selectedPreset, setSelectedPreset] = useState<GamePreset | null>(preset);
+  const [gameName, setGameName] = useState('');
+  const [scoringMode, setScoringMode] = useState<ScoringMode>('RACE_HIGH');
+  const [roundScoringType, setRoundScoringType] = useState<RoundScoringType>('EVERY_PLAYER');
+  const [targetScore, setTargetScore] = useState<number>(100);
+  const [targetRounds, setTargetRounds] = useState<number>(5);
 
-  const savedLibrary = storage.getPlayerLibrary();
+  // Player builder
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [newPlayerName, setNewPlayerName] = useState('');
+  const [selectedColor, setSelectedColor] = useState(PLAYER_COLORS[0].hex);
+  const [savedLibrary, setSavedLibrary] = useState<Player[]>([]);
 
-  const [gameName, setGameName] = useState<string>(initialPreset ? initialPreset.name : 'Game Night Match');
-  const [scoringMode, setScoringMode] = useState<ScoringMode>(initialPreset ? initialPreset.scoringMode : 'RACE_HIGH');
-  const [targetScore, setTargetScore] = useState<number>(initialPreset?.defaultTargetScore || 500);
-  const [targetRounds, setTargetRounds] = useState<number>(10);
-
-  // Selected players
-  const [players, setPlayers] = useState<Player[]>([
-    savedLibrary[0] || { id: 'p1', name: 'Alex', color: '#E5A93C', initials: 'AL' },
-    savedLibrary[1] || { id: 'p2', name: 'Jordan', color: '#6A9C78', initials: 'JO' },
-  ]);
-
-  const [newPlayerName, setNewPlayerName] = useState<string>('');
-  const [selectedColorHex, setSelectedColorHex] = useState<string>(PLAYER_COLORS[2].hex);
-
-  // Quick add saved player
-  const handleToggleSavedPlayer = (savedP: Player) => {
-    audio.playKeypadTap();
-    if (players.some((p) => p.name.toLowerCase() === savedP.name.toLowerCase())) {
-      setPlayers(players.filter((p) => p.name.toLowerCase() !== savedP.name.toLowerCase()));
-    } else {
-      setPlayers([...players, savedP]);
+  useEffect(() => {
+    if (preset) {
+      setSelectedPreset(preset);
+      setGameName(preset.name === 'Custom Game' ? 'My Game Night' : preset.name);
+      setScoringMode(preset.scoringMode);
+      setRoundScoringType(preset.roundScoringType || 'EVERY_PLAYER');
+      setTargetScore(preset.defaultTargetScore || 100);
+      setTargetRounds(preset.defaultTargetRounds || 5);
     }
-  };
+  }, [preset]);
 
-  // Add custom player name
-  const handleAddCustomPlayer = () => {
+  useEffect(() => {
+    if (isOpen) {
+      const library = storage.getPlayerLibrary();
+      setSavedLibrary(library);
+      if (players.length === 0 && library.length >= 2) {
+        setPlayers(library.slice(0, 2));
+      }
+    }
+  }, [isOpen]);
+
+  const handleAddPlayer = (e?: React.FormEvent) => {
+    if (e) {
+      e.preventDefault();
+    }
     if (!newPlayerName.trim()) {
       return;
     }
-    audio.playKeypadTap();
 
-    const name = newPlayerName.trim();
-    const initials = name
+    soundEffects.playPenClick();
+    const initials = newPlayerName
+      .trim()
       .split(' ')
-      .map((w) => w[0])
+      .map((n) => n[0])
       .join('')
       .substring(0, 2)
       .toUpperCase();
 
-    const newP: Player = {
-      id: 'player_' + Date.now() + Math.random().toString(36).substring(2, 5),
-      name,
-      color: selectedColorHex,
-      initials: initials || name.substring(0, 2).toUpperCase(),
+    const newPlayer: Player = {
+      id: `p_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+      name: newPlayerName.trim(),
+      color: selectedColor,
+      initials,
     };
 
-    setPlayers([...players, newP]);
-    storage.savePlayerToLibrary(newP);
+    setPlayers([...players, newPlayer]);
+    storage.savePlayerToLibrary(newPlayer);
+    setSavedLibrary(storage.getPlayerLibrary());
+
     setNewPlayerName('');
+    const nextColorIdx = (PLAYER_COLORS.findIndex((c) => c.hex === selectedColor) + 1) % PLAYER_COLORS.length;
+    setSelectedColor(PLAYER_COLORS[nextColorIdx].hex);
   };
 
-  // Remove player
-  const handleRemovePlayer = (id: string) => {
-    audio.playKeypadTap();
-    if (players.length <= 1) {
-      return;
+  const handleToggleSavedPlayer = (savedPlayer: Player) => {
+    soundEffects.playPaperRustle();
+    const exists = players.some((p) => p.name.toLowerCase() === savedPlayer.name.toLowerCase());
+    if (exists) {
+      setPlayers(players.filter((p) => p.name.toLowerCase() !== savedPlayer.name.toLowerCase()));
+    } else {
+      setPlayers([...players, savedPlayer]);
     }
+  };
+
+  const handleDeleteSavedPlayer = (savedPlayerId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    soundEffects.playPaperRustle();
+    storage.deletePlayerFromLibrary(savedPlayerId);
+    setSavedLibrary(storage.getPlayerLibrary());
+    setPlayers(players.filter((p) => p.id !== savedPlayerId));
+  };
+
+  const handleRemovePlayer = (id: string) => {
+    soundEffects.playPaperRustle();
     setPlayers(players.filter((p) => p.id !== id));
   };
 
-  // Submit and start
-  const handleCreateGame = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (players.length === 0) {
+  const handleMovePlayerOrder = (index: number, direction: 'UP' | 'DOWN') => {
+    soundEffects.playPenClick();
+    const targetIdx = direction === 'UP' ? index - 1 : index + 1;
+    if (targetIdx < 0 || targetIdx >= players.length) {
       return;
     }
+    const updated = [...players];
+    const temp = updated[index];
+    updated[index] = updated[targetIdx];
+    updated[targetIdx] = temp;
+    setPlayers(updated);
+  };
 
-    audio.playRoundSubmit();
-
-    const newGame: GameSession = {
-      id: 'game_' + Date.now(),
-      name: gameName.trim() || 'Game Night Match',
-      presetId: initialPreset?.id,
+  const handleStart = () => {
+    if (players.length < 1) {
+      return;
+    }
+    soundEffects.playPenClick();
+    onStartGame({
+      name: gameName || 'Game Night',
+      presetId: selectedPreset?.id,
       scoringMode,
-      targetScore: scoringMode !== 'FIXED_ROUNDS' ? Number(targetScore) || 500 : undefined,
-      targetRounds: scoringMode === 'FIXED_ROUNDS' ? Number(targetRounds) || 10 : undefined,
+      roundScoringType,
+      targetScore: scoringMode !== 'FIXED_ROUNDS' ? targetScore : undefined,
+      targetRounds: scoringMode === 'FIXED_ROUNDS' ? targetRounds : undefined,
       players,
-      rounds: [],
-      status: 'ACTIVE',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    onStartGame(newGame);
+    });
+    onClose();
   };
 
   return (
-    <div className="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-[#2C302E]/60 p-4 backdrop-blur-sm">
-      <div className="relative flex max-h-[90vh] w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-[#E5E0D8] bg-[#FDFBF7] shadow-2xl">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#E5E0D8] bg-[#F7F4EE] px-6 py-4">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">{initialPreset?.icon || '✏️'}</span>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent
+        showCloseButton={false}
+        className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl border-[#E5E0D8] bg-[#FDFBF7] p-6 text-[#2C302E] shadow-2xl"
+      >
+        <DialogHeader>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-3xl">{selectedPreset?.icon || '✏️'}</span>
+              <div>
+                <DialogTitle className="text-xl font-bold text-[#2C302E]">
+                  Setup Match: {selectedPreset?.name || 'Custom Game'}
+                </DialogTitle>
+                <DialogDescription className="text-sm text-[#5A605C]">
+                  Configure seating turn order and target rules in under 10 seconds.
+                </DialogDescription>
+              </div>
+            </div>
+
+            <button
+              onClick={onClose}
+              className="rounded-lg border border-[#E5E0D8] bg-[#F7F4EE] px-2.5 py-1 text-xs font-bold text-[#5A605C] hover:text-[#2C302E]"
+            >
+              ✕ Close
+            </button>
+          </div>
+        </DialogHeader>
+
+        <div className="my-4 space-y-6">
+          {!preset && (
             <div>
-              <h3 className="text-xl font-extrabold text-[#2C302E]">
-                {initialPreset ? `Setup ${initialPreset.name}` : 'New Game Setup'}
-              </h3>
-              <p className="text-xs font-semibold text-[#5A605C]">Configure players & target score rule</p>
-            </div>
-          </div>
-          <button
-            onClick={() => {
-              audio.playKeypadTap();
-              onClose();
-            }}
-            className="rounded-lg p-1.5 text-[#5A605C] transition-colors hover:bg-[#EFEAE1] hover:text-[#2C302E]"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-
-        {/* Content Body */}
-        <form onSubmit={handleCreateGame} className="flex-1 space-y-6 overflow-y-auto p-6">
-          {/* Game Title */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-extrabold tracking-wide text-[#2C302E] uppercase">Match Title</label>
-            <Input
-              value={gameName}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGameName(e.target.value)}
-              placeholder="e.g. Friday Rummy Battle"
-              className="w-full rounded-xl border-[#E5E0D8] bg-[#F7F4EE] px-4 py-2.5 text-sm font-bold focus:border-[#2C302E]"
-            />
-          </div>
-
-          {/* Scoring Mode & Winning Rules */}
-          <div className="space-y-3">
-            <label className="text-xs font-extrabold tracking-wide text-[#2C302E] uppercase">Winning Condition</label>
-
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  audio.playKeypadTap();
-                  setScoringMode('RACE_HIGH');
-                }}
-                className={`rounded-xl border p-3 text-left transition-all ${
-                  scoringMode === 'RACE_HIGH'
-                    ? 'border-[#2C302E] bg-[#2C302E] text-white shadow-sm'
-                    : 'border-[#E5E0D8] bg-[#F7F4EE] text-[#2C302E] hover:border-[#2C302E]/50'
-                }`}
-              >
-                <Trophy className="mb-1 h-4 w-4 text-[#E5A93C]" />
-                <div className="text-xs font-extrabold">Race to Target</div>
-                <div className="text-[10px] font-medium opacity-80">Highest score wins</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  audio.playKeypadTap();
-                  setScoringMode('RACE_LOW');
-                }}
-                className={`rounded-xl border p-3 text-left transition-all ${
-                  scoringMode === 'RACE_LOW'
-                    ? 'border-[#2C302E] bg-[#2C302E] text-white shadow-sm'
-                    : 'border-[#E5E0D8] bg-[#F7F4EE] text-[#2C302E] hover:border-[#2C302E]/50'
-                }`}
-              >
-                <Flag className="mb-1 h-4 w-4 text-[#6A9C78]" />
-                <div className="text-xs font-extrabold">Low Score Wins</div>
-                <div className="text-[10px] font-medium opacity-80">Lowest score wins (Uno)</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  audio.playKeypadTap();
-                  setScoringMode('FIXED_ROUNDS');
-                }}
-                className={`rounded-xl border p-3 text-left transition-all ${
-                  scoringMode === 'FIXED_ROUNDS'
-                    ? 'border-[#2C302E] bg-[#2C302E] text-white shadow-sm'
-                    : 'border-[#E5E0D8] bg-[#F7F4EE] text-[#2C302E] hover:border-[#2C302E]/50'
-                }`}
-              >
-                <Sparkles className="mb-1 h-4 w-4 text-[#D96B43]" />
-                <div className="text-xs font-extrabold">Fixed Rounds</div>
-                <div className="text-[10px] font-medium opacity-80">Ends after N rounds</div>
-              </button>
-            </div>
-
-            {/* Target Value Input */}
-            {scoringMode !== 'FIXED_ROUNDS' ? (
-              <div className="flex items-center gap-3 rounded-xl border border-[#E5E0D8] bg-[#F7F4EE] p-3">
-                <span className="text-xs font-extrabold text-[#5A605C]">Target Threshold:</span>
-                <input
-                  type="number"
-                  value={targetScore}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTargetScore(Number(e.target.value))}
-                  className="score-num w-28 rounded-lg border border-[#E5E0D8] bg-white px-3 py-1 text-sm font-extrabold text-[#2C302E] focus:border-[#2C302E] focus:outline-none"
-                />
-                <span className="text-xs font-semibold text-[#5A605C]">points</span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-3 rounded-xl border border-[#E5E0D8] bg-[#F7F4EE] p-3">
-                <span className="text-xs font-extrabold text-[#5A605C]">Total Rounds:</span>
-                <input
-                  type="number"
-                  value={targetRounds}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTargetRounds(Number(e.target.value))}
-                  className="score-num w-24 rounded-lg border border-[#E5E0D8] bg-white px-3 py-1 text-sm font-extrabold text-[#2C302E] focus:border-[#2C302E] focus:outline-none"
-                />
-                <span className="text-xs font-semibold text-[#5A605C]">rounds</span>
-              </div>
-            )}
-          </div>
-
-          {/* Players Roster */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-1.5 text-xs font-extrabold tracking-wide text-[#2C302E] uppercase">
-                <Users className="h-4 w-4 text-[#5A605C]" />
-                Player Roster ({players.length})
+              <label className="mb-2 block text-xs font-semibold tracking-wider text-[#5A605C] uppercase">
+                Select Game Preset
               </label>
-              <span className="text-[11px] font-semibold text-[#5A605C]">Min 1 player</span>
-            </div>
-
-            {/* Selected Players Chips */}
-            <div className="max-h-48 space-y-2 overflow-y-auto pr-1">
-              {players.map((p, index) => (
-                <div
-                  key={p.id}
-                  className="flex items-center justify-between rounded-xl border border-[#E5E0D8] bg-[#F7F4EE] p-2.5"
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="flex h-8 w-8 items-center justify-center rounded-lg text-xs font-extrabold text-white shadow-sm"
-                      style={{ backgroundColor: p.color }}
-                    >
-                      {p.initials}
-                    </div>
-                    <span className="text-sm font-extrabold text-[#2C302E]">{p.name}</span>
-                    <span className="rounded-md bg-[#EFEAE1] px-2 py-0.5 text-[10px] font-bold text-[#5A605C]">
-                      Seat {index + 1}
-                    </span>
-                  </div>
-
+              <div className="grid grid-cols-3 gap-2">
+                {GAME_PRESETS.map((p) => (
                   <button
+                    key={p.id}
                     type="button"
-                    onClick={() => handleRemovePlayer(p.id)}
-                    disabled={players.length <= 1}
-                    className="rounded-md p-1 text-[#5A605C] transition-colors hover:bg-[#EFEAE1] hover:text-[#C84B31] disabled:opacity-30"
+                    onClick={() => {
+                      setSelectedPreset(p);
+                      setGameName(p.name);
+                      setScoringMode(p.scoringMode);
+                      setRoundScoringType(p.roundScoringType);
+                      if (p.defaultTargetScore) {
+                        setTargetScore(p.defaultTargetScore);
+                      }
+                    }}
+                    className={`rounded-lg border p-2 text-left text-xs transition-all ${
+                      selectedPreset?.id === p.id
+                        ? 'border-[#2C302E] bg-[#F7F4EE] shadow-xs'
+                        : 'border-[#E5E0D8] hover:border-[#D5CEC2]'
+                    }`}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <div className="flex items-center gap-1.5 font-bold">
+                      <span>{p.icon}</span>
+                      <span className="truncate">{p.name}</span>
+                    </div>
                   </button>
-                </div>
-              ))}
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Match Title & Rules */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold tracking-wider text-[#5A605C] uppercase">
+                Match Title
+              </label>
+              <input
+                type="text"
+                value={gameName}
+                onChange={(e) => setGameName(e.target.value)}
+                placeholder="e.g. Friday Night Showdown"
+                className="w-full rounded-lg border border-[#E5E0D8] bg-[#F7F4EE] px-3 py-2 text-sm focus:border-[#2C302E] focus:outline-none"
+              />
             </div>
 
-            {/* Quick Add from Saved Family/Friends Library */}
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold tracking-wider text-[#5A605C] uppercase">
+                Win Threshold Rule
+              </label>
+              <select
+                value={scoringMode}
+                onChange={(e) => setScoringMode(e.target.value as ScoringMode)}
+                className="w-full rounded-lg border border-[#E5E0D8] bg-[#F7F4EE] px-3 py-2 text-sm focus:border-[#2C302E] focus:outline-none"
+              >
+                <option value="RACE_HIGH">Race to High Score (Most Points Wins)</option>
+                <option value="RACE_LOW">Race to Low Limit (Lowest Points Wins)</option>
+                <option value="FIXED_ROUNDS">Fixed Rounds Limit</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Round Scoring Type Selection */}
+          <div>
+            <label className="mb-1.5 block text-xs font-semibold tracking-wider text-[#5A605C] uppercase">
+              Round Scoring Structure
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setRoundScoringType('EVERY_PLAYER')}
+                className={`rounded-lg border p-3 text-left transition-all ${
+                  roundScoringType === 'EVERY_PLAYER'
+                    ? 'border-[#2C302E] bg-[#F7F4EE] ring-1 ring-[#2C302E]'
+                    : 'border-[#E5E0D8] bg-white hover:border-[#D5CEC2]'
+                }`}
+              >
+                <span className="block text-xs font-bold text-[#2C302E]">👥 Every Player Scores Each Round</span>
+                <span className="text-[11px] text-[#5A605C]">
+                  All players enter a score before round advances (e.g. Qwirkle, Rummy).
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setRoundScoringType('SINGLE_WINNER')}
+                className={`rounded-lg border p-3 text-left transition-all ${
+                  roundScoringType === 'SINGLE_WINNER'
+                    ? 'border-[#2C302E] bg-[#F7F4EE] ring-1 ring-[#2C302E]'
+                    : 'border-[#E5E0D8] bg-white hover:border-[#D5CEC2]'
+                }`}
+              >
+                <span className="block text-xs font-bold text-[#2C302E]">🏆 One Winner Scores Per Round</span>
+                <span className="text-[11px] text-[#5A605C]">
+                  Only one player scores per round, advancing round immediately (e.g. Uno).
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Target Value input */}
+          <div className="flex items-center justify-between rounded-lg border border-[#E5E0D8] bg-[#F7F4EE] p-3">
+            <span className="text-sm font-semibold text-[#2C302E]">
+              {scoringMode === 'FIXED_ROUNDS' ? 'Target Rounds Limit:' : 'Target Win Threshold:'}
+            </span>
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                value={scoringMode === 'FIXED_ROUNDS' ? targetRounds : targetScore}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value) || 0;
+                  if (scoringMode === 'FIXED_ROUNDS') {
+                    setTargetRounds(val);
+                  } else {
+                    setTargetScore(val);
+                  }
+                }}
+                className="w-24 rounded border border-[#E5E0D8] bg-white px-3 py-1 text-right font-mono text-sm font-bold"
+              />
+              <span className="text-xs text-[#5A605C]">{scoringMode === 'FIXED_ROUNDS' ? 'Rounds' : 'Points'}</span>
+            </div>
+          </div>
+
+          {/* Player Roster Builder */}
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <label className="text-xs font-semibold tracking-wider text-[#5A605C] uppercase">
+                Players & Seating Turn Order ({players.length})
+              </label>
+              <span className="text-xs text-[#5A605C]">Use ↑↓ to reorder turn sequence</span>
+            </div>
+
             {savedLibrary.length > 0 && (
-              <div className="space-y-1.5 pt-2">
-                <div className="text-[11px] font-bold text-[#5A605C] uppercase">Quick Select Saved Players:</div>
+              <div className="mb-3">
+                <span className="mb-1.5 block text-[11px] font-medium text-[#5A605C]">Quick Select Saved Players:</span>
                 <div className="flex flex-wrap gap-1.5">
                   {savedLibrary.map((sp) => {
                     const isSelected = players.some((p) => p.name.toLowerCase() === sp.name.toLowerCase());
                     return (
-                      <button
+                      <div
                         key={sp.id}
-                        type="button"
-                        onClick={() => handleToggleSavedPlayer(sp)}
-                        className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold transition-all ${
+                        className={`group inline-flex cursor-pointer items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium transition-all ${
                           isSelected
                             ? 'border-[#2C302E] bg-[#2C302E] text-white'
-                            : 'border-[#E5E0D8] bg-[#F7F4EE] text-[#5A605C] hover:border-[#2C302E]'
+                            : 'border-[#E5E0D8] bg-[#F7F4EE] text-[#2C302E] hover:border-[#2C302E]'
                         }`}
+                        onClick={() => handleToggleSavedPlayer(sp)}
                       >
-                        {isSelected && <Check className="h-3 w-3 text-[#E5A93C]" />}
+                        <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ backgroundColor: sp.color }} />
                         <span>{sp.name}</span>
-                      </button>
+                        <button
+                          type="button"
+                          title="Delete player from saved library"
+                          onClick={(e) => handleDeleteSavedPlayer(sp.id, e)}
+                          className="ml-1 text-xs opacity-60 hover:text-red-400 hover:opacity-100"
+                        >
+                          ×
+                        </button>
+                      </div>
                     );
                   })}
                 </div>
               </div>
             )}
 
-            {/* Custom New Player Form */}
-            <div className="flex items-center gap-2 pt-2">
-              <Input
-                value={newPlayerName}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewPlayerName(e.target.value)}
-                placeholder="Add new player name..."
-                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddCustomPlayer();
-                  }
-                }}
-                className="flex-1 rounded-xl border-[#E5E0D8] bg-[#F7F4EE] px-3 py-2 text-xs font-bold focus:border-[#2C302E]"
-              />
+            <form onSubmit={handleAddPlayer} className="mb-3 flex gap-2">
+              <div className="flex flex-1 gap-2">
+                <input
+                  type="text"
+                  value={newPlayerName}
+                  onChange={(e) => setNewPlayerName(e.target.value)}
+                  placeholder="Enter player name..."
+                  className="flex-1 rounded-lg border border-[#E5E0D8] bg-[#F7F4EE] px-3 py-2 text-sm focus:border-[#2C302E] focus:outline-none"
+                />
 
-              {/* Color Swatch Picker */}
-              <div className="flex items-center gap-1 rounded-xl border border-[#E5E0D8] bg-[#F7F4EE] p-1">
-                {PLAYER_COLORS.map((c) => (
-                  <button
-                    key={c.hex}
-                    type="button"
-                    onClick={() => setSelectedColorHex(c.hex)}
-                    className={`h-5 w-5 rounded-full border-2 transition-transform ${
-                      selectedColorHex === c.hex
-                        ? 'scale-110 border-[#2C302E]'
-                        : 'border-transparent opacity-70 hover:opacity-100'
-                    }`}
-                    style={{ backgroundColor: c.hex }}
-                  />
-                ))}
+                <div className="flex items-center gap-1 rounded-lg border border-[#E5E0D8] bg-[#F7F4EE] px-2">
+                  {PLAYER_COLORS.map((color) => (
+                    <button
+                      key={color.hex}
+                      type="button"
+                      onClick={() => setSelectedColor(color.hex)}
+                      className={`h-5 w-5 rounded-full transition-transform ${
+                        selectedColor === color.hex ? 'scale-125 ring-2 ring-[#2C302E]' : 'opacity-70 hover:opacity-100'
+                      }`}
+                      style={{ backgroundColor: color.hex }}
+                    />
+                  ))}
+                </div>
               </div>
 
-              <button
-                type="button"
-                onClick={handleAddCustomPlayer}
-                className="rounded-xl bg-[#2C302E] p-2 text-white transition-colors hover:bg-[#1E2120]"
-              >
-                <Plus className="h-4 w-4" />
-              </button>
+              <Button type="submit" variant="secondary" size="sm" className="bg-[#2C302E] text-white hover:bg-black">
+                + Add
+              </Button>
+            </form>
+
+            <div className="max-h-48 space-y-1.5 overflow-y-auto pr-1">
+              {players.length === 0 ? (
+                <div className="rounded-lg border border-dashed border-[#E5E0D8] py-4 text-center text-xs text-[#5A605C]">
+                  No players added yet. Select from saved library above or add new players.
+                </div>
+              ) : (
+                players.map((p, idx) => (
+                  <div
+                    key={p.id}
+                    className="flex items-center justify-between rounded-lg border border-[#E5E0D8] bg-[#F7F4EE] p-2"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 text-center font-mono text-xs font-bold text-[#5A605C]">#{idx + 1}</span>
+                      <span
+                        className="flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-white shadow-xs"
+                        style={{ backgroundColor: p.color }}
+                      >
+                        {p.initials}
+                      </span>
+                      <span className="text-sm font-semibold text-[#2C302E]">{p.name}</span>
+                      {idx === 0 && (
+                        <Badge variant="outline" className="text-[10px]">
+                          First Turn
+                        </Badge>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => handleMovePlayerOrder(idx, 'UP')}
+                        disabled={idx === 0}
+                        className="rounded border bg-white px-1.5 py-0.5 text-xs hover:bg-gray-100 disabled:opacity-30"
+                        title="Move Turn Up"
+                      >
+                        ↑
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleMovePlayerOrder(idx, 'DOWN')}
+                        disabled={idx === players.length - 1}
+                        className="rounded border bg-white px-1.5 py-0.5 text-xs hover:bg-gray-100 disabled:opacity-30"
+                        title="Move Turn Down"
+                      >
+                        ↓
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleRemovePlayer(p.id)}
+                        className="ml-1 p-1 text-xs font-bold text-[#5A605C] hover:text-[#C84B31]"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
+        </div>
 
-          {/* Modal Footer Actions */}
-          <div className="flex items-center justify-end gap-3 border-t border-[#E5E0D8] pt-4">
-            <button
-              type="button"
-              onClick={() => {
-                audio.playKeypadTap();
-                onClose();
-              }}
-              className="rounded-xl px-4 py-2.5 text-xs font-bold text-[#5A605C] transition-colors hover:bg-[#EFEAE1]"
-            >
-              Cancel
-            </button>
-            <Button
-              type="submit"
-              className="flex items-center gap-2 rounded-xl bg-[#2C302E] px-6 py-2.5 text-sm font-black text-[#FDFBF7] shadow-md transition-all hover:bg-[#1E2120]"
-            >
-              <Trophy className="h-4 w-4 text-[#E5A93C]" />
-              Start Match Now
-            </Button>
-          </div>
-        </form>
-      </div>
-    </div>
+        {/* Modal Actions */}
+        <div className="mt-4 flex items-center justify-between border-t border-[#E5E0D8] pt-3">
+          <Button variant="ghost" onClick={onClose} className="text-[#5A605C]">
+            Cancel
+          </Button>
+
+          <Button
+            onClick={handleStart}
+            disabled={players.length < 1}
+            className="bg-[#C84B31] px-6 font-bold text-white hover:bg-[#b03f28]"
+          >
+            Start Match ({players.length} Players) →
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };

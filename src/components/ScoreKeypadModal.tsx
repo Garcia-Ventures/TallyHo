@@ -6,7 +6,7 @@ import { Player, RoundScore } from '../types/game';
 
 interface ScoreKeypadModalProps {
   player: Player | null;
-  roundNumber: number;
+  roundNumber?: number;
   isOpen: boolean;
   onClose: () => void;
   onSubmitScore: (score: RoundScore) => void;
@@ -14,7 +14,7 @@ interface ScoreKeypadModalProps {
 
 export const ScoreKeypadModal: React.FC<ScoreKeypadModalProps> = ({
   player,
-  roundNumber,
+  roundNumber = 1,
   isOpen,
   onClose,
   onSubmitScore,
@@ -186,7 +186,7 @@ export const ScoreKeypadModal: React.FC<ScoreKeypadModalProps> = ({
             <button
               type="button"
               onClick={handleBackspace}
-              className="flex items-center justify-center rounded-2xl border border-[#E5E0D8] bg-[#EFEAE1] py-3.5 font-bold text-[#2C302E] text-[#C84B31] transition-all hover:bg-[#C84B31]/10 sm:py-4"
+              className="flex items-center justify-center rounded-2xl border border-[#E5E0D8] bg-[#EFEAE1] py-3.5 font-bold text-[#C84B31] transition-all hover:bg-[#C84B31]/10 sm:py-4"
             >
               <Delete className="h-6 w-6" />
             </button>

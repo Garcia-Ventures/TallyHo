@@ -9,13 +9,22 @@ interface GameOverModalProps {
   game: GameSession;
   isOpen: boolean;
   onRematch: () => void;
-  onReturnHome: () => void;
+  onClose?: () => void;
+  onReturnHome?: () => void;
 }
 
-export const GameOverModal: React.FC<GameOverModalProps> = ({ game, isOpen, onRematch, onReturnHome }) => {
+export const GameOverModal: React.FC<GameOverModalProps> = ({ game, isOpen, onRematch, onClose, onReturnHome }) => {
   if (!isOpen) {
     return null;
   }
+
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    } else if (onReturnHome) {
+      onReturnHome();
+    }
+  };
 
   // Trigger celebration & audio on open
   useEffect(() => {
@@ -188,7 +197,7 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({ game, isOpen, onRe
           <button
             onClick={() => {
               audio.playKeypadTap();
-              onReturnHome();
+              handleClose();
             }}
             className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#E5E0D8] bg-[#EFEAE1] px-6 py-3 text-sm font-bold text-[#2C302E] transition-colors hover:bg-[#E5E0D8] sm:w-auto"
           >

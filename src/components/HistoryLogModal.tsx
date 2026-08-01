@@ -8,13 +8,28 @@ interface HistoryLogModalProps {
   history: GameSession[];
   isOpen: boolean;
   onClose: () => void;
-  onDeleteMatch: (id: string) => void;
+  onDeleteMatch?: (id: string) => void;
+  onClearHistory?: () => void;
 }
 
-export const HistoryLogModal: React.FC<HistoryLogModalProps> = ({ history, isOpen, onClose, onDeleteMatch }) => {
+export const HistoryLogModal: React.FC<HistoryLogModalProps> = ({
+  history,
+  isOpen,
+  onClose,
+  onDeleteMatch,
+  onClearHistory,
+}) => {
   if (!isOpen) {
     return null;
   }
+
+  const handleDelete = (id: string) => {
+    if (onDeleteMatch) {
+      onDeleteMatch(id);
+    } else if (onClearHistory) {
+      onClearHistory();
+    }
+  };
 
   return (
     <div className="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-[#2C302E]/60 p-4 backdrop-blur-sm">
@@ -93,7 +108,7 @@ export const HistoryLogModal: React.FC<HistoryLogModalProps> = ({ history, isOpe
                     <button
                       onClick={() => {
                         audio.playUndo();
-                        onDeleteMatch(game.id);
+                        handleDelete(game.id);
                       }}
                       className="rounded-lg p-1.5 text-[#5A605C] transition-colors hover:bg-[#C84B31]/10 hover:text-[#C84B31]"
                       title="Delete Record"
@@ -126,13 +141,24 @@ export const HistoryLogModal: React.FC<HistoryLogModalProps> = ({ history, isOpe
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end border-t border-[#E5E0D8] bg-[#F7F4EE] p-4">
+        <div className="flex items-center justify-between border-t border-[#E5E0D8] bg-[#F7F4EE] p-4">
+          {onClearHistory && history.length > 0 && (
+            <button
+              onClick={() => {
+                audio.playUndo();
+                onClearHistory();
+              }}
+              className="text-xs font-bold text-[#C84B31] hover:underline"
+            >
+              Clear All Archive
+            </button>
+          )}
           <Button
             onClick={() => {
               audio.playKeypadTap();
               onClose();
             }}
-            className="rounded-xl bg-[#2C302E] px-6 py-2 text-xs font-extrabold text-white"
+            className="ml-auto rounded-xl bg-[#2C302E] px-6 py-2 text-xs font-extrabold text-white"
           >
             Close Archive
           </Button>

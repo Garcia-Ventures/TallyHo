@@ -6,20 +6,20 @@ import { GAME_PRESETS, GamePreset, GameSession } from '../types/game';
 
 interface HomeViewProps {
   activeGame: GameSession | null;
-  onResumeActiveGame: () => void;
+  matchHistory?: GameSession[];
   onSelectPreset: (preset: GamePreset) => void;
-  onStartCustomGame: () => void;
-  onOpenHistory: () => void;
-  recentGames: GameSession[];
+  onResumeGame?: () => void;
+  onStartCustomGame?: () => void;
+  onOpenHistory?: () => void;
 }
 
 export const HomeView: React.FC<HomeViewProps> = ({
   activeGame,
-  onResumeActiveGame,
+  matchHistory = [],
   onSelectPreset,
+  onResumeGame,
   onStartCustomGame,
   onOpenHistory,
-  recentGames,
 }) => {
   return (
     <div className="animate-fade-in mx-auto max-w-4xl space-y-10 px-4 py-8">
@@ -52,7 +52,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <Button
               onClick={() => {
                 audio.playKeypadTap();
-                onResumeActiveGame();
+                if (onResumeGame) {
+                  onResumeGame();
+                }
               }}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#E5A93C] px-6 py-3.5 text-sm font-black text-[#2C302E] shadow-lg transition-all hover:scale-[1.02] hover:bg-[#D4982B] active:scale-95 sm:w-auto"
             >
@@ -121,7 +123,11 @@ export const HomeView: React.FC<HomeViewProps> = ({
         <Button
           onClick={() => {
             audio.playKeypadTap();
-            onStartCustomGame();
+            if (onStartCustomGame) {
+              onStartCustomGame();
+            } else {
+              onSelectPreset(GAME_PRESETS[GAME_PRESETS.length - 1]);
+            }
           }}
           className="mx-auto flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[#2C302E]/30 bg-[#F7F4EE] px-8 py-3.5 text-sm font-bold text-[#2C302E] shadow-sm transition-all hover:border-[#2C302E] hover:bg-[#EFEAE1] sm:w-auto"
         >
@@ -131,26 +137,28 @@ export const HomeView: React.FC<HomeViewProps> = ({
       </div>
 
       {/* Recent Match History Section */}
-      {recentGames.length > 0 && (
+      {matchHistory.length > 0 && (
         <div className="space-y-4 border-t border-[#E5E0D8] pt-6">
           <div className="flex items-center justify-between">
             <h3 className="flex items-center gap-2 text-lg font-extrabold text-[#2C302E]">
               <History className="h-5 w-5 text-[#5A605C]" />
               Recent Game Night Memories
             </h3>
-            <button
-              onClick={() => {
-                audio.playKeypadTap();
-                onOpenHistory();
-              }}
-              className="flex items-center gap-1 text-xs font-bold text-[#3B5998] hover:underline"
-            >
-              View All Match History
-            </button>
+            {onOpenHistory && (
+              <button
+                onClick={() => {
+                  audio.playKeypadTap();
+                  onOpenHistory();
+                }}
+                className="flex items-center gap-1 text-xs font-bold text-[#3B5998] hover:underline"
+              >
+                View All Match History
+              </button>
+            )}
           </div>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {recentGames.slice(0, 4).map((game) => (
+            {matchHistory.slice(0, 4).map((game) => (
               <div
                 key={game.id}
                 className="flex items-center justify-between rounded-xl border border-[#E5E0D8] bg-[#F7F4EE] p-4 transition-colors hover:border-[#2C302E]"

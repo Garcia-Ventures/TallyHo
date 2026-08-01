@@ -4,257 +4,351 @@ import { GameSetupModal } from './components/GameSetupModal';
 import { HistoryLogModal } from './components/HistoryLogModal';
 import { HomeView } from './components/HomeView';
 import { Navbar } from './components/Navbar';
+import { PlayModeView } from './components/PlayModeView';
 import { RoundHistoryModal } from './components/RoundHistoryModal';
 import { ScoreboardView } from './components/ScoreboardView';
 import { ScoreKeypadModal } from './components/ScoreKeypadModal';
 
+import { soundEffects } from './services/audio';
 import { storage } from './services/storage';
-import { GamePreset, GameSession, Player, Round, RoundScore } from './types/game';
+import { GamePreset, GameSession, Player, Round, RoundScore, RoundScoringType, ScoringMode } from './types/game';
 
 export function App() {
-  const [view, setView] = useState<'HOME' | 'SCOREBOARD'>('HOME');
+  const [viewMode, setViewMode] = useState<'HOME' | 'MATCH'>('HOME');
+  const [isPlayMode, setIsPlayMode] = useState<boolean>(false);
+
   const [activeGame, setActiveGame] = useState<GameSession | null>(null);
   const [matchHistory, setMatchHistory] = useState<GameSession[]>([]);
 
-  // Modals state
-  const [setupModalOpen, setSetupModalOpen] = useState<boolean>(false);
+  // Modals
+  const [isSetupOpen, setIsSetupOpen] = useState(false);
   const [selectedPreset, setSelectedPreset] = useState<GamePreset | null>(null);
 
   const [keypadPlayer, setKeypadPlayer] = useState<Player | null>(null);
-  const [roundHistoryOpen, setRoundHistoryOpen] = useState<boolean>(false);
-  const [gameOverOpen, setGameOverOpen] = useState<boolean>(false);
-  const [historyArchiveOpen, setHistoryArchiveOpen] = useState<boolean>(false);
+  const [isRoundHistoryOpen, setIsRoundHistoryOpen] = useState(false);
+  const [isGameOverOpen, setIsGameOverOpen] = useState(false);
+  const [isHistoryLogOpen, setIsHistoryLogOpen] = useState(false);
 
-  // Initial load
   useEffect(() => {
-    const existing = storage.getActiveGame();
-    if (existing && existing.status === 'ACTIVE') {
-      setActiveGame(existing);
+    const savedActive = storage.getActiveGame();
+    if (savedActive) {
+      setActiveGame(savedActive);
+      setViewMode('MATCH');
     }
     setMatchHistory(storage.getMatchHistory());
   }, []);
 
-  // Sync active game to storage on change
-  const updateActiveGame = (updated: GameSession) => {
-    setActiveGame(updated);
-    storage.saveActiveGame(updated);
+  const handleStartSetup = (preset?: GamePreset) => {
+    setSelectedPreset(preset || null);
+    setIsSetupOpen(true);
   };
 
-  // Start new match
-  const handleStartNewGame = (game: GameSession) => {
-    updateActiveGame(game);
-    setSetupModalOpen(false);
-    setView('SCOREBOARD');
+  const handleCreateGame = (setup: {
+    name: string;
+    presetId?: string;
+    scoringMode: ScoringMode;
+    roundScoringType: RoundScoringType;
+    targetScore?: number;
+    targetRounds?: number;
+    players: Player[];
+  }) => {
+    const initialRound: Round = {
+      roundNumber: 1,
+      timestamp: new Date().toISOString(),
+      scores: {},
+    };
+
+    const newGame: GameSession = {
+      id: `game_${Date.now()}`,
+      name: setup.name,
+      presetId: setup.presetId,
+      scoringMode: setup.scoringMode,
+      roundScoringType: setup.roundScoringType,
+      targetScore: setup.targetScore,
+      targetRounds: setup.targetRounds,
+      players: setup.players,
+      rounds: [initialRound],
+      status: 'ACTIVE',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      currentTurnIndex: 0,
+    };
+
+    setActiveGame(newGame);
+    storage.saveActiveGame(newGame);
+    setViewMode('MATCH');
+    setIsPlayMode(true);
   };
 
-  // Submit round score from keypad
+  const handleResumeGame = () => {
+    if (activeGame) {
+      setViewMode('MATCH');
+      setIsPlayMode(false);
+    }
+  };
+
+  const togglePlayModeFlip = (targetIsPlayMode: boolean) => {
+    soundEffects.playPaperRustle();
+    setIsPlayMode(targetIsPlayMode);
+  };
+
   const handleSubmitRoundScore = (score: RoundScore) => {
     if (!activeGame) {
       return;
     }
 
+    soundEffects.playPenClick();
     const currentRounds = [...activeGame.rounds];
-    const latestRoundIndex = currentRounds.length > 0 ? currentRounds.length - 1 : 0;
-    const latestRound = currentRounds[latestRoundIndex];
-
-    let updatedRounds: Round[] = [];
-
-    // Check if current round has incomplete entries or if we create a new round
-    if (latestRound && !latestRound.scores[score.playerId]) {
-      // Append to current round
-      const updatedScores = { ...latestRound.scores, [score.playerId]: score };
-      currentRounds[latestRoundIndex] = { ...latestRound, scores: updatedScores };
-      updatedRounds = currentRounds;
-    } else {
-      // Create new round
-      const newRound: Round = {
-        roundNumber: currentRounds.length + 1,
+    if (currentRounds.length === 0) {
+      currentRounds.push({
+        roundNumber: 1,
         timestamp: new Date().toISOString(),
-        scores: { [score.playerId]: score },
-      };
-      updatedRounds = [...currentRounds, newRound];
+        scores: {},
+      });
     }
 
+    const latestRoundIdx = currentRounds.length - 1;
+    const latestRound = { ...currentRounds[latestRoundIdx] };
+    const updatedScores = { ...latestRound.scores, [score.playerId]: score };
+    latestRound.scores = updatedScores;
+    currentRounds[latestRoundIdx] = latestRound;
+
+    const isSingleWinner = activeGame.roundScoringType === 'SINGLE_WINNER';
+
+    // If SINGLE_WINNER or all players logged for EVERY_PLAYER, advance round
+    const shouldAdvanceRound = isSingleWinner || activeGame.players.every((p) => Boolean(updatedScores[p.id]));
+
+    if (shouldAdvanceRound) {
+      currentRounds.push({
+        roundNumber: latestRound.roundNumber + 1,
+        timestamp: new Date().toISOString(),
+        scores: {},
+      });
+    }
+
+    const updatedGame: GameSession = {
+      ...activeGame,
+      rounds: currentRounds,
+      updatedAt: new Date().toISOString(),
+    };
+
+    setActiveGame(updatedGame);
+    storage.saveActiveGame(updatedGame);
+
+    checkWinCondition(updatedGame);
+  };
+
+  const checkWinCondition = (game: GameSession) => {
+    const totals: Record<string, number> = {};
+    game.players.forEach((p) => (totals[p.id] = 0));
+    game.rounds.forEach((r) => {
+      Object.values(r.scores).forEach((s) => {
+        const net = s.points + (s.bonusPoints || 0) - (s.penaltyPoints || 0);
+        totals[s.playerId] = (totals[s.playerId] || 0) + net;
+      });
+    });
+
+    let hasWinner = false;
+    let winnerId = '';
+
+    if (game.targetScore) {
+      if (game.scoringMode === 'RACE_HIGH') {
+        const leader = game.players.find((p) => (totals[p.id] || 0) >= game.targetScore!);
+        if (leader) {
+          hasWinner = true;
+          winnerId = leader.id;
+        }
+      } else if (game.scoringMode === 'RACE_LOW') {
+        const exceeded = game.players.some((p) => (totals[p.id] || 0) >= game.targetScore!);
+        if (exceeded) {
+          hasWinner = true;
+          const sorted = [...game.players].sort((a, b) => (totals[a.id] || 0) - (totals[b.id] || 0));
+          winnerId = sorted[0]?.id || '';
+        }
+      }
+    } else if (game.targetRounds) {
+      const completedRounds = game.rounds.filter((r) => Object.keys(r.scores).length > 0);
+      if (completedRounds.length >= game.targetRounds) {
+        hasWinner = true;
+        const sorted = [...game.players].sort((a, b) => (totals[b.id] || 0) - (totals[a.id] || 0));
+        winnerId = sorted[0]?.id || '';
+      }
+    }
+
+    if (hasWinner) {
+      soundEffects.playVictoryFanfare();
+      const completedGame: GameSession = {
+        ...game,
+        status: 'COMPLETED',
+        winnerId,
+      };
+      setActiveGame(completedGame);
+      storage.archiveMatch(completedGame);
+      setMatchHistory(storage.getMatchHistory());
+      setIsGameOverOpen(true);
+    }
+  };
+
+  const handleReorderPlayers = (updatedPlayers: Player[]) => {
+    if (!activeGame) {
+      return;
+    }
+    const updatedGame: GameSession = {
+      ...activeGame,
+      players: updatedPlayers,
+      updatedAt: new Date().toISOString(),
+    };
+    setActiveGame(updatedGame);
+    storage.saveActiveGame(updatedGame);
+  };
+
+  const handleUpdateRounds = (updatedRounds: Round[]) => {
+    if (!activeGame) {
+      return;
+    }
     const updatedGame: GameSession = {
       ...activeGame,
       rounds: updatedRounds,
       updatedAt: new Date().toISOString(),
     };
-
-    updateActiveGame(updatedGame);
+    setActiveGame(updatedGame);
+    storage.saveActiveGame(updatedGame);
   };
 
-  // Update rounds from history editor
-  const handleUpdateRounds = (updatedRounds: Round[]) => {
+  const handleEndMatchManually = () => {
     if (!activeGame) {
       return;
     }
-    const updatedGame = { ...activeGame, rounds: updatedRounds, updatedAt: new Date().toISOString() };
-    updateActiveGame(updatedGame);
-  };
-
-  // End match & victory
-  const handleEndGame = () => {
-    if (!activeGame) {
-      return;
-    }
-
-    // Calculate winner
-    const totals: Record<string, number> = {};
-    activeGame.players.forEach((p) => (totals[p.id] = 0));
-    activeGame.rounds.forEach((r) => {
-      Object.entries(r.scores).forEach(([pId, s]) => {
-        if (totals[pId] !== undefined && s) {
-          totals[pId] += (s.points || 0) + (s.bonusPoints || 0) - (s.penaltyPoints || 0);
-        }
-      });
-    });
-
-    const sorted = [...activeGame.players].sort((a, b) =>
-      activeGame.scoringMode === 'RACE_LOW' ? totals[a.id] - totals[b.id] : totals[b.id] - totals[a.id],
-    );
-
-    const winnerId = sorted[0]?.id;
-
+    soundEffects.playVictoryFanfare();
     const completedGame: GameSession = {
       ...activeGame,
       status: 'COMPLETED',
-      winnerId,
-      updatedAt: new Date().toISOString(),
     };
-
     setActiveGame(completedGame);
-    storage.saveMatchToHistory(completedGame);
-    storage.clearActiveGame();
+    storage.archiveMatch(completedGame);
     setMatchHistory(storage.getMatchHistory());
-    setGameOverOpen(true);
-  };
-
-  // Rematch with same players
-  const handleRematch = () => {
-    if (!activeGame) {
-      return;
-    }
-    const newGame: GameSession = {
-      id: 'game_' + Date.now(),
-      name: activeGame.name,
-      presetId: activeGame.presetId,
-      scoringMode: activeGame.scoringMode,
-      targetScore: activeGame.targetScore,
-      targetRounds: activeGame.targetRounds,
-      players: activeGame.players,
-      rounds: [],
-      status: 'ACTIVE',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    setGameOverOpen(false);
-    handleStartNewGame(newGame);
-  };
-
-  // Delete match from history
-  const handleDeleteMatchFromHistory = (id: string) => {
-    storage.deleteMatchFromHistory(id);
-    setMatchHistory(storage.getMatchHistory());
+    setIsGameOverOpen(true);
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#FDFBF7] text-[#2C302E]">
-      {/* Navigation Header */}
+    <div className="flex min-h-screen flex-col bg-[#FDFBF7] font-sans text-[#2C302E]">
       <Navbar
-        hasActiveGame={Boolean(activeGame && activeGame.status === 'ACTIVE')}
-        onOpenNewGame={() => {
-          setSelectedPreset(null);
-          setSetupModalOpen(true);
-        }}
-        onOpenHistory={() => setHistoryArchiveOpen(true)}
-        onOpenSettings={() => {}}
-        onReturnHome={() => setView('HOME')}
+        hasActiveGame={Boolean(activeGame)}
+        onNewGame={() => handleStartSetup()}
+        onViewHistory={() => setIsHistoryLogOpen(true)}
+        onReturnHome={() => setViewMode('HOME')}
       />
 
-      {/* Main View Area */}
-      <main className="flex-1 pb-16">
-        {view === 'HOME' ? (
+      <main className="mx-auto w-full max-w-6xl flex-1 p-4 md:p-8">
+        {viewMode === 'HOME' && (
           <HomeView
             activeGame={activeGame}
-            onResumeActiveGame={() => setView('SCOREBOARD')}
-            onSelectPreset={(preset) => {
-              setSelectedPreset(preset);
-              setSetupModalOpen(true);
-            }}
-            onStartCustomGame={() => {
-              setSelectedPreset(null);
-              setSetupModalOpen(true);
-            }}
-            onOpenHistory={() => setHistoryArchiveOpen(true)}
-            recentGames={matchHistory}
+            matchHistory={matchHistory}
+            onSelectPreset={(p) => handleStartSetup(p)}
+            onResumeGame={handleResumeGame}
           />
-        ) : activeGame ? (
-          <ScoreboardView
-            game={activeGame}
-            onOpenKeypad={(player) => setKeypadPlayer(player)}
-            onOpenRoundHistory={() => setRoundHistoryOpen(true)}
-            onEndGame={handleEndGame}
-          />
-        ) : (
-          <div className="p-12 text-center text-base text-[#5A605C]">
-            No active game match found. Start a new match to begin scorekeeping!
+        )}
+
+        {viewMode === 'MATCH' && activeGame && (
+          /* 3D Paper Flip Card Container: Front (Dashboard) & Back (Play Mode) */
+          <div className="perspective-1000 min-h-[600px] w-full">
+            <div
+              className={`preserve-3d relative h-full w-full transition-transform duration-700 ease-in-out ${
+                isPlayMode ? 'rotate-y-180' : ''
+              }`}
+            >
+              {/* FRONT OF PAPER SHEET: Match Dashboard */}
+              <div className={`w-full backface-hidden ${isPlayMode ? 'pointer-events-none' : ''}`}>
+                <ScoreboardView
+                  game={activeGame}
+                  onOpenScoreKeypad={(player) => setKeypadPlayer(player)}
+                  onOpenRoundHistory={() => setIsRoundHistoryOpen(true)}
+                  onFlipToPlayMode={() => togglePlayModeFlip(true)}
+                  onEndMatch={handleEndMatchManually}
+                  onReorderPlayers={handleReorderPlayers}
+                />
+              </div>
+
+              {/* BACK OF PAPER SHEET: Play Mode */}
+              <div
+                className={`absolute top-0 left-0 w-full rotate-y-180 backface-hidden ${
+                  !isPlayMode ? 'pointer-events-none' : ''
+                }`}
+              >
+                <PlayModeView
+                  game={activeGame}
+                  onScoreSubmitted={handleSubmitRoundScore}
+                  onFlipToDashboard={() => togglePlayModeFlip(false)}
+                  onEndMatch={handleEndMatchManually}
+                />
+              </div>
+            </div>
           </div>
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-[#E5E0D8] bg-[#F7F4EE]/50 py-6 text-center text-xs font-semibold text-[#5A605C]">
-        <p>Tally Ho — Digital Pencil & Paper for Game Night • Crafted with @gv-tech/design-system</p>
+      <footer className="border-t border-[#E5E0D8] bg-[#F7F4EE]/50 py-4 text-center text-xs text-[#5A605C]">
+        Tally Ho — Your digital pencil & paper for game night. Crafted with GV Tech Design Tokens.
       </footer>
 
-      {/* Setup Modal */}
+      {/* Modals */}
       <GameSetupModal
-        initialPreset={selectedPreset}
-        isOpen={setupModalOpen}
-        onClose={() => setSetupModalOpen(false)}
-        onStartGame={handleStartNewGame}
+        isOpen={isSetupOpen}
+        onClose={() => setIsSetupOpen(false)}
+        preset={selectedPreset}
+        onStartGame={handleCreateGame}
       />
 
-      {/* Keypad Modal */}
-      <ScoreKeypadModal
-        player={keypadPlayer}
-        roundNumber={(activeGame?.rounds.length || 0) + 1}
-        isOpen={Boolean(keypadPlayer)}
-        onClose={() => setKeypadPlayer(null)}
-        onSubmitScore={handleSubmitRoundScore}
-      />
+      {keypadPlayer && activeGame && (
+        <ScoreKeypadModal
+          isOpen={Boolean(keypadPlayer)}
+          onClose={() => setKeypadPlayer(null)}
+          player={keypadPlayer}
+          onSubmitScore={handleSubmitRoundScore}
+        />
+      )}
 
-      {/* Round History Modal */}
       {activeGame && (
         <RoundHistoryModal
+          isOpen={isRoundHistoryOpen}
+          onClose={() => setIsRoundHistoryOpen(false)}
           game={activeGame}
-          isOpen={roundHistoryOpen}
-          onClose={() => setRoundHistoryOpen(false)}
           onUpdateRounds={handleUpdateRounds}
         />
       )}
 
-      {/* Game Over Celebration Modal */}
       {activeGame && (
         <GameOverModal
+          isOpen={isGameOverOpen}
+          onClose={() => {
+            setIsGameOverOpen(false);
+            setActiveGame(null);
+            setViewMode('HOME');
+          }}
           game={activeGame}
-          isOpen={gameOverOpen}
-          onRematch={handleRematch}
-          onReturnHome={() => {
-            setGameOverOpen(false);
-            setView('HOME');
+          onRematch={() => {
+            setIsGameOverOpen(false);
+            handleCreateGame({
+              name: activeGame.name,
+              presetId: activeGame.presetId,
+              scoringMode: activeGame.scoringMode,
+              roundScoringType: activeGame.roundScoringType,
+              targetScore: activeGame.targetScore,
+              targetRounds: activeGame.targetRounds,
+              players: activeGame.players,
+            });
           }}
         />
       )}
 
-      {/* Match History Archive Modal */}
       <HistoryLogModal
+        isOpen={isHistoryLogOpen}
+        onClose={() => setIsHistoryLogOpen(false)}
         history={matchHistory}
-        isOpen={historyArchiveOpen}
-        onClose={() => setHistoryArchiveOpen(false)}
-        onDeleteMatch={handleDeleteMatchFromHistory}
+        onClearHistory={() => {
+          localStorage.removeItem('tallyho_match_history');
+          setMatchHistory([]);
+        }}
       />
     </div>
   );

@@ -1,4 +1,5 @@
 export type ScoringMode = 'RACE_HIGH' | 'RACE_LOW' | 'FIXED_ROUNDS';
+export type RoundScoringType = 'EVERY_PLAYER' | 'SINGLE_WINNER';
 
 export interface GamePreset {
   id: string;
@@ -6,6 +7,7 @@ export interface GamePreset {
   description: string;
   icon: string;
   scoringMode: ScoringMode;
+  roundScoringType: RoundScoringType;
   defaultTargetScore?: number;
   defaultTargetRounds?: number;
   badgeText: string;
@@ -38,6 +40,7 @@ export interface GameSession {
   name: string;
   presetId?: string;
   scoringMode: ScoringMode;
+  roundScoringType: RoundScoringType;
   targetScore?: number;
   targetRounds?: number;
   players: Player[];
@@ -46,6 +49,7 @@ export interface GameSession {
   createdAt: string;
   updatedAt: string;
   winnerId?: string;
+  currentTurnIndex?: number;
 }
 
 export interface GameHighlight {
@@ -75,54 +79,60 @@ export const GAME_PRESETS: GamePreset[] = [
   {
     id: 'rummy',
     name: 'Rummy 500',
-    description: 'First to reach 500 points across melds & tricks.',
+    description: 'First to reach 500 points across melds & tricks. Every player scores each round.',
     icon: '🃏',
     scoringMode: 'RACE_HIGH',
+    roundScoringType: 'EVERY_PLAYER',
     defaultTargetScore: 500,
     badgeText: 'First to 500',
   },
   {
     id: 'uno',
     name: 'Uno',
-    description: 'Keep totals low! Game ends when someone reaches 500.',
+    description: 'Round winner scores remaining card points. Keep totals low or race high!',
     icon: '🎴',
     scoringMode: 'RACE_LOW',
+    roundScoringType: 'SINGLE_WINNER',
     defaultTargetScore: 500,
-    badgeText: 'Lowest Score Wins',
+    badgeText: 'Single Round Winner',
   },
   {
     id: 'pigs',
     name: 'Pass the Pigs',
-    description: 'Push your luck! Race to 100 pig-position points.',
+    description: 'Push your luck! Winner of each pig roll turn logs points.',
     icon: '🐖',
     scoringMode: 'RACE_HIGH',
+    roundScoringType: 'SINGLE_WINNER',
     defaultTargetScore: 100,
     badgeText: 'Race to 100',
   },
   {
     id: 'qwirkle',
     name: 'Qwirkle',
-    description: 'Match colors and shapes for high score runs.',
+    description: 'Match colors and shapes. Every player logs tile points each round.',
     icon: '🟧',
     scoringMode: 'RACE_HIGH',
+    roundScoringType: 'EVERY_PLAYER',
     defaultTargetScore: 300,
     badgeText: 'Target 300',
   },
   {
     id: 'hearts',
     name: 'Hearts',
-    description: 'Avoid penalty hearts & Queen of Spades. Lowest score wins.',
+    description: 'Avoid penalty hearts & Queen of Spades. Lowest total score wins.',
     icon: '♥️',
     scoringMode: 'RACE_LOW',
+    roundScoringType: 'EVERY_PLAYER',
     defaultTargetScore: 100,
     badgeText: 'Lowest Score Wins',
   },
   {
     id: 'custom',
     name: 'Custom Game',
-    description: 'Configure your own target score, rounds, or win conditions.',
+    description: 'Configure custom scoring modes, win conditions, and round rules.',
     icon: '✏️',
     scoringMode: 'RACE_HIGH',
+    roundScoringType: 'EVERY_PLAYER',
     defaultTargetScore: 100,
     badgeText: 'Flexible Rules',
   },
