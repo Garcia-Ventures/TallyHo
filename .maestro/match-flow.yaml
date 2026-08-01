@@ -1,0 +1,26 @@
+appId: com.garciaventures.tallyho
+---
+- launchApp
+- assertVisible: "Tally Ho"
+
+# 1. Start New Match Setup
+- tapOn: "+ Custom Match"
+- assertVisible: "New Game Setup"
+
+# 2. Configure Players & Rulebook
+- inputText: "Scrabble Night"
+- tapOn: "🚀 Start Match"
+
+# 3. Verify Active Match Screen
+- assertVisible: "Round 1 in progress"
+- tapOn: "🎮 Enter Play Mode →"
+
+# 4. Input Turn Scores via Keypad
+- tapOn: "5"
+- tapOn: "0"
+- tapOn: "✓ Submit Round Score"
+
+# 5. End Match & Verify Victory Screen
+- tapOn: "🏆 End"
+- assertVisible: "Game Night Champion"
+- assertVisible: "Rematch"
