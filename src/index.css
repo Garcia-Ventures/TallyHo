@@ -85,7 +85,7 @@
 }
 
 /* Dialog Overlay Backdrop */
-[data-slot="dialog-overlay"] {
+[data-slot='dialog-overlay'] {
   position: fixed !important;
   inset: 0 !important;
   z-index: 50 !important;
@@ -95,7 +95,7 @@
 }
 
 /* Dialog Content Exact Midpoint Centering */
-[data-slot="dialog-content"] {
+[data-slot='dialog-content'] {
   position: fixed !important;
   top: 50% !important;
   left: 50% !important;

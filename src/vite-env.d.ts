@@ -1,4 +1,5 @@
 /// <reference types="vite/client" />
+/// <reference types="nativewind/types" />
 
 declare module '*.css' {
   const content: { [className: string]: string };
