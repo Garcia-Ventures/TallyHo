@@ -10,17 +10,33 @@ import { ScoreboardView } from './components/ScoreboardView';
 import { ScoreKeypadModal } from './components/ScoreKeypadModal';
 
 import { soundEffects } from './services/audio';
-import { storage } from './services/storage';
-import { GamePreset, GameSession, Player, Round, RoundScore, RoundScoringType, ScoringMode } from './types/game';
+import { useGameStore } from './stores/useGameStore';
+import { usePlayerLibraryStore } from './stores/usePlayerLibraryStore';
+import { useSettingsStore } from './stores/useSettingsStore';
+import { GamePreset, Player, RoundScore } from './types/game';
 
 export function App() {
-  const [viewMode, setViewMode] = useState<'HOME' | 'MATCH'>('HOME');
-  const [isPlayMode, setIsPlayMode] = useState<boolean>(false);
+  const {
+    activeGame,
+    matchHistory,
+    viewMode,
+    isPlayMode,
+    loadInitialData,
+    setViewMode,
+    setIsPlayMode,
+    createGame,
+    submitRoundScore,
+    reorderPlayers,
+    updateRounds,
+    endMatchManually,
+    clearHistory,
+    clearActiveGame,
+  } = useGameStore();
 
-  const [activeGame, setActiveGame] = useState<GameSession | null>(null);
-  const [matchHistory, setMatchHistory] = useState<GameSession[]>([]);
+  const { loadPlayers } = usePlayerLibraryStore();
+  const { loadSettings } = useSettingsStore();
 
-  // Modals
+  // Modals state
   const [isSetupOpen, setIsSetupOpen] = useState(false);
   const [selectedPreset, setSelectedPreset] = useState<GamePreset | null>(null);
 
@@ -30,54 +46,14 @@ export function App() {
   const [isHistoryLogOpen, setIsHistoryLogOpen] = useState(false);
 
   useEffect(() => {
-    const savedActive = storage.getActiveGame();
-    if (savedActive) {
-      setActiveGame(savedActive);
-      setViewMode('MATCH');
-    }
-    setMatchHistory(storage.getMatchHistory());
-  }, []);
+    loadInitialData();
+    loadPlayers();
+    loadSettings();
+  }, [loadInitialData, loadPlayers, loadSettings]);
 
   const handleStartSetup = (preset?: GamePreset) => {
     setSelectedPreset(preset || null);
     setIsSetupOpen(true);
-  };
-
-  const handleCreateGame = (setup: {
-    name: string;
-    presetId?: string;
-    scoringMode: ScoringMode;
-    roundScoringType: RoundScoringType;
-    targetScore?: number;
-    targetRounds?: number;
-    players: Player[];
-  }) => {
-    const initialRound: Round = {
-      roundNumber: 1,
-      timestamp: new Date().toISOString(),
-      scores: {},
-    };
-
-    const newGame: GameSession = {
-      id: `game_${Date.now()}`,
-      name: setup.name,
-      presetId: setup.presetId,
-      scoringMode: setup.scoringMode,
-      roundScoringType: setup.roundScoringType,
-      targetScore: setup.targetScore,
-      targetRounds: setup.targetRounds,
-      players: setup.players,
-      rounds: [initialRound],
-      status: 'ACTIVE',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      currentTurnIndex: 0,
-    };
-
-    setActiveGame(newGame);
-    storage.saveActiveGame(newGame);
-    setViewMode('MATCH');
-    setIsPlayMode(true);
   };
 
   const handleResumeGame = () => {
@@ -92,141 +68,18 @@ export function App() {
     setIsPlayMode(targetIsPlayMode);
   };
 
-  const handleSubmitRoundScore = (score: RoundScore) => {
-    if (!activeGame) {
-      return;
-    }
-
+  const handleSubmitScore = (score: RoundScore) => {
     soundEffects.playPenClick();
-    const currentRounds = [...activeGame.rounds];
-    if (currentRounds.length === 0) {
-      currentRounds.push({
-        roundNumber: 1,
-        timestamp: new Date().toISOString(),
-        scores: {},
-      });
-    }
-
-    const latestRoundIdx = currentRounds.length - 1;
-    const latestRound = { ...currentRounds[latestRoundIdx] };
-    const updatedScores = { ...latestRound.scores, [score.playerId]: score };
-    latestRound.scores = updatedScores;
-    currentRounds[latestRoundIdx] = latestRound;
-
-    const isSingleWinner = activeGame.roundScoringType === 'SINGLE_WINNER';
-
-    // If SINGLE_WINNER or all players logged for EVERY_PLAYER, advance round
-    const shouldAdvanceRound = isSingleWinner || activeGame.players.every((p) => Boolean(updatedScores[p.id]));
-
-    if (shouldAdvanceRound) {
-      currentRounds.push({
-        roundNumber: latestRound.roundNumber + 1,
-        timestamp: new Date().toISOString(),
-        scores: {},
-      });
-    }
-
-    const updatedGame: GameSession = {
-      ...activeGame,
-      rounds: currentRounds,
-      updatedAt: new Date().toISOString(),
-    };
-
-    setActiveGame(updatedGame);
-    storage.saveActiveGame(updatedGame);
-
-    checkWinCondition(updatedGame);
-  };
-
-  const checkWinCondition = (game: GameSession) => {
-    const totals: Record<string, number> = {};
-    game.players.forEach((p) => (totals[p.id] = 0));
-    game.rounds.forEach((r) => {
-      Object.values(r.scores).forEach((s) => {
-        const net = s.points + (s.bonusPoints || 0) - (s.penaltyPoints || 0);
-        totals[s.playerId] = (totals[s.playerId] || 0) + net;
-      });
-    });
-
-    let hasWinner = false;
-    let winnerId = '';
-
-    if (game.targetScore) {
-      if (game.scoringMode === 'RACE_HIGH') {
-        const leader = game.players.find((p) => (totals[p.id] || 0) >= game.targetScore!);
-        if (leader) {
-          hasWinner = true;
-          winnerId = leader.id;
-        }
-      } else if (game.scoringMode === 'RACE_LOW') {
-        const exceeded = game.players.some((p) => (totals[p.id] || 0) >= game.targetScore!);
-        if (exceeded) {
-          hasWinner = true;
-          const sorted = [...game.players].sort((a, b) => (totals[a.id] || 0) - (totals[b.id] || 0));
-          winnerId = sorted[0]?.id || '';
-        }
-      }
-    } else if (game.targetRounds) {
-      const completedRounds = game.rounds.filter((r) => Object.keys(r.scores).length > 0);
-      if (completedRounds.length >= game.targetRounds) {
-        hasWinner = true;
-        const sorted = [...game.players].sort((a, b) => (totals[b.id] || 0) - (totals[a.id] || 0));
-        winnerId = sorted[0]?.id || '';
-      }
-    }
-
-    if (hasWinner) {
+    const winResult = submitRoundScore(score);
+    if (winResult.hasWinner) {
       soundEffects.playVictoryFanfare();
-      const completedGame: GameSession = {
-        ...game,
-        status: 'COMPLETED',
-        winnerId,
-      };
-      setActiveGame(completedGame);
-      storage.archiveMatch(completedGame);
-      setMatchHistory(storage.getMatchHistory());
       setIsGameOverOpen(true);
     }
   };
 
-  const handleReorderPlayers = (updatedPlayers: Player[]) => {
-    if (!activeGame) {
-      return;
-    }
-    const updatedGame: GameSession = {
-      ...activeGame,
-      players: updatedPlayers,
-      updatedAt: new Date().toISOString(),
-    };
-    setActiveGame(updatedGame);
-    storage.saveActiveGame(updatedGame);
-  };
-
-  const handleUpdateRounds = (updatedRounds: Round[]) => {
-    if (!activeGame) {
-      return;
-    }
-    const updatedGame: GameSession = {
-      ...activeGame,
-      rounds: updatedRounds,
-      updatedAt: new Date().toISOString(),
-    };
-    setActiveGame(updatedGame);
-    storage.saveActiveGame(updatedGame);
-  };
-
-  const handleEndMatchManually = () => {
-    if (!activeGame) {
-      return;
-    }
+  const handleEndMatch = () => {
     soundEffects.playVictoryFanfare();
-    const completedGame: GameSession = {
-      ...activeGame,
-      status: 'COMPLETED',
-    };
-    setActiveGame(completedGame);
-    storage.archiveMatch(completedGame);
-    setMatchHistory(storage.getMatchHistory());
+    endMatchManually();
     setIsGameOverOpen(true);
   };
 
@@ -264,8 +117,8 @@ export function App() {
                   onOpenScoreKeypad={(player) => setKeypadPlayer(player)}
                   onOpenRoundHistory={() => setIsRoundHistoryOpen(true)}
                   onFlipToPlayMode={() => togglePlayModeFlip(true)}
-                  onEndMatch={handleEndMatchManually}
-                  onReorderPlayers={handleReorderPlayers}
+                  onEndMatch={handleEndMatch}
+                  onReorderPlayers={reorderPlayers}
                 />
               </div>
 
@@ -277,9 +130,9 @@ export function App() {
               >
                 <PlayModeView
                   game={activeGame}
-                  onScoreSubmitted={handleSubmitRoundScore}
+                  onScoreSubmitted={handleSubmitScore}
                   onFlipToDashboard={() => togglePlayModeFlip(false)}
-                  onEndMatch={handleEndMatchManually}
+                  onEndMatch={handleEndMatch}
                 />
               </div>
             </div>
@@ -296,7 +149,7 @@ export function App() {
         isOpen={isSetupOpen}
         onClose={() => setIsSetupOpen(false)}
         preset={selectedPreset}
-        onStartGame={handleCreateGame}
+        onStartGame={createGame}
       />
 
       {keypadPlayer && activeGame && (
@@ -304,7 +157,7 @@ export function App() {
           isOpen={Boolean(keypadPlayer)}
           onClose={() => setKeypadPlayer(null)}
           player={keypadPlayer}
-          onSubmitScore={handleSubmitRoundScore}
+          onSubmitScore={handleSubmitScore}
         />
       )}
 
@@ -313,7 +166,7 @@ export function App() {
           isOpen={isRoundHistoryOpen}
           onClose={() => setIsRoundHistoryOpen(false)}
           game={activeGame}
-          onUpdateRounds={handleUpdateRounds}
+          onUpdateRounds={updateRounds}
         />
       )}
 
@@ -322,13 +175,12 @@ export function App() {
           isOpen={isGameOverOpen}
           onClose={() => {
             setIsGameOverOpen(false);
-            setActiveGame(null);
-            setViewMode('HOME');
+            clearActiveGame();
           }}
           game={activeGame}
           onRematch={() => {
             setIsGameOverOpen(false);
-            handleCreateGame({
+            createGame({
               name: activeGame.name,
               presetId: activeGame.presetId,
               scoringMode: activeGame.scoringMode,
@@ -345,10 +197,7 @@ export function App() {
         isOpen={isHistoryLogOpen}
         onClose={() => setIsHistoryLogOpen(false)}
         history={matchHistory}
-        onClearHistory={() => {
-          localStorage.removeItem('tallyho_match_history');
-          setMatchHistory([]);
-        }}
+        onClearHistory={clearHistory}
       />
     </div>
   );
