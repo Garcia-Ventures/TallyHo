@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
 import { ConfettiCelebrationNative } from '../../src/components/ConfettiCelebration.native';
-import { GameOverModalNative } from '../../src/components/GameOverModal';
+import { GameOverModalNative } from '../../src/components/GameOverModal.native';
 import { useGameStore } from '../../src/stores/useGameStore';
 
 export default function GameOverModalRoute() {

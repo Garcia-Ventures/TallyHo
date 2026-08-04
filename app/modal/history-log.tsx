@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { HistoryLogModalNative } from '../../src/components/HistoryLogModal';
+import { HistoryLogModalNative } from '../../src/components/HistoryLogModal.native';
 import { useGameStore } from '../../src/stores/useGameStore';
 
 export default function HistoryLogModalRoute() {
