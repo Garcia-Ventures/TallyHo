@@ -1,10 +1,10 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
-import { FlipCardContainerNative } from '../../src/components/FlipCardContainer.native';
-import { PlayModeViewNative } from '../../src/components/PlayModeView.native';
-import { ScoreboardViewNative } from '../../src/components/ScoreboardView.native';
-import { nativeSound } from '../../src/services/audio.native';
+import { FlipCardContainerNative } from '../../src/components/FlipCardContainer';
+import { PlayModeViewNative } from '../../src/components/PlayModeView';
+import { ScoreboardViewNative } from '../../src/components/ScoreboardView';
+import { nativeSound } from '../../src/services/audio';
 import { useGameStore } from '../../src/stores/useGameStore';
 import { Player, RoundScore } from '../../src/types/game';
 

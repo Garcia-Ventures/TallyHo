@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { ScoreKeypadModalNative } from '../../src/components/ScoreKeypadModal.native';
+import { ScoreKeypadModalNative } from '../../src/components/ScoreKeypadModal';
 import { useGameStore } from '../../src/stores/useGameStore';
 
 export default function KeypadModalRoute() {

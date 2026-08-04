@@ -93,3 +93,4 @@ sketch
 
 dist/
 .eslintcache
+.expo/

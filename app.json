@@ -27,10 +27,7 @@
       "bundler": "metro"
     },
     "plugins": [
-      "expo-router",
-      [
-        "expo-haptics"
-      ]
+      "expo-router"
     ],
     "scheme": "tallyho",
     "newArchEnabled": true

@@ -11,11 +11,36 @@ const DEFAULT_SETTINGS: UserSettings = {
   paperGridTexture: true,
 };
 
+const memoryStore: Record<string, string> = {};
+
+function getStorageItem(key: string): string | null {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    return window.localStorage.getItem(key);
+  }
+  return memoryStore[key] || null;
+}
+
+function setStorageItem(key: string, value: string): void {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    window.localStorage.setItem(key, value);
+  } else {
+    memoryStore[key] = value;
+  }
+}
+
+function removeStorageItem(key: string): void {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    window.localStorage.removeItem(key);
+  } else {
+    delete memoryStore[key];
+  }
+}
+
 export const storage = {
   // Active Game
   getActiveGame: (): GameSession | null => {
     try {
-      const data = localStorage.getItem(ACTIVE_GAME_KEY);
+      const data = getStorageItem(ACTIVE_GAME_KEY);
       return data ? JSON.parse(data) : null;
     } catch (e) {
       console.error('Failed to load active game', e);
@@ -25,7 +50,7 @@ export const storage = {
 
   saveActiveGame: (game: GameSession): void => {
     try {
-      localStorage.setItem(ACTIVE_GAME_KEY, JSON.stringify(game));
+      setStorageItem(ACTIVE_GAME_KEY, JSON.stringify(game));
     } catch (e) {
       console.error('Failed to save active game', e);
     }
@@ -33,7 +58,7 @@ export const storage = {
 
   clearActiveGame: (): void => {
     try {
-      localStorage.removeItem(ACTIVE_GAME_KEY);
+      removeStorageItem(ACTIVE_GAME_KEY);
     } catch (e) {
       console.error('Failed to clear active game', e);
     }
@@ -42,7 +67,7 @@ export const storage = {
   // Match History
   getMatchHistory: (): GameSession[] => {
     try {
-      const data = localStorage.getItem(MATCH_HISTORY_KEY);
+      const data = getStorageItem(MATCH_HISTORY_KEY);
       return data ? JSON.parse(data) : [];
     } catch (e) {
       console.error('Failed to load match history', e);
@@ -54,7 +79,7 @@ export const storage = {
     try {
       const history = storage.getMatchHistory();
       const updated = [game, ...history.filter((g) => g.id !== game.id)];
-      localStorage.setItem(MATCH_HISTORY_KEY, JSON.stringify(updated));
+      setStorageItem(MATCH_HISTORY_KEY, JSON.stringify(updated));
       storage.clearActiveGame();
     } catch (e) {
       console.error('Failed to archive match', e);
@@ -65,7 +90,7 @@ export const storage = {
     try {
       const history = storage.getMatchHistory();
       const updated = history.filter((g) => g.id !== gameId);
-      localStorage.setItem(MATCH_HISTORY_KEY, JSON.stringify(updated));
+      setStorageItem(MATCH_HISTORY_KEY, JSON.stringify(updated));
     } catch (e) {
       console.error('Failed to delete match from history', e);
     }
@@ -74,7 +99,7 @@ export const storage = {
   // Player Library
   getPlayerLibrary: (): Player[] => {
     try {
-      const data = localStorage.getItem(PLAYER_LIBRARY_KEY);
+      const data = getStorageItem(PLAYER_LIBRARY_KEY);
       if (data) {
         return JSON.parse(data);
       }
@@ -86,7 +111,7 @@ export const storage = {
         { id: 'p3', name: 'Sophia', initials: 'S', color: '#D96B43' },
         { id: 'p4', name: 'Lucas', initials: 'L', color: '#3B5998' },
       ];
-      localStorage.setItem(PLAYER_LIBRARY_KEY, JSON.stringify(defaultLibrary));
+      setStorageItem(PLAYER_LIBRARY_KEY, JSON.stringify(defaultLibrary));
       return defaultLibrary;
     } catch (e) {
       console.error('Failed to load player library', e);
@@ -107,7 +132,7 @@ export const storage = {
         updated = [player, ...library];
       }
 
-      localStorage.setItem(PLAYER_LIBRARY_KEY, JSON.stringify(updated));
+      setStorageItem(PLAYER_LIBRARY_KEY, JSON.stringify(updated));
     } catch (e) {
       console.error('Failed to save player to library', e);
     }
@@ -117,7 +142,7 @@ export const storage = {
     try {
       const library = storage.getPlayerLibrary();
       const updated = library.filter((p) => p.id !== playerId);
-      localStorage.setItem(PLAYER_LIBRARY_KEY, JSON.stringify(updated));
+      setStorageItem(PLAYER_LIBRARY_KEY, JSON.stringify(updated));
     } catch (e) {
       console.error('Failed to delete player from library', e);
     }
@@ -126,7 +151,7 @@ export const storage = {
   // Settings
   getSettings: (): UserSettings => {
     try {
-      const data = localStorage.getItem(SETTINGS_KEY);
+      const data = getStorageItem(SETTINGS_KEY);
       return data ? { ...DEFAULT_SETTINGS, ...JSON.parse(data) } : DEFAULT_SETTINGS;
     } catch (e) {
       console.error('Failed to load settings', e);
@@ -136,7 +161,7 @@ export const storage = {
 
   saveSettings: (settings: UserSettings): void => {
     try {
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+      setStorageItem(SETTINGS_KEY, JSON.stringify(settings));
     } catch (e) {
       console.error('Failed to save settings', e);
     }

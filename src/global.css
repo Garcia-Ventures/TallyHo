@@ -1,0 +1,51 @@
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css';
+@import 'nativewind/theme';
+
+@layer base {
+  :root {
+    --paper-bg: #fdfbf7;
+    --paper-card: #f7f4ee;
+    --paper-border: #e5e0d8;
+    --ink-primary: #2c302e;
+    --ink-muted: #5a605c;
+    --stamp-red: #c84b31;
+
+    --background: 40 40% 98%;
+    --color-background: #fdfbf7;
+    --foreground: 150 4% 18%;
+    --color-foreground: #2c302e;
+    --card: 38 33% 95%;
+    --color-card: #f7f4ee;
+    --card-foreground: 150 4% 18%;
+    --color-card-foreground: #2c302e;
+    --primary: 150 4% 18%;
+    --color-primary: #2c302e;
+    --primary-foreground: 40 40% 98%;
+    --color-primary-foreground: #fdfbf7;
+    --border: 35 20% 87%;
+    --color-border: #e5e0d8;
+  }
+}
+
+@layer utilities {
+  .paper-sheet {
+    background-color: #f7f4ee;
+  }
+
+  .paper-card {
+    background-color: #f7f4ee;
+    border-width: 1px;
+    border-color: #e5e0d8;
+  }
+
+  .ink-underline {
+    border-bottom-width: 2px;
+    border-color: #c84b31;
+  }
+
+  .score-num {
+    font-family: monospace;
+  }
+}

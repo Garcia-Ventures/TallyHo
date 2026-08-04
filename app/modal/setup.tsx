@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { GameSetupModalNative } from '../../src/components/GameSetupModal.native';
+import { GameSetupModalNative } from '../../src/components/GameSetupModal';
 import { useGameStore } from '../../src/stores/useGameStore';
 import { GAME_PRESETS } from '../../src/types/game';
 
