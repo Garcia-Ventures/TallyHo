@@ -72,6 +72,14 @@ export default function RootLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="modal/settings"
+        options={{
+          presentation: 'modal',
+          title: 'Settings',
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }

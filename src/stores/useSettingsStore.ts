@@ -10,6 +10,7 @@ interface SettingsState {
 
 export const useSettingsStore = create<SettingsState>((set, get) => ({
   settings: {
+    themeMode: 'system',
     soundEnabled: true,
     hapticsEnabled: true,
     paperGridTexture: true,

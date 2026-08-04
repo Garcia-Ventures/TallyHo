@@ -61,9 +61,11 @@ export interface GameHighlight {
 }
 
 export interface UserSettings {
+  themeMode: 'system' | 'light' | 'dark';
   soundEnabled: boolean;
   hapticsEnabled: boolean;
   paperGridTexture: boolean;
+  customServerUrl?: string;
 }
 
 export const PLAYER_COLORS = [

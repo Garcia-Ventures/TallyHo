@@ -189,3 +189,4 @@ class SoundService {
 
 export const audio = new SoundService();
 export const soundEffects = audio;
+export const nativeSound = audio;

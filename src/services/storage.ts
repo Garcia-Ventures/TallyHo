@@ -6,9 +6,11 @@ const PLAYER_LIBRARY_KEY = 'tallyho_player_library';
 const SETTINGS_KEY = 'tallyho_settings';
 
 const DEFAULT_SETTINGS: UserSettings = {
+  themeMode: 'system',
   soundEnabled: true,
   hapticsEnabled: true,
   paperGridTexture: true,
+  customServerUrl: 'https://api.tallyho.app/v1',
 };
 
 const memoryStore: Record<string, string> = {};

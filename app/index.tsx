@@ -58,12 +58,22 @@ export default function HomeScreen() {
           <Text className="text-xl font-black text-[#2C302E]">Rulebook Presets</Text>
         </View>
 
-        <Pressable
-          onPress={() => router.push('/modal/setup')}
-          className="items-center justify-center rounded-xl bg-[#C84B31] px-4 py-2.5 shadow"
-        >
-          <Text className="text-xs font-black text-white">+ Custom Match</Text>
-        </Pressable>
+        <View className="flex-row items-center gap-2">
+          <Pressable
+            onPress={() => router.push('/modal/settings')}
+            className="items-center justify-center rounded-xl border border-[#E5E0D8] bg-[#F7F4EE] px-3 py-2.5 shadow-xs"
+            accessibilityLabel="Open Settings"
+          >
+            <Text className="text-xs font-black text-[#2C302E]">⚙️ Settings</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={() => router.push('/modal/setup')}
+            className="items-center justify-center rounded-xl bg-[#C84B31] px-3.5 py-2.5 shadow"
+          >
+            <Text className="text-xs font-black text-white">+ Custom Match</Text>
+          </Pressable>
+        </View>
       </View>
 
       {/* Game Presets Grid */}
