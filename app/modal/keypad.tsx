@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { ScoreKeypadModalNative } from '../../src/components/ScoreKeypadModal.native';
+import { ScoreKeypadModal } from '../../src/components/ScoreKeypadModal';
 import { useGameStore } from '../../src/stores/useGameStore';
 
 export default function KeypadModalRoute() {
@@ -16,7 +16,7 @@ export default function KeypadModalRoute() {
 
   return (
     <View className="flex-1 bg-[#FDFBF7]">
-      <ScoreKeypadModalNative
+      <ScoreKeypadModal
         isOpen={true}
         isRouteModal={true}
         onClose={() => router.back()}

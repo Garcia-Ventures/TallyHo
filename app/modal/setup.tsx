@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { GameSetupModalNative } from '../../src/components/GameSetupModal.native';
+import { GameSetupModal } from '../../src/components/GameSetupModal';
 import { useGameStore } from '../../src/stores/useGameStore';
 import { GAME_PRESETS } from '../../src/types/game';
 
@@ -13,7 +13,7 @@ export default function SetupModalRoute() {
 
   return (
     <View className="flex-1 bg-[#FDFBF7]">
-      <GameSetupModalNative
+      <GameSetupModal
         isOpen={true}
         isRouteModal={true}
         onClose={() => router.back()}

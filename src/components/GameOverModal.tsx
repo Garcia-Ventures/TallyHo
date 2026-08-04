@@ -1,211 +1,152 @@
-import { Button } from '@gv-tech/ui-web';
-import confetti from 'canvas-confetti';
-import { Home, RotateCcw, Sparkles, Star, Zap } from 'lucide-react';
-import React, { useEffect } from 'react';
-import { audio } from '../services/audio';
+import { Badge, Button, Card, CardContent, Text } from '@gv-tech/ui-native';
+import React from 'react';
+import { Modal, ScrollView, View } from 'react-native';
 import { GameSession } from '../types/game';
+import { calculateGameHighlights, calculatePlayerTotals, getSortedPlayers } from '../utils/scoring';
 
 interface GameOverModalProps {
-  game: GameSession;
   isOpen: boolean;
+  onClose: () => void;
+  game: GameSession;
   onRematch: () => void;
-  onClose?: () => void;
-  onReturnHome?: () => void;
+  isRouteModal?: boolean;
 }
 
-export const GameOverModal: React.FC<GameOverModalProps> = ({ game, isOpen, onRematch, onClose, onReturnHome }) => {
+export const GameOverModal: React.FC<GameOverModalProps> = ({
+  isOpen,
+  onClose,
+  game,
+  onRematch,
+  isRouteModal = false,
+}) => {
   if (!isOpen) {
     return null;
   }
 
-  const handleClose = () => {
-    if (onClose) {
-      onClose();
-    } else if (onReturnHome) {
-      onReturnHome();
-    }
-  };
-
-  // Trigger celebration & audio on open
-  useEffect(() => {
-    audio.playVictoryFanfare();
-    try {
-      confetti({
-        particleCount: 80,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#E5A93C', '#6A9C78', '#D96B43', '#3B5998', '#C84B31'],
-      });
-    } catch {
-      // Confetti fallback
-    }
-  }, []);
-
-  // Compute final totals & standings
-  const playerTotals: Record<string, number> = {};
-  game.players.forEach((p) => {
-    playerTotals[p.id] = 0;
-  });
-
-  let maxSingleRoundScore = 0;
-  let maxSingleRoundPlayerId = '';
-
-  game.rounds.forEach((r) => {
-    Object.entries(r.scores).forEach(([pId, scoreObj]) => {
-      if (playerTotals[pId] !== undefined && scoreObj) {
-        const pts = (scoreObj.points || 0) + (scoreObj.bonusPoints || 0) - (scoreObj.penaltyPoints || 0);
-        playerTotals[pId] += pts;
-
-        if (pts > maxSingleRoundScore) {
-          maxSingleRoundScore = pts;
-          maxSingleRoundPlayerId = pId;
-        }
-      }
-    });
-  });
-
-  const sortedPlayers = [...game.players].sort((a, b) => {
-    const totalA = playerTotals[a.id] || 0;
-    const totalB = playerTotals[b.id] || 0;
-    if (game.scoringMode === 'RACE_LOW') {
-      return totalA - totalB;
-    }
-    return totalB - totalA;
-  });
-
+  const totals = calculatePlayerTotals(game);
+  const sortedPlayers = getSortedPlayers(game, totals);
   const winner = sortedPlayers[0];
   const secondPlace = sortedPlayers[1];
   const thirdPlace = sortedPlayers[2];
+  const { highlights } = calculateGameHighlights(game);
 
-  const maxRoundPlayer = game.players.find((p) => p.id === maxSingleRoundPlayerId);
+  const content = (
+    <View className="flex-1 justify-between gap-4 bg-[#FDFBF7] p-5">
+      {/* Header */}
+      <View className="items-center gap-1 rounded-2xl bg-[#2C302E] p-4">
+        <Text className="text-3xl">👑</Text>
+        <Text className="text-xs font-black tracking-widest text-[#E5A93C] uppercase">Game Night Champion</Text>
+        <Text className="text-2xl font-black text-white">{winner ? `${winner.name} Wins!` : 'Match Completed'}</Text>
+        <Text className="text-xs text-gray-300">
+          {game.name} • {game.rounds.length} Rounds Logged
+        </Text>
+      </View>
+
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 16, paddingBottom: 16 }}>
+        {/* Podium Standings */}
+        <View className="flex-row items-end justify-center gap-2 pt-2">
+          {/* 2nd Place */}
+          {secondPlace && (
+            <Card className="flex-1 items-center border-[#E5E0D8] bg-[#F7F4EE] p-3">
+              <CardContent className="items-center gap-1 p-0">
+                <View className="h-7 w-7 items-center justify-center rounded-full bg-[#3B5998]">
+                  <Text className="text-xs font-black text-white">2</Text>
+                </View>
+                <Text className="text-xs font-bold text-[#2C302E]" numberOfLines={1}>
+                  {secondPlace.name}
+                </Text>
+                <Text className="text-base font-black text-[#2C302E]">{totals[secondPlace.id]}</Text>
+                <Text className="text-[9px] text-[#5A605C]">2nd Place</Text>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* 1st Place */}
+          {winner && (
+            <Card className="flex-[1.2] items-center border-2 border-[#E5A93C] bg-[#E5A93C]/15 p-3.5 shadow-sm">
+              <CardContent className="items-center gap-1 p-0">
+                <View className="h-8 w-8 items-center justify-center rounded-full bg-[#E5A93C]">
+                  <Text className="text-sm font-black text-black">1</Text>
+                </View>
+                <Text className="text-sm font-black text-[#2C302E]" numberOfLines={1}>
+                  {winner.name}
+                </Text>
+                <Text className="text-xl font-black text-[#2C302E]">{totals[winner.id]}</Text>
+                <Badge className="bg-[#E5A93C] px-2 py-0.5">
+                  <Text className="text-[10px] font-black text-black uppercase">🏆 Winner</Text>
+                </Badge>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* 3rd Place */}
+          {thirdPlace && (
+            <Card className="flex-1 items-center border-[#E5E0D8] bg-[#F7F4EE] p-3">
+              <CardContent className="items-center gap-1 p-0">
+                <View className="h-7 w-7 items-center justify-center rounded-full bg-[#D96B43]">
+                  <Text className="text-xs font-black text-white">3</Text>
+                </View>
+                <Text className="text-xs font-bold text-[#2C302E]" numberOfLines={1}>
+                  {thirdPlace.name}
+                </Text>
+                <Text className="text-base font-black text-[#2C302E]">{totals[thirdPlace.id]}</Text>
+                <Text className="text-[9px] text-[#5A605C]">3rd Place</Text>
+              </CardContent>
+            </Card>
+          )}
+        </View>
+
+        {/* Match Highlights */}
+        {highlights.length > 0 && (
+          <View className="gap-2">
+            <Text className="text-xs font-black text-[#5A605C] uppercase">⚡ Match Highlights:</Text>
+            {highlights.map((h, idx) => (
+              <Card key={idx} className="border-[#E5E0D8] bg-[#F7F4EE] p-3">
+                <CardContent className="flex-row items-center justify-between p-0">
+                  <View className="flex-1 pr-2">
+                    <Text className="text-xs font-bold text-[#2C302E]">{h.title}</Text>
+                    <Text className="text-[10px] text-[#5A605C]">{h.description}</Text>
+                  </View>
+                  <Badge variant="secondary" className="bg-[#E5A93C]/20 px-2 py-1">
+                    <Text className="text-[10px] font-bold text-[#2C302E]">{h.badge}</Text>
+                  </Badge>
+                </CardContent>
+              </Card>
+            ))}
+          </View>
+        )}
+      </ScrollView>
+
+      {/* Action Buttons */}
+      <View className="flex-row gap-2.5">
+        <Button onPress={onRematch} className="flex-1 items-center justify-center rounded-2xl bg-[#2C302E] py-4 shadow">
+          <Text className="text-sm font-black text-white">🔄 Rematch</Text>
+        </Button>
+
+        <Button
+          onPress={onClose}
+          variant="outline"
+          className="items-center justify-center rounded-2xl border-[#E5E0D8] bg-white px-6 py-4"
+        >
+          <Text className="text-sm font-bold text-[#2C302E]">Home</Text>
+        </Button>
+      </View>
+    </View>
+  );
+
+  if (isRouteModal) {
+    return content;
+  }
 
   return (
-    <div className="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-[#2C302E]/70 p-4 backdrop-blur-md">
-      <div className="relative flex max-h-[90vh] w-full max-w-xl flex-col overflow-hidden rounded-3xl border border-[#E5E0D8] bg-[#FDFBF7] shadow-2xl">
-        {/* Victory Header */}
-        <div className="relative space-y-3 overflow-hidden bg-gradient-to-b from-[#2C302E] to-[#1E2120] p-8 text-center text-white">
-          <div className="mx-auto flex h-16 w-16 animate-bounce items-center justify-center rounded-2xl bg-[#E5A93C] text-3xl text-[#2C302E] shadow-lg">
-            👑
-          </div>
-
-          <div>
-            <div className="text-xs font-black tracking-widest text-[#E5A93C] uppercase">Game Night Champion</div>
-            <h2 className="mt-1 text-3xl font-black text-white">
-              {winner ? `${winner.name} Wins!` : 'Match Complete!'}
-            </h2>
-            <p className="mt-1 text-xs font-semibold text-gray-300">
-              {game.name} • {game.rounds.length} Rounds Logged
-            </p>
-          </div>
-        </div>
-
-        {/* Podium Standings */}
-        <div className="flex-1 space-y-6 overflow-y-auto p-6">
-          {/* Top 3 Podium */}
-          <div className="grid grid-cols-3 items-end gap-3 pt-2 text-center">
-            {/* 2nd Place */}
-            {secondPlace && (
-              <div className="space-y-1 rounded-2xl border border-[#E5E0D8] bg-[#F7F4EE] p-3">
-                <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-[#3B5998] text-xs font-black text-white">
-                  2
-                </div>
-                <div className="truncate text-xs font-extrabold text-[#2C302E]">{secondPlace.name}</div>
-                <div className="score-num text-lg font-black text-[#2C302E]">{playerTotals[secondPlace.id]}</div>
-                <div className="text-[10px] font-bold text-[#5A605C]">2nd Place</div>
-              </div>
-            )}
-
-            {/* 1st Place Champion */}
-            {winner && (
-              <div className="scale-105 transform space-y-1 rounded-2xl border-2 border-[#E5A93C] bg-[#E5A93C]/15 p-4 shadow-md">
-                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[#E5A93C] text-base font-black text-[#2C302E] shadow">
-                  1
-                </div>
-                <div className="truncate text-sm font-black text-[#2C302E]">{winner.name}</div>
-                <div className="score-num text-2xl font-black text-[#2C302E]">{playerTotals[winner.id]}</div>
-                <div className="text-[10px] font-black tracking-wider text-[#E5A93C] uppercase">🏆 Champion</div>
-              </div>
-            )}
-
-            {/* 3rd Place */}
-            {thirdPlace && (
-              <div className="space-y-1 rounded-2xl border border-[#E5E0D8] bg-[#F7F4EE] p-3">
-                <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-[#D96B43] text-xs font-black text-white">
-                  3
-                </div>
-                <div className="truncate text-xs font-extrabold text-[#2C302E]">{thirdPlace.name}</div>
-                <div className="score-num text-lg font-black text-[#2C302E]">{playerTotals[thirdPlace.id]}</div>
-                <div className="text-[10px] font-bold text-[#5A605C]">3rd Place</div>
-              </div>
-            )}
-          </div>
-
-          {/* Highlights Reel */}
-          <div className="space-y-3 pt-2">
-            <h4 className="flex items-center gap-1.5 text-xs font-black tracking-wider text-[#5A605C] uppercase">
-              <Sparkles className="h-4 w-4 text-[#E5A93C]" />
-              Match Highlight Reel
-            </h4>
-
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {/* Highlight 1: Highest Single Round */}
-              {maxRoundPlayer && (
-                <div className="flex items-center gap-3 rounded-xl border border-[#E5E0D8] bg-[#F7F4EE] p-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#6A9C78]/20 text-[#6A9C78]">
-                    <Zap className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-[11px] font-extrabold text-[#5A605C]">Highest Single Round</div>
-                    <div className="text-xs font-black text-[#2C302E]">
-                      {maxRoundPlayer.name} ({maxSingleRoundScore} pts)
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Highlight 2: Victory Margin */}
-              {winner && secondPlace && (
-                <div className="flex items-center gap-3 rounded-xl border border-[#E5E0D8] bg-[#F7F4EE] p-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#3B5998]/20 text-[#3B5998]">
-                    <Star className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-[11px] font-extrabold text-[#5A605C]">Winning Margin</div>
-                    <div className="text-xs font-black text-[#2C302E]">
-                      +{Math.abs(playerTotals[winner.id] - playerTotals[secondPlace.id])} pts over 2nd
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex flex-col items-center gap-3 border-t border-[#E5E0D8] bg-[#F7F4EE] p-6 sm:flex-row">
-          <Button
-            onClick={() => {
-              audio.playKeypadTap();
-              onRematch();
-            }}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#2C302E] py-3 text-sm font-extrabold text-white shadow hover:bg-[#1E2120] sm:flex-1"
-          >
-            <RotateCcw className="h-4 w-4 text-[#E5A93C]" />
-            Rematch Same Players
-          </Button>
-
-          <button
-            onClick={() => {
-              audio.playKeypadTap();
-              handleClose();
-            }}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#E5E0D8] bg-[#EFEAE1] px-6 py-3 text-sm font-bold text-[#2C302E] transition-colors hover:bg-[#E5E0D8] sm:w-auto"
-          >
-            <Home className="h-4 w-4" />
-            Home View
-          </button>
-        </div>
-      </div>
-    </div>
+    <Modal visible={isOpen} animationType="slide" transparent>
+      <View className="flex-1 justify-end bg-black/70">
+        <View className="h-[85%] overflow-hidden rounded-t-3xl border-t border-[#E5E0D8] bg-[#FDFBF7] shadow-2xl">
+          {content}
+        </View>
+      </View>
+    </Modal>
   );
 };
+
+export const GameOverModalNative = GameOverModal;

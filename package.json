@@ -20,8 +20,8 @@
     "build:android:apk": "eas build --platform android --profile preview",
     "build:android:play": "eas build --platform android --profile production",
     "test": "bun test",
-    "build": "tsc && vite build",
-    "dev": "vite",
+    "build": "tsc && expo export -p web",
+    "dev": "expo start --web",
     "format": "prettier --write .",
     "format:ci": "prettier --check .",
     "lint": "eslint . --cache",
@@ -29,13 +29,11 @@
     "lint:report": "eslint . --cache -o ./eslintReport.html -f html",
     "validate": "bun run ./scripts/validate.mjs",
     "validate:fix": "bun run ./scripts/validate.mjs --fix",
-    "prepare": "husky",
-    "preview": "vite preview"
+    "prepare": "husky"
   },
   "dependencies": {
     "@gv-tech/design-tokens": "^2.26.1",
     "@gv-tech/ui-native": "^2.26.1",
-    "@gv-tech/ui-web": "^2.26.1",
     "canvas-confetti": "^1.9.4",
     "chalk": "4.1.2",
     "class-variance-authority": "^0.7.1",

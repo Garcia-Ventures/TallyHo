@@ -53,7 +53,7 @@ const Particle: React.FC<ConfettiParticleProps> = ({ index }) => {
   );
 };
 
-export const ConfettiCelebrationNative: React.FC = () => {
+export const ConfettiCelebration: React.FC = () => {
   return (
     <View className="pointer-events-none absolute inset-0 z-50">
       {Array.from({ length: PARTICLE_COUNT }).map((_, i) => (
@@ -62,3 +62,5 @@ export const ConfettiCelebrationNative: React.FC = () => {
     </View>
   );
 };
+
+export const ConfettiCelebrationNative = ConfettiCelebration;

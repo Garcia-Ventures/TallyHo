@@ -1,23 +1,24 @@
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { HistoryLogModal } from '../../src/components/HistoryLogModal';
+import { RoundHistoryModal } from '../../src/components/RoundHistoryModal';
 import { useGameStore } from '../../src/stores/useGameStore';
 
-export default function HistoryLogModalRoute() {
+export default function RoundHistoryModalRoute() {
   const router = useRouter();
-  const { matchHistory, clearHistory } = useGameStore();
+  const { activeGame, updateRounds } = useGameStore();
+
+  if (!activeGame) {
+    return null;
+  }
 
   return (
     <View className="flex-1 bg-[#FDFBF7]">
-      <HistoryLogModal
+      <RoundHistoryModal
         isOpen={true}
         isRouteModal={true}
+        game={activeGame}
         onClose={() => router.back()}
-        history={matchHistory}
-        onClearHistory={() => {
-          clearHistory();
-          router.back();
-        }}
+        onUpdateRounds={(updated) => updateRounds(updated)}
       />
     </View>
   );

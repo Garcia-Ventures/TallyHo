@@ -73,6 +73,14 @@ export default function RootLayout() {
         }}
       />
       <Stack.Screen
+        name="modal/round-history"
+        options={{
+          presentation: 'modal',
+          title: 'Round History',
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="modal/settings"
         options={{
           presentation: 'modal',

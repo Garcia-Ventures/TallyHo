@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { Player } from '../types/game';
 
-describe('ScoreKeypadModalNative Component', () => {
+describe('ScoreKeypadModal Component', () => {
   const mockPlayer: Player = {
     id: 'p1',
     name: 'Alice',

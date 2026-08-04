@@ -9,7 +9,7 @@ interface FlipCardContainerProps {
   duration?: number;
 }
 
-export const FlipCardContainerNative: React.FC<FlipCardContainerProps> = ({
+export const FlipCardContainer: React.FC<FlipCardContainerProps> = ({
   isFlipped,
   frontComponent,
   backComponent,
@@ -68,3 +68,5 @@ export const FlipCardContainerNative: React.FC<FlipCardContainerProps> = ({
     </View>
   );
 };
+
+export const FlipCardContainerNative = FlipCardContainer;

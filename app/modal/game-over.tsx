@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
-import { ConfettiCelebrationNative } from '../../src/components/ConfettiCelebration.native';
-import { GameOverModalNative } from '../../src/components/GameOverModal.native';
+import { ConfettiCelebration } from '../../src/components/ConfettiCelebration';
+import { GameOverModal } from '../../src/components/GameOverModal';
 import { useGameStore } from '../../src/stores/useGameStore';
 
 export default function GameOverModalRoute() {
@@ -14,8 +14,8 @@ export default function GameOverModalRoute() {
 
   return (
     <View className="flex-1 bg-[#FDFBF7]">
-      <ConfettiCelebrationNative />
-      <GameOverModalNative
+      <ConfettiCelebration />
+      <GameOverModal
         isOpen={true}
         isRouteModal={true}
         onClose={() => {

@@ -1,9 +1,9 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import { FlipCardContainerNative } from '../../src/components/FlipCardContainer.native';
-import { PlayModeViewNative } from '../../src/components/PlayModeView.native';
-import { ScoreboardViewNative } from '../../src/components/ScoreboardView.native';
+import { FlipCardContainer } from '../../src/components/FlipCardContainer';
+import { PlayModeView } from '../../src/components/PlayModeView';
+import { ScoreboardView } from '../../src/components/ScoreboardView';
 import { nativeSound } from '../../src/services/audio';
 import { useGameStore } from '../../src/stores/useGameStore';
 import { Player, RoundScore } from '../../src/types/game';
@@ -33,7 +33,7 @@ export default function MatchScreen() {
   };
 
   const handleOpenRoundHistory = () => {
-    router.push('/modal/history-log');
+    router.push('/modal/round-history');
   };
 
   const handleToggleFlip = (targetPlayMode: boolean) => {
@@ -56,10 +56,10 @@ export default function MatchScreen() {
 
   return (
     <View className="flex-1 bg-[#FDFBF7]">
-      <FlipCardContainerNative
+      <FlipCardContainer
         isFlipped={isPlayMode}
         frontComponent={
-          <ScoreboardViewNative
+          <ScoreboardView
             game={activeGame}
             onOpenScoreKeypad={handleOpenScoreKeypad}
             onOpenRoundHistory={handleOpenRoundHistory}
@@ -69,7 +69,7 @@ export default function MatchScreen() {
           />
         }
         backComponent={
-          <PlayModeViewNative
+          <PlayModeView
             game={activeGame}
             onScoreSubmitted={handleSubmitScore}
             onFlipToDashboard={() => handleToggleFlip(false)}
