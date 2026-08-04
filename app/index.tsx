@@ -23,7 +23,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <ScrollView className="flex-1 space-y-5 bg-[#FDFBF7] p-4" showsVerticalScrollIndicator={false}>
+    <ScrollView className="bg-background flex-1 space-y-5 p-4" showsVerticalScrollIndicator={false}>
       {/* Active Game Resume Banner */}
       {activeGame && activeGame.status === 'ACTIVE' && (
         <Card className="border-[#E5A93C] bg-[#E5A93C]/15 p-4 shadow-sm">
@@ -35,7 +35,7 @@ export default function HomeScreen() {
                   <Text className="text-xs font-black tracking-widest text-[#E5A93C] uppercase">
                     Active Match in Progress
                   </Text>
-                  <Text className="text-base font-black text-[#2C302E]">{activeGame.name}</Text>
+                  <Text className="text-foreground text-base font-black">{activeGame.name}</Text>
                 </View>
               </View>
 
@@ -46,9 +46,9 @@ export default function HomeScreen() {
 
             <Button
               onPress={handleResumeMatch}
-              className="w-full items-center justify-center rounded-xl bg-[#2C302E] py-3 shadow"
+              className="bg-primary w-full items-center justify-center rounded-xl py-3 shadow"
             >
-              <Text className="text-xs font-black text-white">▶ Resume Game</Text>
+              <Text className="text-primary-foreground text-xs font-black">▶ Resume Game</Text>
             </Button>
           </CardContent>
         </Card>
@@ -57,17 +57,17 @@ export default function HomeScreen() {
       {/* Start New Game Header */}
       <View className="flex-row items-center justify-between">
         <View>
-          <Text className="text-xs font-black tracking-widest text-[#5A605C] uppercase">Start a Game</Text>
-          <Text className="text-xl font-black text-[#2C302E]">Rulebook Presets</Text>
+          <Text className="text-muted-foreground text-xs font-black tracking-widest uppercase">Start a Game</Text>
+          <Text className="text-foreground text-xl font-black">Rulebook Presets</Text>
         </View>
 
         <View className="flex-row items-center gap-2">
           <Button
             onPress={() => router.push('/modal/settings')}
             variant="outline"
-            className="items-center justify-center rounded-xl border-[#E5E0D8] bg-[#F7F4EE] px-3 py-2.5 shadow-xs"
+            className="border-border bg-card items-center justify-center rounded-xl px-3 py-2.5 shadow-xs"
           >
-            <Text className="text-xs font-black text-[#2C302E]">⚙️ Settings</Text>
+            <Text className="text-foreground text-xs font-black">⚙️ Settings</Text>
           </Button>
 
           <Button
@@ -83,17 +83,17 @@ export default function HomeScreen() {
       <View className="flex-row flex-wrap gap-3">
         {GAME_PRESETS.map((preset) => (
           <Pressable key={preset.id} onPress={() => handleSelectPreset(preset)} className="w-[48%]">
-            <Card className="space-y-2 border-[#E5E0D8] bg-[#F7F4EE] p-4 shadow-xs">
+            <Card className="border-border bg-card space-y-2 p-4 shadow-xs">
               <CardContent className="space-y-2 p-0">
                 <Text className="text-2xl">{preset.icon}</Text>
-                <Text className="text-sm font-black text-[#2C302E]">{preset.name}</Text>
-                <Text className="text-[10px] text-[#5A605C]" numberOfLines={2}>
+                <Text className="text-foreground text-sm font-black">{preset.name}</Text>
+                <Text className="text-muted-foreground text-[10px]" numberOfLines={2}>
                   {preset.description}
                 </Text>
 
                 <View className="mt-1 self-start">
-                  <Badge variant="secondary" className="bg-[#E5E0D8]/60 px-2 py-0.5">
-                    <Text className="text-[9px] font-extrabold text-[#2C302E]">{preset.badgeText}</Text>
+                  <Badge variant="secondary" className="bg-muted px-2 py-0.5">
+                    <Text className="text-foreground text-[9px] font-extrabold">{preset.badgeText}</Text>
                   </Badge>
                 </View>
               </CardContent>
@@ -105,7 +105,7 @@ export default function HomeScreen() {
       {/* Match History Overview */}
       <View className="space-y-3 pt-2">
         <View className="flex-row items-center justify-between">
-          <Text className="text-xs font-black tracking-widest text-[#5A605C] uppercase">Recent Matches</Text>
+          <Text className="text-muted-foreground text-xs font-black tracking-widest uppercase">Recent Matches</Text>
 
           {matchHistory.length > 0 && (
             <Pressable onPress={() => router.push('/modal/history-log')}>
@@ -115,10 +115,10 @@ export default function HomeScreen() {
         </View>
 
         {matchHistory.length === 0 ? (
-          <Card className="items-center space-y-1 border-[#E5E0D8] bg-[#F7F4EE] p-6">
+          <Card className="border-border bg-card items-center space-y-1 p-6">
             <CardContent className="items-center space-y-1 p-0">
               <Text className="text-2xl">📝</Text>
-              <Text className="text-xs font-bold text-[#5A605C]">No completed matches yet.</Text>
+              <Text className="text-muted-foreground text-xs font-bold">No completed matches yet.</Text>
             </CardContent>
           </Card>
         ) : (
@@ -128,11 +128,11 @@ export default function HomeScreen() {
             const winner = sorted[0];
 
             return (
-              <Card key={game.id} className="border-[#E5E0D8] bg-[#F7F4EE] p-4">
+              <Card key={game.id} className="border-border bg-card p-4">
                 <CardContent className="flex-row items-center justify-between p-0">
                   <View>
-                    <Text className="text-sm font-black text-[#2C302E]">{game.name}</Text>
-                    <Text className="text-[10px] text-[#5A605C]">
+                    <Text className="text-foreground text-sm font-black">{game.name}</Text>
+                    <Text className="text-muted-foreground text-[10px]">
                       {game.rounds.length} Rounds • {game.players.length} Players
                     </Text>
                   </View>
@@ -140,7 +140,7 @@ export default function HomeScreen() {
                   {winner && (
                     <View className="items-end rounded-xl bg-[#E5A93C]/20 px-3 py-1.5">
                       <Text className="text-[9px] font-black text-[#E5A93C] uppercase">👑 Winner</Text>
-                      <Text className="text-xs font-bold text-[#2C302E]">{winner.name}</Text>
+                      <Text className="text-foreground text-xs font-bold">{winner.name}</Text>
                     </View>
                   )}
                 </CardContent>

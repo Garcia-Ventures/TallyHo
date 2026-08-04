@@ -1,5 +1,6 @@
+import { Text } from '@gv-tech/ui-native';
 import React, { useState } from 'react';
-import { Modal, Pressable, Text, View } from 'react-native';
+import { Modal, Pressable, View } from 'react-native';
 import { Player, RoundScore } from '../types/game';
 
 interface ScoreKeypadModalProps {
@@ -55,30 +56,30 @@ export const ScoreKeypadModal: React.FC<ScoreKeypadModalProps> = ({
   };
 
   const content = (
-    <View className="flex-1 justify-between gap-4 bg-[#FDFBF7] p-5">
+    <View className="bg-background flex-1 justify-between gap-4 p-5">
       {/* Header */}
-      <View className="flex-row items-center justify-between border-b border-[#E5E0D8] pb-3">
+      <View className="border-border flex-row items-center justify-between border-b pb-3">
         <View className="flex-row items-center gap-2.5">
           <View className="h-9 w-9 items-center justify-center rounded-full" style={{ backgroundColor: player.color }}>
             <Text className="text-sm font-black text-white">{player.initials}</Text>
           </View>
           <View>
-            <Text className="text-xs text-[#5A605C]">Entering score for</Text>
-            <Text className="text-base font-black text-[#2C302E]">{player.name}</Text>
+            <Text className="text-muted-foreground text-xs">Entering score for</Text>
+            <Text className="text-foreground text-base font-black">{player.name}</Text>
           </View>
         </View>
 
         {!isRouteModal && (
           <Pressable onPress={onClose} className="p-1">
-            <Text className="text-base font-bold text-[#5A605C]">✕</Text>
+            <Text className="text-muted-foreground text-base font-bold">✕</Text>
           </Pressable>
         )}
       </View>
 
       {/* Number Display */}
-      <View className="items-center justify-center rounded-2xl border border-[#E5E0D8] bg-[#F7F4EE] px-4 py-6 shadow-inner">
-        <Text className="mb-1 text-xs font-bold text-[#5A605C]">SCORE</Text>
-        <Text className="text-5xl font-black text-[#2C302E]">{pointsStr || '0'}</Text>
+      <View className="border-border bg-card items-center justify-center rounded-2xl border px-4 py-6 shadow-inner">
+        <Text className="text-muted-foreground mb-1 text-xs font-bold">SCORE</Text>
+        <Text className="text-foreground text-5xl font-black">{pointsStr || '0'}</Text>
       </View>
 
       {/* Keypad Grid */}
@@ -96,13 +97,15 @@ export const ScoreKeypadModal: React.FC<ScoreKeypadModalProps> = ({
                 onPress={() => handleKeyPress(btn)}
                 className={`flex-1 items-center justify-center rounded-2xl border py-4 ${
                   btn === 'CLR'
-                    ? 'border-red-200 bg-red-50'
+                    ? 'border-red-200 bg-red-50 dark:border-red-900/40 dark:bg-red-950/40'
                     : btn === 'DEL'
-                      ? 'border-gray-300 bg-gray-100'
-                      : 'border-[#E5E0D8] bg-white shadow-xs'
+                      ? 'border-border bg-muted'
+                      : 'border-border bg-popover shadow-xs'
                 }`}
               >
-                <Text className={`text-2xl font-black ${btn === 'CLR' ? 'text-red-600' : 'text-[#2C302E]'}`}>
+                <Text
+                  className={`text-2xl font-black ${btn === 'CLR' ? 'text-red-600 dark:text-red-400' : 'text-foreground'}`}
+                >
                   {btn === 'DEL' ? '⌫' : btn}
                 </Text>
               </Pressable>
@@ -128,7 +131,7 @@ export const ScoreKeypadModal: React.FC<ScoreKeypadModalProps> = ({
   return (
     <Modal visible={isOpen} animationType="slide" transparent>
       <View className="flex-1 justify-end bg-black/60">
-        <View className="h-[85%] overflow-hidden rounded-t-3xl border-t border-[#E5E0D8] bg-[#FDFBF7] shadow-2xl">
+        <View className="border-border bg-background h-[85%] overflow-hidden rounded-t-3xl border-t shadow-2xl">
           {content}
         </View>
       </View>

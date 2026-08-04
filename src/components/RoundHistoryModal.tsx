@@ -65,13 +65,15 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
   };
 
   const content = (
-    <View className="flex-1 justify-between gap-4 bg-[#FDFBF7] p-5">
+    <View className="bg-background flex-1 justify-between gap-4 p-5">
       {/* Header */}
       {!isRouteModal && (
-        <View className="flex-row items-center justify-between border-b border-[#E5E0D8] pb-3">
+        <View className="border-border flex-row items-center justify-between border-b pb-3">
           <View>
-            <Text className="text-xl font-black text-[#2C302E]">Round History & Edit Log</Text>
-            <Text className="text-xs font-semibold text-[#5A605C]">Fix mistaken entries or adjust past scores</Text>
+            <Text className="text-foreground text-xl font-black">Round History & Edit Log</Text>
+            <Text className="text-muted-foreground text-xs font-semibold">
+              Fix mistaken entries or adjust past scores
+            </Text>
           </View>
           <Pressable
             onPress={() => {
@@ -80,7 +82,7 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
             }}
             className="p-1"
           >
-            <Text className="text-base font-bold text-[#5A605C]">✕</Text>
+            <Text className="text-muted-foreground text-base font-bold">✕</Text>
           </Pressable>
         </View>
       )}
@@ -88,10 +90,10 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
       {/* Content Sheet */}
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingBottom: 16 }}>
         {game.rounds.length === 0 ? (
-          <Card className="items-center justify-center border-[#E5E0D8] bg-[#F7F4EE] p-8">
+          <Card className="border-border bg-card items-center justify-center p-8">
             <CardContent className="items-center justify-center gap-2 p-0">
               <Text className="text-3xl">📋</Text>
-              <Text className="text-sm font-bold text-[#5A605C]">
+              <Text className="text-muted-foreground text-sm font-bold">
                 No rounds recorded yet. Log your first round on the score pad!
               </Text>
             </CardContent>
@@ -101,10 +103,10 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
             const isEditing = editingRoundIndex === idx;
 
             return (
-              <Card key={round.roundNumber} className="border-[#E5E0D8] bg-[#F7F4EE] p-4">
+              <Card key={round.roundNumber} className="border-border bg-card p-4">
                 <CardContent className="space-y-3 p-0">
-                  <View className="flex-row items-center justify-between border-b border-[#E5E0D8] pb-2">
-                    <Text className="text-xs font-black text-[#2C302E] uppercase">Round {round.roundNumber}</Text>
+                  <View className="border-border flex-row items-center justify-between border-b pb-2">
+                    <Text className="text-foreground text-xs font-black uppercase">Round {round.roundNumber}</Text>
 
                     <View className="flex-row items-center gap-2">
                       {isEditing ? (
@@ -117,7 +119,7 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
                           variant="ghost"
                           className="h-8 rounded-lg px-2.5 py-1"
                         >
-                          <Text className="text-xs font-bold text-[#5A605C]">✏️ Edit</Text>
+                          <Text className="text-muted-foreground text-xs font-bold">✏️ Edit</Text>
                         </Button>
                       )}
 
@@ -139,7 +141,7 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
 
                       return (
                         <View key={p.id} className="w-[47%] space-y-1">
-                          <Text className="truncate text-[11px] font-extrabold text-[#5A605C]">{p.name}</Text>
+                          <Text className="text-muted-foreground truncate text-[11px] font-extrabold">{p.name}</Text>
 
                           {isEditing ? (
                             <Input
@@ -151,10 +153,10 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
                                   [p.id]: val,
                                 })
                               }
-                              className="h-9 rounded-lg border-[#E5E0D8] bg-white px-2 py-1 text-sm font-black text-[#2C302E]"
+                              className="border-border bg-popover text-foreground h-9 rounded-lg px-2 py-1 text-sm font-black"
                             />
                           ) : (
-                            <Text className="text-base font-black text-[#2C302E]">{pts}</Text>
+                            <Text className="text-foreground text-base font-black">{pts}</Text>
                           )}
                         </View>
                       );
@@ -174,9 +176,9 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
             nativeSound.playKeypadTap();
             onClose();
           }}
-          className="rounded-xl bg-[#2C302E] px-6 py-2.5"
+          className="bg-primary rounded-xl px-6 py-2.5"
         >
-          <Text className="text-xs font-extrabold text-white">Done</Text>
+          <Text className="text-primary-foreground text-xs font-extrabold">Done</Text>
         </Button>
       </View>
     </View>
@@ -189,7 +191,7 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
   return (
     <Modal visible={isOpen} animationType="slide" transparent>
       <View className="flex-1 justify-end bg-black/60">
-        <View className="h-[85%] overflow-hidden rounded-t-3xl border-t border-[#E5E0D8] bg-[#FDFBF7] shadow-2xl">
+        <View className="border-border bg-background h-[85%] overflow-hidden rounded-t-3xl border-t shadow-2xl">
           {content}
         </View>
       </View>

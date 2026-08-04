@@ -24,23 +24,23 @@ export const HistoryLogModal: React.FC<HistoryLogModalProps> = ({
   }
 
   const content = (
-    <View className="flex-1 justify-between gap-4 bg-[#FDFBF7] p-5">
+    <View className="bg-background flex-1 justify-between gap-4 p-5">
       {/* Header */}
       {!isRouteModal && (
-        <View className="flex-row items-center justify-between border-b border-[#E5E0D8] pb-3">
-          <Text className="text-xl font-black text-[#2C302E]">📜 Match History ({history.length})</Text>
+        <View className="border-border flex-row items-center justify-between border-b pb-3">
+          <Text className="text-foreground text-xl font-black">📜 Match History ({history.length})</Text>
           <Pressable onPress={onClose} className="p-1">
-            <Text className="text-base font-bold text-[#5A605C]">✕</Text>
+            <Text className="text-muted-foreground text-base font-bold">✕</Text>
           </Pressable>
         </View>
       )}
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingBottom: 16 }}>
         {history.length === 0 ? (
-          <Card className="items-center justify-center border-[#E5E0D8] bg-[#F7F4EE] p-8">
+          <Card className="border-border bg-card items-center justify-center p-8">
             <CardContent className="items-center justify-center gap-2 p-0">
               <Text className="text-3xl">🎲</Text>
-              <Text className="text-sm font-bold text-[#5A605C]">No completed matches archived yet.</Text>
+              <Text className="text-muted-foreground text-sm font-bold">No completed matches archived yet.</Text>
             </CardContent>
           </Card>
         ) : (
@@ -50,23 +50,25 @@ export const HistoryLogModal: React.FC<HistoryLogModalProps> = ({
             const winner = sorted[0];
 
             return (
-              <Card key={game.id} className="border-[#E5E0D8] bg-[#F7F4EE] p-4">
+              <Card key={game.id} className="border-border bg-card p-4">
                 <CardContent className="gap-2 p-0">
                   <View className="flex-row items-center justify-between">
-                    <Text className="text-base font-black text-[#2C302E]">{game.name}</Text>
-                    <Text className="text-[10px] text-[#5A605C]">{new Date(game.createdAt).toLocaleDateString()}</Text>
+                    <Text className="text-foreground text-base font-black">{game.name}</Text>
+                    <Text className="text-muted-foreground text-[10px]">
+                      {new Date(game.createdAt).toLocaleDateString()}
+                    </Text>
                   </View>
 
                   {winner && (
                     <Badge variant="secondary" className="flex-row items-center gap-1.5 self-start bg-[#E5A93C]/15 p-2">
                       <Text className="text-xs">👑</Text>
-                      <Text className="text-xs font-bold text-[#2C302E]">
+                      <Text className="text-foreground text-xs font-bold">
                         Winner: {winner.name} ({totals[winner.id]} pts)
                       </Text>
                     </Badge>
                   )}
 
-                  <Text className="text-[10px] text-[#5A605C]">
+                  <Text className="text-muted-foreground text-[10px]">
                     {game.players.length} Players • {game.rounds.length} Rounds Logged
                   </Text>
                 </CardContent>
@@ -80,9 +82,9 @@ export const HistoryLogModal: React.FC<HistoryLogModalProps> = ({
         <Button
           onPress={onClearHistory}
           variant="destructive"
-          className="mt-1 items-center rounded-2xl border border-red-200 bg-red-50 py-3.5"
+          className="mt-1 items-center rounded-2xl border border-red-200 bg-red-50 py-3.5 dark:border-red-900/40 dark:bg-red-950/40"
         >
-          <Text className="text-xs font-bold text-red-600">Clear All History</Text>
+          <Text className="text-xs font-bold text-red-600 dark:text-red-400">Clear All History</Text>
         </Button>
       )}
     </View>
@@ -95,7 +97,7 @@ export const HistoryLogModal: React.FC<HistoryLogModalProps> = ({
   return (
     <Modal visible={isOpen} animationType="slide" transparent>
       <View className="flex-1 justify-end bg-black/60">
-        <View className="h-[85%] overflow-hidden rounded-t-3xl border-t border-[#E5E0D8] bg-[#FDFBF7] shadow-2xl">
+        <View className="border-border bg-background h-[85%] overflow-hidden rounded-t-3xl border-t shadow-2xl">
           {content}
         </View>
       </View>

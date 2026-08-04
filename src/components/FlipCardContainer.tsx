@@ -43,13 +43,11 @@ export const FlipCardContainer: React.FC<FlipCardContainerProps> = ({
   });
 
   return (
-    <View className="relative w-full flex-1 bg-[#FDFBF7]">
+    <View className="bg-background relative w-full flex-1">
       {/* Front Face (Scoreboard Dashboard) */}
       <Animated.View
-        style={[
-          { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, flex: 1, backgroundColor: '#FDFBF7' },
-          frontAnimatedStyle,
-        ]}
+        className="bg-background absolute top-0 right-0 bottom-0 left-0 flex-1"
+        style={[frontAnimatedStyle]}
         pointerEvents={isFlipped ? 'none' : 'auto'}
       >
         {frontComponent}
@@ -57,10 +55,8 @@ export const FlipCardContainer: React.FC<FlipCardContainerProps> = ({
 
       {/* Back Face (Play Mode Sheet) */}
       <Animated.View
-        style={[
-          { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, flex: 1, backgroundColor: '#FDFBF7' },
-          backAnimatedStyle,
-        ]}
+        className="bg-background absolute top-0 right-0 bottom-0 left-0 flex-1"
+        style={[backAnimatedStyle]}
         pointerEvents={!isFlipped ? 'none' : 'auto'}
       >
         {backComponent}

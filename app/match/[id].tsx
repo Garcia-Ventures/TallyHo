@@ -55,7 +55,7 @@ export default function MatchScreen() {
   };
 
   return (
-    <View className="flex-1 bg-[#FDFBF7]">
+    <View className="bg-background flex-1">
       <FlipCardContainer
         isFlipped={isPlayMode}
         frontComponent={

@@ -1,5 +1,6 @@
+import { Text } from '@gv-tech/ui-native';
 import React, { useState } from 'react';
-import { Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Modal, Pressable, ScrollView, TextInput, View } from 'react-native';
 import { GAME_PRESETS, GamePreset, PLAYER_COLORS, Player, RoundScoringType, ScoringMode } from '../types/game';
 
 interface GameSetupModalProps {
@@ -85,19 +86,19 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
   };
 
   const content = (
-    <View className="flex-1 bg-[#FDFBF7] p-5">
+    <View className="bg-background flex-1 p-5">
       {/* Unified Screen Header */}
-      <View className="mb-4 flex-row items-center justify-between border-b border-[#E5E0D8] pb-3">
-        <Text className="text-xl font-black text-[#2C302E]">New Game Setup</Text>
+      <View className="border-border mb-4 flex-row items-center justify-between border-b pb-3">
+        <Text className="text-foreground text-xl font-black">New Game Setup</Text>
         <Pressable onPress={onClose} className="p-1">
-          <Text className="text-base font-bold text-[#5A605C]">✕</Text>
+          <Text className="text-muted-foreground text-base font-bold">✕</Text>
         </Pressable>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 24, gap: 18 }}>
         {/* Preset Selector */}
         <View className="gap-1.5">
-          <Text className="text-xs font-bold text-[#5A605C]">Select Preset Rulebook:</Text>
+          <Text className="text-muted-foreground text-xs font-bold">Select Preset Rulebook:</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -111,7 +112,7 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
                   key={p.id}
                   onPress={() => handleSelectPreset(p)}
                   className={`will-change-variable min-w-[130px] rounded-2xl border p-3.5 ${
-                    isSelected ? 'border-2 border-[#C84B31] bg-[#C84B31]/10 shadow-sm' : 'border-[#E5E0D8] bg-[#F7F4EE]'
+                    isSelected ? 'border-2 border-[#C84B31] bg-[#C84B31]/10 shadow-sm' : 'border-border bg-card'
                   }`}
                 >
                   <View className="mb-1 flex-row items-center justify-between">
@@ -122,8 +123,8 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
                       </View>
                     )}
                   </View>
-                  <Text className="text-xs font-black text-[#2C302E]">{p.name}</Text>
-                  <Text className="mt-0.5 text-[10px] font-medium text-[#5A605C]">{p.badgeText}</Text>
+                  <Text className="text-foreground text-xs font-black">{p.name}</Text>
+                  <Text className="text-muted-foreground mt-0.5 text-[10px] font-medium">{p.badgeText}</Text>
                 </Pressable>
               );
             })}
@@ -132,36 +133,38 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
 
         {/* Match Name Input */}
         <View className="gap-1">
-          <Text className="text-xs font-bold text-[#5A605C]">Match Name</Text>
+          <Text className="text-muted-foreground text-xs font-bold">Match Name</Text>
           <TextInput
             value={matchName}
             onChangeText={setMatchName}
-            className="rounded-xl border border-[#E5E0D8] bg-white p-3.5 text-sm font-bold text-[#2C302E]"
+            className="border-border bg-popover text-foreground rounded-xl border p-3.5 text-sm font-bold"
             placeholder="e.g. Scrabble Finals"
+            placeholderTextColor="#8A8F8C"
           />
         </View>
 
         {/* Target Score */}
         <View className="gap-1">
-          <Text className="text-xs font-bold text-[#5A605C]">Target Winning Score</Text>
+          <Text className="text-muted-foreground text-xs font-bold">Target Winning Score</Text>
           <TextInput
             value={targetScoreStr}
             onChangeText={setTargetScoreStr}
             keyboardType="numeric"
-            className="rounded-xl border border-[#E5E0D8] bg-white p-3.5 text-sm font-bold text-[#2C302E]"
+            className="border-border bg-popover text-foreground rounded-xl border p-3.5 text-sm font-bold"
             placeholder="100"
+            placeholderTextColor="#8A8F8C"
           />
         </View>
 
         {/* Player Roster */}
         <View className="gap-2">
-          <Text className="text-xs font-bold text-[#5A605C]">Players ({players.length}):</Text>
+          <Text className="text-muted-foreground text-xs font-bold">Players ({players.length}):</Text>
 
           <View className="gap-2">
             {players.map((p) => (
               <View
                 key={p.id}
-                className="flex-row items-center justify-between rounded-xl border border-[#E5E0D8] bg-white p-3"
+                className="border-border bg-popover flex-row items-center justify-between rounded-xl border p-3"
               >
                 <View className="flex-row items-center gap-2.5">
                   <View
@@ -170,7 +173,7 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
                   >
                     <Text className="text-xs font-black text-white">{p.initials}</Text>
                   </View>
-                  <Text className="text-xs font-bold text-[#2C302E]">{p.name}</Text>
+                  <Text className="text-foreground text-xs font-bold">{p.name}</Text>
                 </View>
                 <Pressable onPress={() => handleRemovePlayer(p.id)} className="p-1">
                   <Text className="text-xs font-bold text-red-500">Remove</Text>
@@ -184,13 +187,14 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
               value={newPlayerName}
               onChangeText={setNewPlayerName}
               placeholder="Add player name..."
-              className="flex-1 rounded-xl border border-[#E5E0D8] bg-white p-3 text-xs font-bold text-[#2C302E]"
+              placeholderTextColor="#8A8F8C"
+              className="border-border bg-popover text-foreground flex-1 rounded-xl border p-3 text-xs font-bold"
             />
             <Pressable
               onPress={handleAddPlayer}
-              className="items-center justify-center rounded-xl bg-[#2C302E] px-4 py-3"
+              className="bg-primary items-center justify-center rounded-xl px-4 py-3"
             >
-              <Text className="text-xs font-bold text-white">+ Add</Text>
+              <Text className="text-primary-foreground text-xs font-bold">+ Add</Text>
             </Pressable>
           </View>
         </View>
@@ -213,7 +217,7 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
   return (
     <Modal visible={isOpen} animationType="slide" transparent>
       <View className="flex-1 justify-end bg-black/60">
-        <View className="h-[90%] overflow-hidden rounded-t-3xl border-t border-[#E5E0D8] bg-[#FDFBF7] shadow-2xl">
+        <View className="border-border bg-background h-[90%] overflow-hidden rounded-t-3xl border-t shadow-2xl">
           {content}
         </View>
       </View>

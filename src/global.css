@@ -5,13 +5,6 @@
 
 @layer base {
   :root {
-    --paper-bg: #fdfbf7;
-    --paper-card: #f7f4ee;
-    --paper-border: #e5e0d8;
-    --ink-primary: #2c302e;
-    --ink-muted: #5a605c;
-    --stamp-red: #c84b31;
-
     --background: 40 40% 98%;
     --color-background: #fdfbf7;
     --foreground: 150 4% 18%;
@@ -20,26 +13,53 @@
     --color-card: #f7f4ee;
     --card-foreground: 150 4% 18%;
     --color-card-foreground: #2c302e;
+    --popover: 0 0% 100%;
+    --color-popover: #ffffff;
+    --popover-foreground: 150 4% 18%;
+    --color-popover-foreground: #2c302e;
+    --muted: 38 25% 91%;
+    --color-muted: #efeae1;
+    --muted-foreground: 144 3% 36%;
+    --color-muted-foreground: #5a605c;
     --primary: 150 4% 18%;
     --color-primary: #2c302e;
     --primary-foreground: 40 40% 98%;
     --color-primary-foreground: #fdfbf7;
     --border: 35 20% 87%;
     --color-border: #e5e0d8;
+    --input: 0 0% 100%;
+    --color-input: #ffffff;
+  }
+
+  .dark {
+    --background: 150 3% 10%;
+    --color-background: #181a19;
+    --foreground: 40 25% 91%;
+    --color-foreground: #f0ece1;
+    --card: 144 4% 14%;
+    --color-card: #232624;
+    --card-foreground: 40 25% 91%;
+    --color-card-foreground: #f0ece1;
+    --popover: 150 4% 18%;
+    --color-popover: #2c302e;
+    --popover-foreground: 40 25% 91%;
+    --color-popover-foreground: #f0ece1;
+    --muted: 150 4% 18%;
+    --color-muted: #2c302e;
+    --muted-foreground: 144 3% 64%;
+    --color-muted-foreground: #a3a9a5;
+    --primary: 144 4% 22%;
+    --color-primary: #363b38;
+    --primary-foreground: 40 25% 91%;
+    --color-primary-foreground: #f0ece1;
+    --border: 144 3% 22%;
+    --color-border: #363b38;
+    --input: 150 4% 18%;
+    --color-input: #2c302e;
   }
 }
 
 @layer utilities {
-  .paper-sheet {
-    background-color: #f7f4ee;
-  }
-
-  .paper-card {
-    background-color: #f7f4ee;
-    border-width: 1px;
-    border-color: #e5e0d8;
-  }
-
   .ink-underline {
     border-bottom-width: 2px;
     border-color: #c84b31;

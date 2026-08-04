@@ -1,5 +1,6 @@
+import { Text } from '@gv-tech/ui-native';
 import React, { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import { GameSession, Player, RoundScore } from '../types/game';
 import { calculatePlayerTotals } from '../utils/scoring';
 
@@ -68,23 +69,20 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
 
   return (
     <ScrollView
-      className="flex-1 bg-[#FDFBF7] p-4"
+      className="bg-background flex-1 p-4"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 40, gap: 16 }}
     >
       {/* Header Controls */}
-      <View className="flex-row items-center justify-between rounded-2xl border border-[#E5E0D8] bg-[#2C302E] p-4 shadow">
+      <View className="border-border bg-card flex-row items-center justify-between rounded-2xl border p-4 shadow">
         <View>
           <Text className="text-xs font-black tracking-widest text-[#E5A93C] uppercase">Turn-by-Turn Play Mode</Text>
-          <Text className="text-lg font-black text-white">Round {currentRoundNumber}</Text>
+          <Text className="text-foreground text-lg font-black">Round {currentRoundNumber}</Text>
         </View>
 
         <View className="flex-row gap-2">
-          <Pressable
-            onPress={onFlipToDashboard}
-            className="rounded-xl border border-[#E5E0D8]/20 bg-white/10 px-3 py-2"
-          >
-            <Text className="text-xs font-bold text-white">📋 Dashboard</Text>
+          <Pressable onPress={onFlipToDashboard} className="border-border bg-popover rounded-xl border px-3 py-2">
+            <Text className="text-foreground text-xs font-bold">📋 Dashboard</Text>
           </Pressable>
           <Pressable onPress={onEndMatch} className="rounded-xl bg-[#C84B31] px-3 py-2">
             <Text className="text-xs font-bold text-white">🏆 End</Text>
@@ -106,7 +104,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
               key={player.id}
               onPress={() => setSelectedPlayerIndex(idx)}
               className={`will-change-variable min-w-[115px] items-center gap-1 rounded-2xl border p-3 ${
-                isSelected ? 'border-2 border-[#E5A93C] bg-[#E5A93C]/15 shadow-sm' : 'border-[#E5E0D8] bg-[#F7F4EE]'
+                isSelected ? 'border-2 border-[#E5A93C] bg-[#E5A93C]/15 shadow-sm' : 'border-border bg-card'
               }`}
             >
               <View
@@ -115,10 +113,12 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
               >
                 <Text className="text-xs font-black text-white">{player.initials}</Text>
               </View>
-              <Text className="text-xs font-bold text-[#2C302E]" numberOfLines={1}>
+              <Text className="text-foreground text-xs font-bold" numberOfLines={1}>
                 {player.name}
               </Text>
-              <Text className="text-[10px] font-extrabold text-[#5A605C]">Total: {totals[player.id] || 0} pts</Text>
+              <Text className="text-muted-foreground text-[10px] font-extrabold">
+                Total: {totals[player.id] || 0} pts
+              </Text>
             </Pressable>
           );
         })}
@@ -126,8 +126,8 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
 
       {/* Score Input Card */}
       {activePlayer && (
-        <View className="gap-4 rounded-2xl border border-[#E5E0D8] bg-[#F7F4EE] p-4 shadow-sm">
-          <View className="flex-row items-center justify-between border-b border-[#E5E0D8] pb-3">
+        <View className="border-border bg-card gap-4 rounded-2xl border p-4 shadow-sm">
+          <View className="border-border flex-row items-center justify-between border-b pb-3">
             <View className="flex-row items-center gap-2.5">
               <View
                 className="h-9 w-9 items-center justify-center rounded-full"
@@ -136,14 +136,14 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                 <Text className="text-sm font-black text-white">{activePlayer.initials}</Text>
               </View>
               <View>
-                <Text className="text-xs text-[#5A605C]">Logging score for:</Text>
-                <Text className="text-base font-black text-[#2C302E]">{activePlayer.name}</Text>
+                <Text className="text-muted-foreground text-xs">Logging score for:</Text>
+                <Text className="text-foreground text-base font-black">{activePlayer.name}</Text>
               </View>
             </View>
 
-            <View className="items-end rounded-xl border border-[#E5E0D8] bg-white px-3.5 py-1.5">
-              <Text className="text-[10px] text-[#5A605C]">Points Entry</Text>
-              <Text className="text-2xl font-black text-[#2C302E]">{scoreInput || '0'}</Text>
+            <View className="border-border bg-popover items-end rounded-xl border px-3.5 py-1.5">
+              <Text className="text-muted-foreground text-[10px]">Points Entry</Text>
+              <Text className="text-foreground text-2xl font-black">{scoreInput || '0'}</Text>
             </View>
           </View>
 
@@ -154,9 +154,9 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                 <Pressable
                   key={digit}
                   onPress={() => handleKeyTap(digit)}
-                  className="flex-1 items-center rounded-xl border border-[#E5E0D8] bg-white py-3.5"
+                  className="border-border bg-popover flex-1 items-center rounded-xl border py-3.5"
                 >
-                  <Text className="text-lg font-black text-[#2C302E]">{digit}</Text>
+                  <Text className="text-foreground text-lg font-black">{digit}</Text>
                 </Pressable>
               ))}
             </View>
@@ -165,24 +165,24 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                 <Pressable
                   key={digit}
                   onPress={() => handleKeyTap(digit)}
-                  className="flex-1 items-center rounded-xl border border-[#E5E0D8] bg-white py-3.5"
+                  className="border-border bg-popover flex-1 items-center rounded-xl border py-3.5"
                 >
-                  <Text className="text-lg font-black text-[#2C302E]">{digit}</Text>
+                  <Text className="text-foreground text-lg font-black">{digit}</Text>
                 </Pressable>
               ))}
             </View>
             <View className="flex-row gap-2">
               <Pressable
                 onPress={() => handleKeyTap('CLR')}
-                className="flex-1 items-center rounded-xl border border-red-200 bg-red-50 py-3.5"
+                className="flex-1 items-center rounded-xl border border-red-200 bg-red-50 py-3.5 dark:border-red-900/40 dark:bg-red-950/40"
               >
-                <Text className="text-xs font-bold text-red-600">CLR</Text>
+                <Text className="text-xs font-bold text-red-600 dark:text-red-400">CLR</Text>
               </Pressable>
               <Pressable
                 onPress={() => handleKeyTap('DEL')}
-                className="flex-1 items-center rounded-xl border border-gray-300 bg-gray-100 py-3.5"
+                className="border-border bg-muted flex-1 items-center rounded-xl border py-3.5"
               >
-                <Text className="text-xs font-bold text-[#5A605C]">⌫</Text>
+                <Text className="text-muted-foreground text-xs font-bold">⌫</Text>
               </Pressable>
             </View>
           </View>
