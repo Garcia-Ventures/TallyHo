@@ -20,14 +20,14 @@ Thank you for your interest in contributing to this project! This guide will hel
 2. **Clone your fork**
 
    ```bash
-   git clone https://github.com/YOUR-USERNAME/template.git
-   cd template
+   git clone https://github.com/YOUR-USERNAME/TallyHo.git
+   cd TallyHo
    ```
 
 3. **Add the upstream remote**
 
    ```bash
-   git remote add upstream https://github.com/eng618/template.git
+   git remote add upstream https://github.com/eng618/TallyHo.git
    ```
 
 4. **Keep your fork synchronized**
