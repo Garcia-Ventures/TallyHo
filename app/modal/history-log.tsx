@@ -11,6 +11,7 @@ export default function HistoryLogModalRoute() {
     <View className="flex-1 bg-[#FDFBF7]">
       <HistoryLogModalNative
         isOpen={true}
+        isRouteModal={true}
         onClose={() => router.back()}
         history={matchHistory}
         onClearHistory={() => {

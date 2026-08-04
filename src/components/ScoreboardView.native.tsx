@@ -41,9 +41,13 @@ export const ScoreboardViewNative: React.FC<ScoreboardViewNativeProps> = ({
   };
 
   return (
-    <ScrollView className="flex-1 space-y-4 bg-[#FDFBF7] p-4" showsVerticalScrollIndicator={false}>
+    <ScrollView
+      className="flex-1 bg-[#FDFBF7] p-4"
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: 40, gap: 16 }}
+    >
       {/* Match Header Banner */}
-      <View className="rounded-2xl border border-[#E5E0D8] bg-[#F7F4EE] p-4 shadow-sm">
+      <View className="gap-3 rounded-2xl border border-[#E5E0D8] bg-[#F7F4EE] p-4 shadow-sm">
         <View className="flex-row items-center justify-between">
           <View className="flex-1 pr-2">
             <Text className="text-xl font-black text-[#2C302E]">{game.name}</Text>
@@ -53,37 +57,37 @@ export const ScoreboardViewNative: React.FC<ScoreboardViewNativeProps> = ({
           </View>
           <View className="flex-row gap-2">
             {game.targetScore ? (
-              <View className="rounded-full border border-[#E5E0D8] bg-white px-2 py-0.5">
-                <Text className="text-[10px] font-bold text-[#2C302E]">{game.targetScore} pts</Text>
+              <View className="rounded-full border border-[#E5E0D8] bg-white px-2.5 py-1">
+                <Text className="text-[10px] font-bold text-[#2C302E]">{game.targetScore} pts target</Text>
               </View>
             ) : null}
           </View>
         </View>
 
         {/* Hero Actions Bar */}
-        <View className="mt-3 flex-row flex-wrap gap-2">
+        <View className="flex-row flex-wrap gap-2">
           <Pressable
             onPress={onFlipToPlayMode}
-            className="flex-1 items-center justify-center rounded-xl bg-[#C84B31] py-2.5 shadow"
+            className="flex-1 items-center justify-center rounded-xl bg-[#C84B31] py-3 shadow"
           >
             <Text className="text-xs font-black text-white">🎮 Enter Play Mode →</Text>
           </Pressable>
 
           <Pressable
             onPress={onOpenRoundHistory}
-            className="items-center justify-center rounded-xl border border-[#E5E0D8] bg-white px-3 py-2.5"
+            className="items-center justify-center rounded-xl border border-[#E5E0D8] bg-white px-3.5 py-3"
           >
             <Text className="text-xs font-bold text-[#2C302E]">📜 Log ({game.rounds.length})</Text>
           </Pressable>
 
-          <Pressable onPress={onEndMatch} className="items-center justify-center rounded-xl bg-[#2C302E] px-3 py-2.5">
+          <Pressable onPress={onEndMatch} className="items-center justify-center rounded-xl bg-[#2C302E] px-3.5 py-3">
             <Text className="text-xs font-bold text-white">🏆 End</Text>
           </Pressable>
         </View>
       </View>
 
       {/* Leaderboard Player Cards Grid */}
-      <View className="flex-row flex-wrap gap-3">
+      <View className="flex-row flex-wrap gap-2.5">
         {game.players.map((player) => {
           const totalScore = totals[player.id] || 0;
           const isLeader = player.id === sortedPlayers[0]?.id && game.rounds.length > 0;
@@ -93,16 +97,16 @@ export const ScoreboardViewNative: React.FC<ScoreboardViewNativeProps> = ({
           return (
             <View
               key={player.id}
-              className={`w-[48%] overflow-hidden rounded-2xl border border-[#E5E0D8] shadow-xs ${
+              className={`will-change-variable max-w-[49%] min-w-[145px] flex-1 overflow-hidden rounded-2xl border border-[#E5E0D8] shadow-xs ${
                 hasLoggedCurrentRound ? 'bg-[#EFEAE1]/70' : 'bg-[#F7F4EE]'
               }`}
             >
               {/* Color Strip */}
               <View className="h-1.5 w-full" style={{ backgroundColor: player.color }} />
 
-              <View className="space-y-2 p-3">
+              <View className="gap-2 p-3">
                 <View className="flex-row items-center justify-between">
-                  <View className="flex-row items-center gap-1.5">
+                  <View className="flex-1 flex-row items-center gap-1.5 pr-1">
                     <View
                       className="h-7 w-7 items-center justify-center rounded-full"
                       style={{ backgroundColor: player.color }}
@@ -134,7 +138,7 @@ export const ScoreboardViewNative: React.FC<ScoreboardViewNativeProps> = ({
                   {hasLoggedCurrentRound ? (
                     <View className="flex-row items-center justify-between">
                       <Text className="text-[10px] font-bold text-[#6A9C78]">✓ Done</Text>
-                      <Pressable onPress={() => onOpenScoreKeypad(player)}>
+                      <Pressable onPress={() => onOpenScoreKeypad(player)} className="p-0.5">
                         <Text className="text-[10px] text-[#5A605C] underline">Edit</Text>
                       </Pressable>
                     </View>
@@ -154,13 +158,18 @@ export const ScoreboardViewNative: React.FC<ScoreboardViewNativeProps> = ({
       </View>
 
       {/* Turn Sequence Bar */}
-      <View className="space-y-2 rounded-xl border border-[#E5E0D8] bg-[#F7F4EE] p-3">
+      <View className="gap-2 rounded-xl border border-[#E5E0D8] bg-[#F7F4EE] p-3">
         <Text className="text-xs font-bold text-[#5A605C]">Turn Sequence Roster:</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2">
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          className="flex-row"
+          contentContainerStyle={{ gap: 8 }}
+        >
           {game.players.map((p, idx) => (
             <View
               key={p.id}
-              className="flex-row items-center gap-1 rounded-lg border border-[#E5E0D8] bg-white px-2 py-1"
+              className="flex-row items-center gap-1.5 rounded-lg border border-[#E5E0D8] bg-white px-2.5 py-1.5"
             >
               <Text className="text-[10px] font-bold text-[#5A605C]">#{idx + 1}</Text>
               <Text className="text-xs font-bold text-[#2C302E]">{p.name}</Text>

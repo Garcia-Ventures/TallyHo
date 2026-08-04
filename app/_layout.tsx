@@ -45,6 +45,7 @@ export default function RootLayout() {
         options={{
           presentation: 'modal',
           title: 'New Game Setup',
+          headerShown: false,
         }}
       />
       <Stack.Screen
@@ -52,6 +53,7 @@ export default function RootLayout() {
         options={{
           presentation: 'modal',
           title: 'Enter Score',
+          headerShown: false,
         }}
       />
       <Stack.Screen
@@ -67,6 +69,7 @@ export default function RootLayout() {
         options={{
           presentation: 'modal',
           title: 'Match History',
+          headerShown: false,
         }}
       />
     </Stack>

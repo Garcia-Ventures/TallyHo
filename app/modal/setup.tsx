@@ -15,6 +15,7 @@ export default function SetupModalRoute() {
     <View className="flex-1 bg-[#FDFBF7]">
       <GameSetupModalNative
         isOpen={true}
+        isRouteModal={true}
         onClose={() => router.back()}
         preset={preset}
         onStartGame={(setup) => {

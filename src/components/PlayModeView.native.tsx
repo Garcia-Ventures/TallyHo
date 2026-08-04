@@ -67,7 +67,11 @@ export const PlayModeViewNative: React.FC<PlayModeViewNativeProps> = ({
   };
 
   return (
-    <ScrollView className="flex-1 space-y-4 bg-[#FDFBF7] p-4" showsVerticalScrollIndicator={false}>
+    <ScrollView
+      className="flex-1 bg-[#FDFBF7] p-4"
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: 40, gap: 16 }}
+    >
       {/* Header Controls */}
       <View className="flex-row items-center justify-between rounded-2xl border border-[#E5E0D8] bg-[#2C302E] p-4 shadow">
         <View>
@@ -89,15 +93,20 @@ export const PlayModeViewNative: React.FC<PlayModeViewNativeProps> = ({
       </View>
 
       {/* Player Turn Selector Carousel */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row gap-2">
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        className="flex-row"
+        contentContainerStyle={{ gap: 10 }}
+      >
         {game.players.map((player, idx) => {
           const isSelected = idx === selectedPlayerIndex;
           return (
             <Pressable
               key={player.id}
               onPress={() => setSelectedPlayerIndex(idx)}
-              className={`min-w-[110px] items-center space-y-1 rounded-2xl border p-3 ${
-                isSelected ? 'border-[#E5A93C] bg-[#E5A93C]/15 shadow-sm' : 'border-[#E5E0D8] bg-[#F7F4EE]'
+              className={`will-change-variable min-w-[115px] items-center gap-1 rounded-2xl border p-3 ${
+                isSelected ? 'border-2 border-[#E5A93C] bg-[#E5A93C]/15 shadow-sm' : 'border-[#E5E0D8] bg-[#F7F4EE]'
               }`}
             >
               <View
@@ -117,9 +126,9 @@ export const PlayModeViewNative: React.FC<PlayModeViewNativeProps> = ({
 
       {/* Score Input Card */}
       {activePlayer && (
-        <View className="space-y-4 rounded-2xl border border-[#E5E0D8] bg-[#F7F4EE] p-4 shadow-sm">
+        <View className="gap-4 rounded-2xl border border-[#E5E0D8] bg-[#F7F4EE] p-4 shadow-sm">
           <View className="flex-row items-center justify-between border-b border-[#E5E0D8] pb-3">
-            <View className="flex-row items-center gap-2">
+            <View className="flex-row items-center gap-2.5">
               <View
                 className="h-9 w-9 items-center justify-center rounded-full"
                 style={{ backgroundColor: activePlayer.color }}
@@ -132,22 +141,22 @@ export const PlayModeViewNative: React.FC<PlayModeViewNativeProps> = ({
               </View>
             </View>
 
-            <View className="items-end rounded-xl border border-[#E5E0D8] bg-white px-3 py-1.5">
+            <View className="items-end rounded-xl border border-[#E5E0D8] bg-white px-3.5 py-1.5">
               <Text className="text-[10px] text-[#5A605C]">Points Entry</Text>
-              <Text className="text-xl font-black text-[#2C302E]">{scoreInput || '0'}</Text>
+              <Text className="text-2xl font-black text-[#2C302E]">{scoreInput || '0'}</Text>
             </View>
           </View>
 
           {/* Quick Keypad */}
-          <View className="space-y-2">
+          <View className="gap-2">
             <View className="flex-row gap-2">
               {['1', '2', '3', '4', '5'].map((digit) => (
                 <Pressable
                   key={digit}
                   onPress={() => handleKeyTap(digit)}
-                  className="flex-1 items-center rounded-xl border border-[#E5E0D8] bg-white py-3"
+                  className="flex-1 items-center rounded-xl border border-[#E5E0D8] bg-white py-3.5"
                 >
-                  <Text className="text-base font-black text-[#2C302E]">{digit}</Text>
+                  <Text className="text-lg font-black text-[#2C302E]">{digit}</Text>
                 </Pressable>
               ))}
             </View>
@@ -156,22 +165,22 @@ export const PlayModeViewNative: React.FC<PlayModeViewNativeProps> = ({
                 <Pressable
                   key={digit}
                   onPress={() => handleKeyTap(digit)}
-                  className="flex-1 items-center rounded-xl border border-[#E5E0D8] bg-white py-3"
+                  className="flex-1 items-center rounded-xl border border-[#E5E0D8] bg-white py-3.5"
                 >
-                  <Text className="text-base font-black text-[#2C302E]">{digit}</Text>
+                  <Text className="text-lg font-black text-[#2C302E]">{digit}</Text>
                 </Pressable>
               ))}
             </View>
             <View className="flex-row gap-2">
               <Pressable
                 onPress={() => handleKeyTap('CLR')}
-                className="flex-1 items-center rounded-xl border border-[#E5E0D8] bg-white py-3"
+                className="flex-1 items-center rounded-xl border border-red-200 bg-red-50 py-3.5"
               >
                 <Text className="text-xs font-bold text-red-600">CLR</Text>
               </Pressable>
               <Pressable
                 onPress={() => handleKeyTap('DEL')}
-                className="flex-1 items-center rounded-xl border border-[#E5E0D8] bg-white py-3"
+                className="flex-1 items-center rounded-xl border border-gray-300 bg-gray-100 py-3.5"
               >
                 <Text className="text-xs font-bold text-[#5A605C]">⌫</Text>
               </Pressable>
@@ -179,8 +188,11 @@ export const PlayModeViewNative: React.FC<PlayModeViewNativeProps> = ({
           </View>
 
           {/* Submit Button */}
-          <Pressable onPress={handleSubmit} className="items-center justify-center rounded-xl bg-[#6A9C78] py-3 shadow">
-            <Text className="text-sm font-black text-white">✓ Submit Round Score</Text>
+          <Pressable
+            onPress={handleSubmit}
+            className="items-center justify-center rounded-xl bg-[#6A9C78] py-3.5 shadow"
+          >
+            <Text className="text-base font-black text-white">✓ Submit Round Score</Text>
           </Pressable>
         </View>
       )}

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { Easing, interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 interface FlipCardContainerProps {
   isFlipped: boolean;
@@ -13,41 +13,54 @@ export const FlipCardContainerNative: React.FC<FlipCardContainerProps> = ({
   isFlipped,
   frontComponent,
   backComponent,
-  duration = 600,
+  duration = 500,
 }) => {
-  const flipRotation = useSharedValue(isFlipped ? 180 : 0);
+  const flipProgress = useSharedValue(isFlipped ? 1 : 0);
 
   useEffect(() => {
-    flipRotation.value = withTiming(isFlipped ? 180 : 0, { duration });
-  }, [isFlipped, duration, flipRotation]);
+    flipProgress.value = withTiming(isFlipped ? 1 : 0, {
+      duration,
+      easing: Easing.inOut(Easing.cubic),
+    });
+  }, [isFlipped, duration, flipProgress]);
 
   const frontAnimatedStyle = useAnimatedStyle(() => {
-    const rotateY = `${flipRotation.value}deg`;
+    const rotateY = `${interpolate(flipProgress.value, [0, 1], [0, 180])}deg`;
     return {
-      transform: [{ perspective: 1000 }, { rotateY }],
+      transform: [{ perspective: 1200 }, { rotateY }],
       backfaceVisibility: 'hidden',
+      zIndex: flipProgress.value >= 0.5 ? 0 : 10,
     };
   });
 
   const backAnimatedStyle = useAnimatedStyle(() => {
-    const rotateY = `${flipRotation.value + 180}deg`;
+    const rotateY = `${interpolate(flipProgress.value, [0, 1], [180, 360])}deg`;
     return {
-      transform: [{ perspective: 1000 }, { rotateY }],
+      transform: [{ perspective: 1200 }, { rotateY }],
       backfaceVisibility: 'hidden',
+      zIndex: flipProgress.value >= 0.5 ? 10 : 0,
     };
   });
 
   return (
-    <View className="relative min-h-[500px] w-full">
+    <View className="relative w-full flex-1 bg-[#FDFBF7]">
       {/* Front Face (Scoreboard Dashboard) */}
-      <Animated.View className="h-full w-full" style={frontAnimatedStyle} pointerEvents={isFlipped ? 'none' : 'auto'}>
+      <Animated.View
+        style={[
+          { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, flex: 1, backgroundColor: '#FDFBF7' },
+          frontAnimatedStyle,
+        ]}
+        pointerEvents={isFlipped ? 'none' : 'auto'}
+      >
         {frontComponent}
       </Animated.View>
 
       {/* Back Face (Play Mode Sheet) */}
       <Animated.View
-        className="absolute top-0 left-0 h-full w-full"
-        style={backAnimatedStyle}
+        style={[
+          { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, flex: 1, backgroundColor: '#FDFBF7' },
+          backAnimatedStyle,
+        ]}
         pointerEvents={!isFlipped ? 'none' : 'auto'}
       >
         {backComponent}

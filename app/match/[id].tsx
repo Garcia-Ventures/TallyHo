@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { FlipCardContainerNative } from '../../src/components/FlipCardContainer';
 import { PlayModeViewNative } from '../../src/components/PlayModeView';
@@ -13,6 +13,12 @@ export default function MatchScreen() {
   const { activeGame, isPlayMode, setIsPlayMode, submitRoundScore, reorderPlayers, endMatchManually } = useGameStore();
 
   const [_, setSelectedKeypadPlayer] = useState<Player | null>(null);
+
+  useEffect(() => {
+    if (!activeGame) {
+      router.dismissTo('/');
+    }
+  }, [activeGame, router]);
 
   if (!activeGame) {
     return null;

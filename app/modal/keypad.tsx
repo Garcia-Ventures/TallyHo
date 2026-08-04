@@ -18,6 +18,7 @@ export default function KeypadModalRoute() {
     <View className="flex-1 bg-[#FDFBF7]">
       <ScoreKeypadModalNative
         isOpen={true}
+        isRouteModal={true}
         onClose={() => router.back()}
         player={player}
         onSubmitScore={(score) => {

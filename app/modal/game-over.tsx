@@ -17,13 +17,14 @@ export default function GameOverModalRoute() {
       <ConfettiCelebrationNative />
       <GameOverModalNative
         isOpen={true}
+        isRouteModal={true}
         onClose={() => {
           clearActiveGame();
-          router.replace('/');
+          router.dismissTo('/');
         }}
         game={activeGame}
         onRematch={() => {
-          createGame({
+          const setup = {
             name: activeGame.name,
             presetId: activeGame.presetId,
             scoringMode: activeGame.scoringMode,
@@ -31,10 +32,12 @@ export default function GameOverModalRoute() {
             targetScore: activeGame.targetScore,
             targetRounds: activeGame.targetRounds,
             players: activeGame.players,
-          });
+          };
+          clearActiveGame();
+          createGame(setup);
           const newGame = useGameStore.getState().activeGame;
           if (newGame) {
-            router.replace(`/match/${newGame.id}`);
+            router.dismissTo(`/match/${newGame.id}`);
           }
         }}
       />
