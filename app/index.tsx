@@ -92,7 +92,7 @@ export default function HomeScreen() {
               onPress={() => handleSelectPreset(preset)}
               className="w-[48%] sm:w-[31%] md:w-[31%]"
             >
-              <Card className="border-border bg-card h-full justify-between space-y-2 p-4 shadow-xs">
+              <Card className="border-border bg-card justify-between space-y-2 p-4 shadow-xs">
                 <CardContent className="space-y-2 p-0">
                   <Text className="text-2xl">{preset.icon}</Text>
                   <Text className="text-foreground text-sm font-black">{preset.name}</Text>
