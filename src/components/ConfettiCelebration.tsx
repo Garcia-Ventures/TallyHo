@@ -5,20 +5,21 @@ import Animated, { useAnimatedStyle, useSharedValue, withDelay, withTiming } fro
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const CONFETTI_COLORS = ['#E5A93C', '#6A9C78', '#D96B43', '#3B5998', '#C84B31', '#8B6B9C'];
-const PARTICLE_COUNT = 40;
+const PARTICLE_COUNT = 50;
 
 interface ConfettiParticleProps {
   index: number;
 }
 
 const Particle: React.FC<ConfettiParticleProps> = ({ index }) => {
-  const startX = SCREEN_WIDTH / 2;
-  const startY = SCREEN_HEIGHT * 0.5;
+  const startX = Math.random() * SCREEN_WIDTH;
+  const startY = -30;
 
-  const targetX = Math.random() * SCREEN_WIDTH;
-  const targetY = Math.random() * (SCREEN_HEIGHT * 0.8);
+  const driftX = (Math.random() - 0.5) * 160;
+  const targetY = SCREEN_HEIGHT + 60;
   const color = CONFETTI_COLORS[index % CONFETTI_COLORS.length];
-  const size = Math.random() * 8 + 6;
+  const sizeWidth = Math.random() * 8 + 6;
+  const sizeHeight = Math.random() * 12 + 8;
 
   const opacity = useSharedValue(1);
   const translateY = useSharedValue(startY);
@@ -26,12 +27,14 @@ const Particle: React.FC<ConfettiParticleProps> = ({ index }) => {
   const rotate = useSharedValue(0);
 
   useEffect(() => {
-    const delay = Math.random() * 200;
-    translateX.value = withDelay(delay, withTiming(targetX, { duration: 1200 }));
-    translateY.value = withDelay(delay, withTiming(targetY + 200, { duration: 1500 }));
-    rotate.value = withDelay(delay, withTiming(720, { duration: 1500 }));
-    opacity.value = withDelay(delay + 800, withTiming(0, { duration: 700 }));
-  }, [translateX, translateY, rotate, opacity, targetX, targetY]);
+    const delay = Math.random() * 600;
+    const duration = 2500 + Math.random() * 1200;
+
+    translateX.value = withDelay(delay, withTiming(startX + driftX, { duration }));
+    translateY.value = withDelay(delay, withTiming(targetY, { duration }));
+    rotate.value = withDelay(delay, withTiming(Math.random() > 0.5 ? 720 : -720, { duration }));
+    opacity.value = withDelay(delay + duration - 800, withTiming(0, { duration: 800 }));
+  }, [startX, startY, driftX, targetY, translateX, translateY, rotate, opacity]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }, { translateY: translateY.value }, { rotate: `${rotate.value}deg` }],
@@ -40,12 +43,12 @@ const Particle: React.FC<ConfettiParticleProps> = ({ index }) => {
 
   return (
     <Animated.View
-      className="absolute rounded-sm"
+      className="absolute rounded-xs"
       style={[
         animatedStyle,
         {
-          width: size,
-          height: size,
+          width: sizeWidth,
+          height: sizeHeight,
           backgroundColor: color,
         },
       ]}
@@ -54,8 +57,30 @@ const Particle: React.FC<ConfettiParticleProps> = ({ index }) => {
 };
 
 export const ConfettiCelebration: React.FC = () => {
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      import('canvas-confetti')
+        .then((confettiModule) => {
+          const confetti = confettiModule.default || confettiModule;
+          confetti({
+            particleCount: 60,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0, y: 0.6 },
+          });
+          confetti({
+            particleCount: 60,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1, y: 0.6 },
+          });
+        })
+        .catch(() => {});
+    }
+  }, []);
+
   return (
-    <View className="pointer-events-none absolute inset-0 z-50">
+    <View className="pointer-events-none absolute inset-0 z-50 overflow-hidden">
       {Array.from({ length: PARTICLE_COUNT }).map((_, i) => (
         <Particle key={i} index={i} />
       ))}

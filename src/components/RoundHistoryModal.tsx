@@ -1,6 +1,6 @@
 import { Button, Card, CardContent, Input, Text } from '@gv-tech/ui-native';
 import React, { useState } from 'react';
-import { Modal, Pressable, ScrollView, View } from 'react-native';
+import { Modal, ScrollView, View } from 'react-native';
 import { nativeSound } from '../services/audio';
 import { GameSession, Round } from '../types/game';
 
@@ -65,9 +65,9 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
   };
 
   const content = (
-    <View className="bg-background flex-1 justify-between gap-4 p-5">
-      {/* Header */}
-      {!isRouteModal && (
+    <View className="bg-background flex-1 items-center justify-between p-5">
+      <View className="w-full max-w-2xl flex-1 justify-between gap-4">
+        {/* Header */}
         <View className="border-border flex-row items-center justify-between border-b pb-3">
           <View>
             <Text className="text-foreground text-xl font-black">Round History & Edit Log</Text>
@@ -75,111 +75,113 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
               Fix mistaken entries or adjust past scores
             </Text>
           </View>
-          <Pressable
+          <Button
             onPress={() => {
               nativeSound.playKeypadTap();
               onClose();
             }}
+            variant="ghost"
+            size="sm"
             className="p-1"
           >
-            <Text className="text-muted-foreground text-base font-bold">✕</Text>
-          </Pressable>
+            <Text className="text-foreground text-base font-bold">✕</Text>
+          </Button>
         </View>
-      )}
 
-      {/* Content Sheet */}
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingBottom: 16 }}>
-        {game.rounds.length === 0 ? (
-          <Card className="border-border bg-card items-center justify-center p-8">
-            <CardContent className="items-center justify-center gap-2 p-0">
-              <Text className="text-3xl">📋</Text>
-              <Text className="text-muted-foreground text-sm font-bold">
-                No rounds recorded yet. Log your first round on the score pad!
-              </Text>
-            </CardContent>
-          </Card>
-        ) : (
-          game.rounds.map((round, idx) => {
-            const isEditing = editingRoundIndex === idx;
+        {/* Content Sheet */}
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingBottom: 16 }}>
+          {game.rounds.length === 0 ? (
+            <Card className="border-border bg-card items-center justify-center p-8">
+              <CardContent className="items-center justify-center gap-2 p-0">
+                <Text className="text-3xl">📋</Text>
+                <Text className="text-muted-foreground text-sm font-bold">
+                  No rounds recorded yet. Log your first round on the score pad!
+                </Text>
+              </CardContent>
+            </Card>
+          ) : (
+            game.rounds.map((round, idx) => {
+              const isEditing = editingRoundIndex === idx;
 
-            return (
-              <Card key={round.roundNumber} className="border-border bg-card p-4">
-                <CardContent className="space-y-3 p-0">
-                  <View className="border-border flex-row items-center justify-between border-b pb-2">
-                    <Text className="text-foreground text-xs font-black uppercase">Round {round.roundNumber}</Text>
+              return (
+                <Card key={round.roundNumber} className="border-border bg-card p-4">
+                  <CardContent className="space-y-3 p-0">
+                    <View className="border-border flex-row items-center justify-between border-b pb-2">
+                      <Text className="text-foreground text-xs font-black uppercase">Round {round.roundNumber}</Text>
 
-                    <View className="flex-row items-center gap-2">
-                      {isEditing ? (
-                        <Button onPress={() => handleSaveEdit(idx)} className="h-8 rounded-lg bg-[#6A9C78] px-3 py-1">
-                          <Text className="text-xs font-bold text-white">✓ Save</Text>
-                        </Button>
-                      ) : (
+                      <View className="flex-row items-center gap-2">
+                        {isEditing ? (
+                          <Button onPress={() => handleSaveEdit(idx)} className="h-8 rounded-lg bg-[#6A9C78] px-3 py-1">
+                            <Text className="text-xs font-bold text-white">✓ Save</Text>
+                          </Button>
+                        ) : (
+                          <Button
+                            onPress={() => handleStartEdit(idx, round)}
+                            variant="ghost"
+                            className="h-8 rounded-lg px-2.5 py-1"
+                          >
+                            <Text className="text-muted-foreground text-xs font-bold">✏️ Edit</Text>
+                          </Button>
+                        )}
+
                         <Button
-                          onPress={() => handleStartEdit(idx, round)}
+                          onPress={() => handleDeleteRound(idx)}
                           variant="ghost"
-                          className="h-8 rounded-lg px-2.5 py-1"
+                          className="h-8 rounded-lg px-2 py-1"
                         >
-                          <Text className="text-muted-foreground text-xs font-bold">✏️ Edit</Text>
+                          <Text className="text-xs font-bold text-[#C84B31]">🗑️</Text>
                         </Button>
-                      )}
-
-                      <Button
-                        onPress={() => handleDeleteRound(idx)}
-                        variant="ghost"
-                        className="h-8 rounded-lg px-2 py-1"
-                      >
-                        <Text className="text-xs font-bold text-[#C84B31]">🗑️</Text>
-                      </Button>
+                      </View>
                     </View>
-                  </View>
 
-                  {/* Player Scores Grid */}
-                  <View className="flex-row flex-wrap gap-3">
-                    {game.players.map((p) => {
-                      const score = round.scores[p.id];
-                      const pts = score?.points || 0;
+                    {/* Player Scores Grid */}
+                    <View className="flex-row flex-wrap gap-3">
+                      {game.players.map((p) => {
+                        const score = round.scores[p.id];
+                        const pts = score?.points || 0;
 
-                      return (
-                        <View key={p.id} className="w-[47%] space-y-1">
-                          <Text className="text-muted-foreground truncate text-[11px] font-extrabold">{p.name}</Text>
+                        return (
+                          <View key={p.id} className="w-[calc(50%-6px)] space-y-1 sm:w-[calc(25%-9px)]">
+                            <Text className="text-muted-foreground truncate text-[11px] font-extrabold">{p.name}</Text>
 
-                          {isEditing ? (
-                            <Input
-                              keyboardType="numeric"
-                              value={editScoreMap[p.id] ?? String(pts)}
-                              onChangeText={(val) =>
-                                setEditScoreMap({
-                                  ...editScoreMap,
-                                  [p.id]: val,
-                                })
-                              }
-                              className="border-border bg-popover text-foreground h-9 rounded-lg px-2 py-1 text-sm font-black"
-                            />
-                          ) : (
-                            <Text className="text-foreground text-base font-black">{pts}</Text>
-                          )}
-                        </View>
-                      );
-                    })}
-                  </View>
-                </CardContent>
-              </Card>
-            );
-          })
-        )}
-      </ScrollView>
+                            {isEditing ? (
+                              <Input
+                                keyboardType="numeric"
+                                value={editScoreMap[p.id] ?? String(pts)}
+                                onChangeText={(val) =>
+                                  setEditScoreMap({
+                                    ...editScoreMap,
+                                    [p.id]: val,
+                                  })
+                                }
+                                className="border-border bg-popover text-foreground h-9 rounded-lg px-2 py-1 text-sm font-black"
+                              />
+                            ) : (
+                              <Text className="text-foreground text-base font-black">{pts}</Text>
+                            )}
+                          </View>
+                        );
+                      })}
+                    </View>
+                  </CardContent>
+                </Card>
+              );
+            })
+          )}
+        </ScrollView>
 
-      {/* Footer */}
-      <View className="flex-row justify-end pt-2">
-        <Button
-          onPress={() => {
-            nativeSound.playKeypadTap();
-            onClose();
-          }}
-          className="bg-primary rounded-xl px-6 py-2.5"
-        >
-          <Text className="text-primary-foreground text-xs font-extrabold">Done</Text>
-        </Button>
+        {/* Footer */}
+        <View className="flex-row justify-end pt-2">
+          <Button
+            onPress={() => {
+              nativeSound.playKeypadTap();
+              onClose();
+            }}
+            className="bg-primary rounded-xl px-6 py-2.5"
+          >
+            <Text className="text-primary-foreground text-xs font-extrabold">Done</Text>
+          </Button>
+        </View>
       </View>
     </View>
   );

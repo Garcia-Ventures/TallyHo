@@ -107,7 +107,7 @@ export const ScoreboardView: React.FC<ScoreboardViewProps> = ({
             return (
               <Card
                 key={player.id}
-                className={`will-change-variable border-border max-w-[49%] min-w-[145px] flex-1 overflow-hidden rounded-2xl border shadow-xs sm:max-w-[31%] md:max-w-[24%] ${
+                className={`will-change-variable border-border w-[calc(50%-5px)] min-w-[140px] overflow-hidden rounded-2xl border shadow-xs sm:w-[calc(33.333%-7px)] md:w-[calc(25%-8px)] ${
                   hasLoggedCurrentRound ? 'bg-muted/70' : 'bg-card'
                 }`}
               >
