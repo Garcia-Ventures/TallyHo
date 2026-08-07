@@ -1,49 +1,16 @@
-import { NativeModules } from 'react-native';
 import { nativeHaptics } from './haptics.native';
 import { storage } from './storage';
 
-interface SoundObject {
-  replayAsync: () => Promise<unknown>;
-}
-
-interface AudioClass {
-  Sound: {
-    createAsync: (source: { uri: string }) => Promise<{ sound: SoundObject }>;
-  };
+interface ExpoAudioPlayer {
+  play: () => void;
 }
 
 /**
- * Native Sound Service for Expo / React Native with safe native module guards.
+ * Native Sound Service for Expo / React Native using expo-audio and haptics.
  */
 class NativeSoundService {
-  private soundCache: Record<string, SoundObject> = {};
-  private AudioModule: AudioClass | null = null;
+  private playerCache: Record<string, ExpoAudioPlayer> = {};
   private isAudioAvailable = true;
-
-  private async getAudioModule(): Promise<AudioClass | null> {
-    if (!this.isAudioAvailable) {
-      return null;
-    }
-    if (this.AudioModule) {
-      return this.AudioModule;
-    }
-
-    try {
-      // Guard against missing ExponentAV native module in Expo Go or custom dev client
-      const hasNativeAV = NativeModules && (NativeModules.ExponentAV || NativeModules.ExpoAudio);
-      if (!hasNativeAV) {
-        this.isAudioAvailable = false;
-        return null;
-      }
-
-      const expoAv = await import('expo-av');
-      this.AudioModule = expoAv.Audio as unknown as AudioClass;
-      return this.AudioModule;
-    } catch {
-      this.isAudioAvailable = false;
-      return null;
-    }
-  }
 
   private async playAudioFile(key: string, sourceUri?: string): Promise<void> {
     const settings = storage.getSettings();
@@ -51,22 +18,24 @@ class NativeSoundService {
       return;
     }
 
-    try {
-      const Audio = await this.getAudioModule();
-      if (!Audio) {
-        return;
-      }
+    if (!sourceUri || !this.isAudioAvailable) {
+      return;
+    }
 
-      if (sourceUri && !this.soundCache[key]) {
-        const { sound } = await Audio.Sound.createAsync({ uri: sourceUri });
-        this.soundCache[key] = sound;
+    try {
+      if (!this.playerCache[key]) {
+        const expoAudio = await import('expo-audio');
+        if (expoAudio && typeof expoAudio.createAudioPlayer === 'function') {
+          const player = expoAudio.createAudioPlayer(sourceUri);
+          this.playerCache[key] = player as unknown as ExpoAudioPlayer;
+        }
       }
-      const cached = this.soundCache[key];
-      if (cached) {
-        await cached.replayAsync();
+      const player = this.playerCache[key];
+      if (player) {
+        player.play();
       }
     } catch {
-      // Audio playback fallback
+      this.isAudioAvailable = false;
     }
   }
 

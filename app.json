@@ -6,11 +6,6 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#FDFBF7"
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.garciaventures.tallyho"
@@ -27,9 +22,9 @@
       "bundler": "metro"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-audio"
     ],
-    "scheme": "tallyho",
-    "newArchEnabled": true
+    "scheme": "tallyho"
   }
 }
