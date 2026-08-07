@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { GameSession, Player, RoundScore } from '../types/game';
 import { calculatePlayerTotals } from '../utils/scoring';
+import { ScreenContainer } from './ScreenContainer';
 
 interface PlayModeViewProps {
   game: GameSession;
@@ -68,12 +69,8 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
   };
 
   return (
-    <ScrollView
-      className="bg-background flex-1"
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ alignItems: 'center', paddingBottom: 40 }}
-    >
-      <View className="w-full max-w-2xl space-y-4 p-4">
+    <ScreenContainer maxWidth="2xl">
+      <View className="gap-4">
         {/* Header Controls */}
         <Card className="border-border bg-card flex-row items-center justify-between rounded-2xl border p-4 shadow">
           <CardContent className="w-full flex-row items-center justify-between p-0">
@@ -189,7 +186,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
           </Card>
         )}
       </View>
-    </ScrollView>
+    </ScreenContainer>
   );
 };
 

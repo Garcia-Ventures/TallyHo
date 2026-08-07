@@ -1,6 +1,7 @@
 import { Badge, Button, Card, CardContent, Text } from '@gv-tech/ui-native';
 import { useRouter } from 'expo-router';
-import { Pressable, ScrollView, View } from 'react-native';
+import { Pressable, View } from 'react-native';
+import { ScreenContainer } from '../src/components/ScreenContainer';
 import { useGameStore } from '../src/stores/useGameStore';
 import { GAME_PRESETS, GamePreset } from '../src/types/game';
 import { calculatePlayerTotals, getSortedPlayers } from '../src/utils/scoring';
@@ -23,12 +24,8 @@ export default function HomeScreen() {
   };
 
   return (
-    <ScrollView
-      className="bg-background flex-1"
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ alignItems: 'center', paddingBottom: 48 }}
-    >
-      <View className="w-full max-w-4xl gap-8 p-5 sm:p-8">
+    <ScreenContainer maxWidth="4xl">
+      <View className="gap-8">
         {/* Active Game Resume Banner */}
         {activeGame && activeGame.status === 'ACTIVE' && (
           <Card className="border-[#E5A93C] bg-[#E5A93C]/15 p-5 shadow-sm sm:p-6">
@@ -61,7 +58,7 @@ export default function HomeScreen() {
 
         {/* Start New Game Header */}
         <View className="gap-4">
-          <View className="mb-2 flex-row items-center justify-between">
+          <View className="mb-2 flex-row flex-wrap items-center justify-between gap-3">
             <View>
               <Text className="text-muted-foreground text-xs font-black tracking-widest uppercase">Start a Game</Text>
               <Text className="text-foreground text-2xl font-black">Rulebook Presets</Text>
@@ -86,14 +83,10 @@ export default function HomeScreen() {
           </View>
 
           {/* Game Presets Grid */}
-          <View className="flex-row flex-wrap justify-start gap-4 sm:gap-5">
+          <View className="flex-row flex-wrap justify-start gap-3.5 sm:gap-5">
             {GAME_PRESETS.map((preset) => (
-              <Pressable
-                key={preset.id}
-                onPress={() => handleSelectPreset(preset)}
-                className="w-[calc(50%-8px)] sm:w-[calc(33.333%-13.333px)]"
-              >
-                <Card className="border-border bg-card h-full justify-between p-5 shadow-xs">
+              <Pressable key={preset.id} onPress={() => handleSelectPreset(preset)} className="w-[47.5%] sm:w-[31.5%]">
+                <Card className="border-border bg-card justify-between p-5 shadow-xs">
                   <CardContent className="flex-1 justify-between gap-2.5 p-0">
                     <View className="gap-2">
                       <Text className="text-2xl">{preset.icon}</Text>
@@ -165,6 +158,6 @@ export default function HomeScreen() {
           )}
         </View>
       </View>
-    </ScrollView>
+    </ScreenContainer>
   );
 }

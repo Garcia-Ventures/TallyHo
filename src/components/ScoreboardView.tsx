@@ -3,6 +3,7 @@ import React from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { GameSession, Player } from '../types/game';
 import { calculatePlayerTotals, getSortedPlayers } from '../utils/scoring';
+import { ScreenContainer } from './ScreenContainer';
 
 interface ScoreboardViewProps {
   game: GameSession;
@@ -42,12 +43,8 @@ export const ScoreboardView: React.FC<ScoreboardViewProps> = ({
   };
 
   return (
-    <ScrollView
-      className="bg-background flex-1"
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ alignItems: 'center', paddingBottom: 40 }}
-    >
-      <View className="w-full max-w-4xl space-y-4 p-4">
+    <ScreenContainer maxWidth="4xl">
+      <View className="gap-4">
         {/* Match Header Banner */}
         <Card className="border-border bg-card gap-3 rounded-2xl border p-4 shadow-sm">
           <CardContent className="gap-3 p-0">
@@ -107,7 +104,7 @@ export const ScoreboardView: React.FC<ScoreboardViewProps> = ({
             return (
               <Card
                 key={player.id}
-                className={`will-change-variable border-border w-[calc(50%-5px)] min-w-[140px] overflow-hidden rounded-2xl border shadow-xs sm:w-[calc(33.333%-7px)] md:w-[calc(25%-8px)] ${
+                className={`will-change-variable border-border w-[47.5%] min-w-[140px] overflow-hidden rounded-2xl border shadow-xs sm:w-[31.5%] md:w-[23.5%] ${
                   hasLoggedCurrentRound ? 'bg-muted/70' : 'bg-card'
                 }`}
               >
@@ -206,7 +203,7 @@ export const ScoreboardView: React.FC<ScoreboardViewProps> = ({
           </CardContent>
         </Card>
       </View>
-    </ScrollView>
+    </ScreenContainer>
   );
 };
 

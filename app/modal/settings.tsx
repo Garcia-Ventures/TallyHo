@@ -28,6 +28,7 @@ import {
 } from 'lucide-react-native';
 import { useState } from 'react';
 import { ActivityIndicator, Alert, Modal, Platform, Pressable, ScrollView, View } from 'react-native';
+import { ScreenContainer } from '../../src/components/ScreenContainer';
 import { nativeSound } from '../../src/services/audio';
 import { useSettingsStore } from '../../src/stores/useSettingsStore';
 
@@ -140,16 +141,18 @@ export default function SettingsModal() {
     <View className="bg-background flex-1">
       {/* Top Bar Header */}
       <View className="border-border bg-card flex-row items-center justify-between border-b px-6 py-4">
-        <View>
-          <Text className="text-foreground text-xl font-black">Settings</Text>
-          <Text className="text-muted-foreground text-xs">GV Tech UI Native • Preferences & Compliance</Text>
+        <View className="mx-auto w-full max-w-2xl flex-row items-center justify-between">
+          <View>
+            <Text className="text-foreground text-xl font-black">Settings</Text>
+            <Text className="text-muted-foreground text-xs">GV Tech UI Native • Preferences & Compliance</Text>
+          </View>
+          <Button onPress={() => router.back()} variant="ghost" size="icon" className="rounded-full">
+            <X size={20} color="#5A605C" />
+          </Button>
         </View>
-        <Button onPress={() => router.back()} variant="ghost" size="icon" className="rounded-full">
-          <X size={20} color="#5A605C" />
-        </Button>
       </View>
 
-      <ScrollView className="flex-1 px-6 py-4" showsVerticalScrollIndicator={false}>
+      <ScreenContainer maxWidth="2xl" padding="normal" className="flex-1">
         {/* SECTION 1: APPEARANCE & THEME */}
         <Card className="border-border bg-card mb-6">
           <CardHeader className="pb-2">
@@ -373,7 +376,7 @@ export default function SettingsModal() {
         <Text className="text-muted-foreground mb-8 text-center text-xs font-medium">
           Formspree Active • TallyHo v1.0.0 (Build 42) • GV Tech UI Native
         </Text>
-      </ScrollView>
+      </ScreenContainer>
 
       {/* PRIVACY STATEMENT MODAL */}
       <Modal visible={showPrivacyModal} animationType="slide" transparent={false}>
