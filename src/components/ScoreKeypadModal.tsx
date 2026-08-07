@@ -102,9 +102,11 @@ export const ScoreKeypadModal: React.FC<ScoreKeypadModalProps> = ({
                   key={btn}
                   onPress={() => handleKeyPress(btn)}
                   variant={btn === 'CLR' ? 'destructive' : btn === 'DEL' ? 'secondary' : 'outline'}
-                  className="flex-1 items-center justify-center rounded-2xl py-4"
+                  className="h-14 flex-1 items-center justify-center rounded-2xl py-0"
                 >
-                  <Text className={`text-2xl font-black ${btn === 'CLR' ? 'text-white' : 'text-foreground'}`}>
+                  <Text
+                    className={`text-xl leading-none font-black ${btn === 'CLR' ? 'text-white' : 'text-foreground'}`}
+                  >
                     {btn === 'DEL' ? '⌫' : btn}
                   </Text>
                 </Button>
@@ -116,9 +118,9 @@ export const ScoreKeypadModal: React.FC<ScoreKeypadModalProps> = ({
         {/* Submit Action */}
         <Button
           onPress={handleSubmit}
-          className="mt-2 items-center justify-center rounded-2xl bg-[#C84B31] py-4 shadow"
+          className="mt-2 h-14 items-center justify-center rounded-2xl bg-[#C84B31] py-0 shadow"
         >
-          <Text className="text-base font-black text-white">Save Round Score</Text>
+          <Text className="text-base leading-none font-black text-white">Save Round Score</Text>
         </Button>
       </View>
     </View>

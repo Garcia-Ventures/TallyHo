@@ -164,9 +164,13 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                         key={btn}
                         onPress={() => handleKeyTap(btn)}
                         variant={btn === 'CLR' ? 'destructive' : btn === 'DEL' ? 'secondary' : 'outline'}
-                        className="flex-1 items-center justify-center rounded-2xl py-3.5"
+                        className="h-14 flex-1 items-center justify-center rounded-2xl py-0"
                       >
-                        <Text className={`text-xl font-black ${btn === 'CLR' ? 'text-white' : 'text-foreground'}`}>
+                        <Text
+                          className={`text-xl leading-none font-black ${
+                            btn === 'CLR' ? 'text-white' : 'text-foreground'
+                          }`}
+                        >
                           {btn === 'DEL' ? '⌫' : btn}
                         </Text>
                       </Button>
