@@ -2,9 +2,9 @@ import '../src/global.css';
 
 import { ThemeProvider } from '@gv-tech/ui-native';
 import { Stack } from 'expo-router';
-import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
 import { useEffect } from 'react';
-import { Platform, useColorScheme } from 'react-native';
+import { useColorScheme } from 'react-native';
+
 import { useGameStore } from '../src/stores/useGameStore';
 import { usePlayerLibraryStore } from '../src/stores/usePlayerLibraryStore';
 import { useSettingsStore } from '../src/stores/useSettingsStore';
@@ -15,26 +15,8 @@ export default function RootLayout() {
   const loadSettings = useSettingsStore((state) => state.loadSettings);
   const themeMode = useSettingsStore((state) => state.settings.themeMode);
   const systemScheme = useColorScheme();
-  const { setColorScheme } = useNativeWindColorScheme();
 
   const isDark = themeMode === 'dark' || (themeMode === 'system' && systemScheme === 'dark');
-
-  useEffect(() => {
-    if (Platform.OS === 'web') {
-      if (typeof document !== 'undefined') {
-        document.documentElement.classList.toggle('dark', isDark);
-        if (document.body) {
-          document.body.classList.toggle('dark', isDark);
-        }
-      }
-    } else {
-      try {
-        setColorScheme(isDark ? 'dark' : 'light');
-      } catch {
-        // Fallback for platform limitations
-      }
-    }
-  }, [isDark, setColorScheme]);
 
   useEffect(() => {
     loadInitialData();

@@ -1,6 +1,6 @@
-import { Text } from '@gv-tech/ui-native';
+import { Button, Card, CardContent, Input, Text } from '@gv-tech/ui-native';
 import React, { useState } from 'react';
-import { Modal, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { Modal, Pressable, ScrollView, View } from 'react-native';
 import { GAME_PRESETS, GamePreset, PLAYER_COLORS, Player, RoundScoringType, ScoringMode } from '../types/game';
 
 interface GameSetupModalProps {
@@ -90,9 +90,9 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
       {/* Unified Screen Header */}
       <View className="border-border mb-4 flex-row items-center justify-between border-b pb-3">
         <Text className="text-foreground text-xl font-black">New Game Setup</Text>
-        <Pressable onPress={onClose} className="p-1">
+        <Button onPress={onClose} variant="ghost" size="sm" className="p-1">
           <Text className="text-muted-foreground text-base font-bold">✕</Text>
-        </Pressable>
+        </Button>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 24, gap: 18 }}>
@@ -134,7 +134,7 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
         {/* Match Name Input */}
         <View className="gap-1">
           <Text className="text-muted-foreground text-xs font-bold">Match Name</Text>
-          <TextInput
+          <Input
             value={matchName}
             onChangeText={setMatchName}
             className="border-border bg-popover text-foreground rounded-xl border p-3.5 text-sm font-bold"
@@ -146,7 +146,7 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
         {/* Target Score */}
         <View className="gap-1">
           <Text className="text-muted-foreground text-xs font-bold">Target Winning Score</Text>
-          <TextInput
+          <Input
             value={targetScoreStr}
             onChangeText={setTargetScoreStr}
             keyboardType="numeric"
@@ -162,50 +162,46 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
 
           <View className="gap-2">
             {players.map((p) => (
-              <View
+              <Card
                 key={p.id}
                 className="border-border bg-popover flex-row items-center justify-between rounded-xl border p-3"
               >
-                <View className="flex-row items-center gap-2.5">
-                  <View
-                    className="h-7 w-7 items-center justify-center rounded-full"
-                    style={{ backgroundColor: p.color }}
-                  >
-                    <Text className="text-xs font-black text-white">{p.initials}</Text>
+                <CardContent className="w-full flex-row items-center justify-between p-0">
+                  <View className="flex-row items-center gap-2.5">
+                    <View
+                      className="h-7 w-7 items-center justify-center rounded-full"
+                      style={{ backgroundColor: p.color }}
+                    >
+                      <Text className="text-xs font-black text-white">{p.initials}</Text>
+                    </View>
+                    <Text className="text-foreground text-xs font-bold">{p.name}</Text>
                   </View>
-                  <Text className="text-foreground text-xs font-bold">{p.name}</Text>
-                </View>
-                <Pressable onPress={() => handleRemovePlayer(p.id)} className="p-1">
-                  <Text className="text-xs font-bold text-red-500">Remove</Text>
-                </Pressable>
-              </View>
+                  <Button onPress={() => handleRemovePlayer(p.id)} variant="ghost" size="sm" className="p-1">
+                    <Text className="text-xs font-bold text-red-500">Remove</Text>
+                  </Button>
+                </CardContent>
+              </Card>
             ))}
           </View>
 
           <View className="mt-1 flex-row gap-2">
-            <TextInput
+            <Input
               value={newPlayerName}
               onChangeText={setNewPlayerName}
               placeholder="Add player name..."
               placeholderTextColor="#8A8F8C"
               className="border-border bg-popover text-foreground flex-1 rounded-xl border p-3 text-xs font-bold"
             />
-            <Pressable
-              onPress={handleAddPlayer}
-              className="bg-primary items-center justify-center rounded-xl px-4 py-3"
-            >
+            <Button onPress={handleAddPlayer} className="bg-primary items-center justify-center rounded-xl px-4 py-3">
               <Text className="text-primary-foreground text-xs font-bold">+ Add</Text>
-            </Pressable>
+            </Button>
           </View>
         </View>
 
         {/* Start Game Action */}
-        <Pressable
-          onPress={handleStart}
-          className="mt-2 items-center justify-center rounded-2xl bg-[#C84B31] py-4 shadow"
-        >
+        <Button onPress={handleStart} className="mt-2 items-center justify-center rounded-2xl bg-[#C84B31] py-4 shadow">
           <Text className="text-base font-black text-white">🚀 Start Match</Text>
-        </Pressable>
+        </Button>
       </ScrollView>
     </View>
   );

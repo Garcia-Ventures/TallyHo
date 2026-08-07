@@ -1,6 +1,6 @@
-import { Text } from '@gv-tech/ui-native';
+import { Button, Card, CardContent, Text } from '@gv-tech/ui-native';
 import React, { useState } from 'react';
-import { Modal, Pressable, View } from 'react-native';
+import { Modal, View } from 'react-native';
 import { Player, RoundScore } from '../types/game';
 
 interface ScoreKeypadModalProps {
@@ -70,17 +70,19 @@ export const ScoreKeypadModal: React.FC<ScoreKeypadModalProps> = ({
         </View>
 
         {!isRouteModal && (
-          <Pressable onPress={onClose} className="p-1">
+          <Button onPress={onClose} variant="ghost" size="sm" className="p-1">
             <Text className="text-muted-foreground text-base font-bold">✕</Text>
-          </Pressable>
+          </Button>
         )}
       </View>
 
       {/* Number Display */}
-      <View className="border-border bg-card items-center justify-center rounded-2xl border px-4 py-6 shadow-inner">
-        <Text className="text-muted-foreground mb-1 text-xs font-bold">SCORE</Text>
-        <Text className="text-foreground text-5xl font-black">{pointsStr || '0'}</Text>
-      </View>
+      <Card className="border-border bg-card items-center justify-center rounded-2xl border px-4 py-6 shadow-inner">
+        <CardContent className="items-center justify-center p-0">
+          <Text className="text-muted-foreground mb-1 text-xs font-bold">SCORE</Text>
+          <Text className="text-foreground text-5xl font-black">{pointsStr || '0'}</Text>
+        </CardContent>
+      </Card>
 
       {/* Keypad Grid */}
       <View className="gap-2.5">
@@ -92,35 +94,25 @@ export const ScoreKeypadModal: React.FC<ScoreKeypadModalProps> = ({
         ].map((row, rIdx) => (
           <View key={rIdx} className="flex-row gap-2.5">
             {row.map((btn) => (
-              <Pressable
+              <Button
                 key={btn}
                 onPress={() => handleKeyPress(btn)}
-                className={`flex-1 items-center justify-center rounded-2xl border py-4 ${
-                  btn === 'CLR'
-                    ? 'border-red-200 bg-red-50 dark:border-red-900/40 dark:bg-red-950/40'
-                    : btn === 'DEL'
-                      ? 'border-border bg-muted'
-                      : 'border-border bg-popover shadow-xs'
-                }`}
+                variant={btn === 'CLR' ? 'destructive' : btn === 'DEL' ? 'secondary' : 'outline'}
+                className="flex-1 items-center justify-center rounded-2xl py-4"
               >
-                <Text
-                  className={`text-2xl font-black ${btn === 'CLR' ? 'text-red-600 dark:text-red-400' : 'text-foreground'}`}
-                >
+                <Text className={`text-2xl font-black ${btn === 'CLR' ? 'text-white' : 'text-foreground'}`}>
                   {btn === 'DEL' ? '⌫' : btn}
                 </Text>
-              </Pressable>
+              </Button>
             ))}
           </View>
         ))}
       </View>
 
       {/* Submit Action */}
-      <Pressable
-        onPress={handleSubmit}
-        className="mt-2 items-center justify-center rounded-2xl bg-[#C84B31] py-4 shadow"
-      >
+      <Button onPress={handleSubmit} className="mt-2 items-center justify-center rounded-2xl bg-[#C84B31] py-4 shadow">
         <Text className="text-base font-black text-white">Save Round Score</Text>
-      </Pressable>
+      </Button>
     </View>
   );
 

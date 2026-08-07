@@ -1,4 +1,4 @@
-import { Text } from '@gv-tech/ui-native';
+import { Button, Card, CardContent, Text } from '@gv-tech/ui-native';
 import React from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { GameSession, Player } from '../types/game';
@@ -43,54 +43,57 @@ export const ScoreboardView: React.FC<ScoreboardViewProps> = ({
 
   return (
     <ScrollView
-      className="flex-1 bg-[#FDFBF7] p-4 dark:bg-[#181A19]"
+      className="bg-background flex-1 p-4"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 40, gap: 16 }}
     >
       {/* Match Header Banner */}
-      <View className="gap-3 rounded-2xl border border-[#E5E0D8] bg-[#F7F4EE] p-4 shadow-sm dark:border-[#363B38] dark:bg-[#232624]">
-        <View className="flex-row items-center justify-between">
-          <View className="flex-1 pr-2">
-            <Text className="text-xl font-black text-[#2C302E] dark:text-[#F0ECE1]">{game.name}</Text>
-            <Text className="text-xs text-[#5A605C] dark:text-[#A3A9A5]">
-              Round {game.rounds.length > 0 ? game.rounds.length : 1} in progress • {game.players.length} Players
-            </Text>
+      <Card className="border-border bg-card gap-3 rounded-2xl border p-4 shadow-sm">
+        <CardContent className="gap-3 p-0">
+          <View className="flex-row items-center justify-between">
+            <View className="flex-1 pr-2">
+              <Text className="text-foreground text-xl font-black">{game.name}</Text>
+              <Text className="text-muted-foreground text-xs">
+                Round {game.rounds.length > 0 ? game.rounds.length : 1} in progress • {game.players.length} Players
+              </Text>
+            </View>
+            <View className="flex-row gap-2">
+              {game.targetScore ? (
+                <View className="border-border bg-popover rounded-full border px-2.5 py-1">
+                  <Text className="text-foreground text-[10px] font-bold">{game.targetScore} pts target</Text>
+                </View>
+              ) : null}
+            </View>
           </View>
-          <View className="flex-row gap-2">
-            {game.targetScore ? (
-              <View className="rounded-full border border-[#E5E0D8] bg-white px-2.5 py-1 dark:border-[#363B38] dark:bg-[#2C302E]">
-                <Text className="text-[10px] font-bold text-[#2C302E] dark:text-[#F0ECE1]">
-                  {game.targetScore} pts target
-                </Text>
-              </View>
-            ) : null}
+
+          {/* Hero Actions Bar */}
+          <View className="flex-row flex-wrap gap-2">
+            <Button
+              onPress={onFlipToPlayMode}
+              className="flex-1 items-center justify-center rounded-xl bg-[#C84B31] py-3 shadow"
+            >
+              <Text className="text-xs font-black text-white">🎮 Enter Play Mode →</Text>
+            </Button>
+
+            <Button
+              onPress={onOpenRoundHistory}
+              variant="outline"
+              size="sm"
+              className="items-center justify-center rounded-xl px-3.5 py-3"
+            >
+              <Text className="text-foreground text-xs font-bold">📜 Log ({game.rounds.length})</Text>
+            </Button>
+
+            <Button
+              onPress={onEndMatch}
+              size="sm"
+              className="bg-primary items-center justify-center rounded-xl px-3.5 py-3"
+            >
+              <Text className="text-primary-foreground text-xs font-bold">🏆 End</Text>
+            </Button>
           </View>
-        </View>
-
-        {/* Hero Actions Bar */}
-        <View className="flex-row flex-wrap gap-2">
-          <Pressable
-            onPress={onFlipToPlayMode}
-            className="flex-1 items-center justify-center rounded-xl bg-[#C84B31] py-3 shadow"
-          >
-            <Text className="text-xs font-black text-white">🎮 Enter Play Mode →</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={onOpenRoundHistory}
-            className="items-center justify-center rounded-xl border border-[#E5E0D8] bg-white px-3.5 py-3 dark:border-[#363B38] dark:bg-[#2C302E]"
-          >
-            <Text className="text-xs font-bold text-[#2C302E] dark:text-[#F0ECE1]">📜 Log ({game.rounds.length})</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={onEndMatch}
-            className="items-center justify-center rounded-xl bg-[#2C302E] px-3.5 py-3 dark:bg-[#363B38]"
-          >
-            <Text className="text-xs font-bold text-white">🏆 End</Text>
-          </Pressable>
-        </View>
-      </View>
+        </CardContent>
+      </Card>
 
       {/* Leaderboard Player Cards Grid */}
       <View className="flex-row flex-wrap gap-2.5">
@@ -101,16 +104,16 @@ export const ScoreboardView: React.FC<ScoreboardViewProps> = ({
           const hasLoggedCurrentRound = Boolean(activeRound.scores[player.id]);
 
           return (
-            <View
+            <Card
               key={player.id}
-              className={`will-change-variable max-w-[49%] min-w-[145px] flex-1 overflow-hidden rounded-2xl border border-[#E5E0D8] shadow-xs dark:border-[#363B38] ${
-                hasLoggedCurrentRound ? 'bg-[#EFEAE1] dark:bg-[#2C302E]' : 'bg-[#F7F4EE] dark:bg-[#232624]'
+              className={`will-change-variable border-border max-w-[49%] min-w-[145px] flex-1 overflow-hidden rounded-2xl border shadow-xs ${
+                hasLoggedCurrentRound ? 'bg-muted/70' : 'bg-card'
               }`}
             >
               {/* Color Strip */}
               <View className="h-1.5 w-full" style={{ backgroundColor: player.color }} />
 
-              <View className="gap-2 p-3">
+              <CardContent className="gap-2 p-3">
                 <View className="flex-row items-center justify-between">
                   <View className="flex-1 flex-row items-center gap-1.5 pr-1">
                     <View
@@ -119,7 +122,7 @@ export const ScoreboardView: React.FC<ScoreboardViewProps> = ({
                     >
                       <Text className="text-xs font-black text-white">{player.initials}</Text>
                     </View>
-                    <Text className="text-xs font-bold text-[#2C302E] dark:text-[#F0ECE1]" numberOfLines={1}>
+                    <Text className="text-foreground text-xs font-bold" numberOfLines={1}>
                       {player.name}
                     </Text>
                   </View>
@@ -133,74 +136,74 @@ export const ScoreboardView: React.FC<ScoreboardViewProps> = ({
 
                 {/* Score Number Display */}
                 <View>
-                  <Text className="text-2xl font-black text-[#2C302E] dark:text-[#F0ECE1]">{totalScore}</Text>
-                  <Text className="text-[10px] text-[#5A605C] dark:text-[#A3A9A5]">
+                  <Text className="text-foreground text-2xl font-black">{totalScore}</Text>
+                  <Text className="text-muted-foreground text-[10px]">
                     {isLeader ? 'Leader' : `${diffFromLeader > 0 ? `+${diffFromLeader}` : diffFromLeader} pts`}
                   </Text>
                 </View>
 
                 {/* Card Action */}
-                <View className="border-t border-[#E5E0D8] pt-2 dark:border-[#363B38]">
+                <View className="border-border border-t pt-2">
                   {hasLoggedCurrentRound ? (
                     <View className="flex-row items-center justify-between">
                       <Text className="text-[10px] font-bold text-[#6A9C78]">✓ Done</Text>
-                      <Pressable onPress={() => onOpenScoreKeypad(player)} className="p-0.5">
-                        <Text className="text-[10px] text-[#5A605C] underline dark:text-[#A3A9A5]">Edit</Text>
-                      </Pressable>
+                      <Button onPress={() => onOpenScoreKeypad(player)} variant="ghost" size="sm" className="p-0.5">
+                        <Text className="text-muted-foreground text-[10px] underline">Edit</Text>
+                      </Button>
                     </View>
                   ) : (
-                    <Pressable
+                    <Button
                       onPress={() => onOpenScoreKeypad(player)}
-                      className="items-center rounded-lg border border-[#E5E0D8] bg-white py-1.5 dark:border-[#363B38] dark:bg-[#2C302E]"
+                      variant="outline"
+                      size="sm"
+                      className="items-center rounded-lg py-1.5"
                     >
-                      <Text className="text-[11px] font-bold text-[#2C302E] dark:text-[#F0ECE1]">+ Score</Text>
-                    </Pressable>
+                      <Text className="text-foreground text-[11px] font-bold">+ Score</Text>
+                    </Button>
                   )}
                 </View>
-              </View>
-            </View>
+              </CardContent>
+            </Card>
           );
         })}
       </View>
 
       {/* Turn Sequence Bar */}
-      <View className="gap-2 rounded-xl border border-[#E5E0D8] bg-[#F7F4EE] p-3 dark:border-[#363B38] dark:bg-[#232624]">
-        <Text className="text-xs font-bold text-[#5A605C] dark:text-[#A3A9A5]">Turn Sequence Roster:</Text>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          className="flex-row"
-          contentContainerStyle={{ gap: 8 }}
-        >
-          {game.players.map((p, idx) => (
-            <View
-              key={p.id}
-              className="flex-row items-center gap-1.5 rounded-lg border border-[#E5E0D8] bg-white px-2.5 py-1.5 dark:border-[#363B38] dark:bg-[#2C302E]"
-            >
-              <Text className="text-[10px] font-bold text-[#5A605C] dark:text-[#A3A9A5]">#{idx + 1}</Text>
-              <Text className="text-xs font-bold text-[#2C302E] dark:text-[#F0ECE1]">{p.name}</Text>
-              <Pressable onPress={() => handleMoveOrder(idx, 'UP')} disabled={idx === 0} className="px-1">
-                <Text
-                  className={`text-[10px] font-bold text-[#2C302E] dark:text-[#F0ECE1] ${idx === 0 ? 'opacity-20' : ''}`}
-                >
-                  ←
-                </Text>
-              </Pressable>
-              <Pressable
-                onPress={() => handleMoveOrder(idx, 'DOWN')}
-                disabled={idx === game.players.length - 1}
-                className="px-1"
+      <Card className="border-border bg-card gap-2 rounded-xl border p-3">
+        <CardContent className="gap-2 p-0">
+          <Text className="text-muted-foreground text-xs font-bold">Turn Sequence Roster:</Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            className="flex-row"
+            contentContainerStyle={{ gap: 8 }}
+          >
+            {game.players.map((p, idx) => (
+              <View
+                key={p.id}
+                className="border-border bg-popover flex-row items-center gap-1.5 rounded-lg border px-2.5 py-1.5"
               >
-                <Text
-                  className={`text-[10px] font-bold text-[#2C302E] dark:text-[#F0ECE1] ${idx === game.players.length - 1 ? 'opacity-20' : ''}`}
+                <Text className="text-muted-foreground text-[10px] font-bold">#{idx + 1}</Text>
+                <Text className="text-foreground text-xs font-bold">{p.name}</Text>
+                <Pressable onPress={() => handleMoveOrder(idx, 'UP')} disabled={idx === 0} className="px-1">
+                  <Text className={`text-foreground text-[10px] font-bold ${idx === 0 ? 'opacity-20' : ''}`}>←</Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => handleMoveOrder(idx, 'DOWN')}
+                  disabled={idx === game.players.length - 1}
+                  className="px-1"
                 >
-                  →
-                </Text>
-              </Pressable>
-            </View>
-          ))}
-        </ScrollView>
-      </View>
+                  <Text
+                    className={`text-foreground text-[10px] font-bold ${idx === game.players.length - 1 ? 'opacity-20' : ''}`}
+                  >
+                    →
+                  </Text>
+                </Pressable>
+              </View>
+            ))}
+          </ScrollView>
+        </CardContent>
+      </Card>
     </ScrollView>
   );
 };

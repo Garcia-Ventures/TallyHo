@@ -1,4 +1,14 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Switch, Text } from '@gv-tech/ui-native';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+  Switch,
+  Text,
+} from '@gv-tech/ui-native';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import {
@@ -17,7 +27,7 @@ import {
   X,
 } from 'lucide-react-native';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, Modal, Platform, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Modal, Platform, Pressable, ScrollView, View } from 'react-native';
 import { nativeSound } from '../../src/services/audio';
 import { useSettingsStore } from '../../src/stores/useSettingsStore';
 
@@ -127,39 +137,33 @@ export default function SettingsModal() {
   }
 
   return (
-    <View className="flex-1 bg-[#FDFBF7] dark:bg-[#181A1B]">
+    <View className="bg-background flex-1">
       {/* Top Bar Header */}
-      <View className="flex-row items-center justify-between border-b border-[#E5E0D8] bg-[#F7F4EE] px-6 py-4 dark:border-gray-800 dark:bg-[#202324]">
+      <View className="border-border bg-card flex-row items-center justify-between border-b px-6 py-4">
         <View>
-          <Text className="text-xl font-black text-[#2C302E] dark:text-white">Settings</Text>
-          <Text className="text-xs text-[#6E7571] dark:text-gray-400">
-            GV Tech UI Native • Preferences & Compliance
-          </Text>
+          <Text className="text-foreground text-xl font-black">Settings</Text>
+          <Text className="text-muted-foreground text-xs">GV Tech UI Native • Preferences & Compliance</Text>
         </View>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          className="rounded-full bg-[#E8E3DA] p-2 dark:bg-gray-700"
-          accessibilityLabel="Close Settings"
-        >
-          <X size={20} color={Platform.OS === 'ios' ? '#2C302E' : '#2C302E'} />
-        </TouchableOpacity>
+        <Button onPress={() => router.back()} variant="ghost" size="icon" className="rounded-full">
+          <X size={20} color="#5A605C" />
+        </Button>
       </View>
 
       <ScrollView className="flex-1 px-6 py-4" showsVerticalScrollIndicator={false}>
         {/* SECTION 1: APPEARANCE & THEME */}
-        <Card className="mb-6">
+        <Card className="border-border bg-card mb-6">
           <CardHeader className="pb-2">
             <View className="flex-row items-center gap-2">
               <Sun size={18} color="#D96B43" />
-              <CardTitle className="text-base font-bold text-[#2C302E] dark:text-white">Appearance & Theme</CardTitle>
+              <CardTitle className="text-foreground text-base font-bold">Appearance & Theme</CardTitle>
             </View>
-            <CardDescription className="text-xs text-[#6E7571] dark:text-gray-400">
+            <CardDescription className="text-muted-foreground text-xs">
               Customize color theme preferences or auto-sync with system settings.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Theme Selector Pills */}
-            <View className="flex-row rounded-xl bg-[#F4F1EA] p-1 dark:bg-gray-800">
+            <View className="bg-muted flex-row rounded-xl p-1">
               {(
                 [
                   { mode: 'system', label: 'System', icon: Smartphone },
@@ -170,34 +174,30 @@ export default function SettingsModal() {
                 const IconComp = item.icon;
                 const isActive = settings.themeMode === item.mode;
                 return (
-                  <TouchableOpacity
+                  <Pressable
                     key={item.mode}
                     onPress={() => handleThemeChange(item.mode)}
                     className={`flex-1 flex-row items-center justify-center gap-1.5 rounded-lg py-2.5 ${
-                      isActive ? 'bg-white shadow-xs dark:bg-gray-700' : ''
+                      isActive ? 'bg-popover shadow-xs' : ''
                     }`}
                   >
-                    <IconComp size={16} color={isActive ? '#D96B43' : '#6E7571'} />
-                    <Text
-                      className={`text-xs font-bold ${
-                        isActive ? 'text-[#D96B43]' : 'text-[#6E7571] dark:text-gray-400'
-                      }`}
-                    >
+                    <IconComp size={16} color={isActive ? '#D96B43' : '#5A605C'} />
+                    <Text className={`text-xs font-bold ${isActive ? 'text-[#D96B43]' : 'text-muted-foreground'}`}>
                       {item.label}
                     </Text>
-                  </TouchableOpacity>
+                  </Pressable>
                 );
               })}
             </View>
 
             {/* Toggles using GV Tech UI Native Switch */}
-            <View className="space-y-3 border-t border-[#F0EBE1] pt-3 dark:border-gray-800">
+            <View className="border-border space-y-3 border-t pt-3">
               <View className="flex-row items-center justify-between py-1">
                 <View className="flex-row items-center gap-2">
-                  <Volume2 size={16} color="#6E7571" />
+                  <Volume2 size={16} color="#5A605C" />
                   <View>
-                    <Text className="text-sm font-semibold text-[#2C302E] dark:text-white">Sound Effects</Text>
-                    <Text className="text-xs text-[#6E7571] dark:text-gray-400">Audio feedback on score actions</Text>
+                    <Text className="text-foreground text-sm font-semibold">Sound Effects</Text>
+                    <Text className="text-muted-foreground text-xs">Audio feedback on score actions</Text>
                   </View>
                 </View>
                 <Switch
@@ -216,10 +216,10 @@ export default function SettingsModal() {
 
               <View className="flex-row items-center justify-between py-1">
                 <View className="flex-row items-center gap-2">
-                  <Vibrate size={16} color="#6E7571" />
+                  <Vibrate size={16} color="#5A605C" />
                   <View>
-                    <Text className="text-sm font-semibold text-[#2C302E] dark:text-white">Haptic Feedback</Text>
-                    <Text className="text-xs text-[#6E7571] dark:text-gray-400">Tactile vibration cues on buttons</Text>
+                    <Text className="text-foreground text-sm font-semibold">Haptic Feedback</Text>
+                    <Text className="text-muted-foreground text-xs">Tactile vibration cues on buttons</Text>
                   </View>
                 </View>
                 <Switch
@@ -237,13 +237,13 @@ export default function SettingsModal() {
         </Card>
 
         {/* SECTION 2: SUBMIT FEEDBACK (FORMSPREE INTEGRATION) */}
-        <Card className="mb-6">
+        <Card className="border-border bg-card mb-6">
           <CardHeader className="pb-2">
             <View className="flex-row items-center gap-2">
               <Send size={18} color="#6A9C78" />
-              <CardTitle className="text-base font-bold text-[#2C302E] dark:text-white">Submit Feedback</CardTitle>
+              <CardTitle className="text-foreground text-base font-bold">Submit Feedback</CardTitle>
             </View>
-            <CardDescription className="text-xs text-[#6E7571] dark:text-gray-400">
+            <CardDescription className="text-muted-foreground text-xs">
               Send bug reports or feature requests directly via Formspree.
             </CardDescription>
           </CardHeader>
@@ -251,54 +251,49 @@ export default function SettingsModal() {
             {/* Category Pills */}
             <View className="flex-row gap-2">
               {(['General', 'Bug', 'Feature'] as const).map((cat) => (
-                <TouchableOpacity
+                <Pressable
                   key={cat}
                   onPress={() => setCategory(cat)}
                   className={`flex-1 items-center rounded-lg border py-2 ${
-                    category === cat
-                      ? 'border-[#6A9C78] bg-[#EAF2ED] dark:bg-green-950'
-                      : 'border-[#E5E0D8] bg-[#FDFBF7] dark:border-gray-800 dark:bg-gray-900'
+                    category === cat ? 'border-[#6A9C78] bg-[#6A9C78]/15' : 'border-border bg-popover'
                   }`}
                 >
                   <Text
-                    className={`text-xs font-bold ${
-                      category === cat ? 'text-[#6A9C78]' : 'text-[#6E7571] dark:text-gray-400'
-                    }`}
+                    className={`text-xs font-bold ${category === cat ? 'text-[#6A9C78]' : 'text-muted-foreground'}`}
                   >
                     {cat === 'Bug' ? '🐛 Bug' : cat === 'Feature' ? '💡 Feature' : '💬 General'}
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
               ))}
             </View>
 
             {/* Email Input */}
-            <View>
-              <Text className="mb-1 text-xs font-semibold text-[#2C302E] dark:text-white">
-                Contact Email <Text className="text-[#A0A5A2]">(Optional)</Text>
+            <View className="gap-1">
+              <Text className="text-foreground text-xs font-semibold">
+                Contact Email <Text className="text-muted-foreground">(Optional)</Text>
               </Text>
-              <TextInput
+              <Input
                 value={email}
                 onChangeText={setEmail}
                 placeholder="you@example.com"
-                placeholderTextColor="#A0A5A2"
+                placeholderTextColor="#8A8F8C"
                 keyboardType="email-address"
                 autoCapitalize="none"
-                className="rounded-xl border border-[#E5E0D8] bg-[#FDFBF7] px-3 py-2 text-xs font-medium text-[#2C302E] dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                className="border-border bg-popover text-foreground h-10"
               />
             </View>
 
             {/* Feedback Message Input */}
-            <View>
-              <Text className="mb-1 text-xs font-semibold text-[#2C302E] dark:text-white">Feedback Message</Text>
-              <TextInput
+            <View className="gap-1">
+              <Text className="text-foreground text-xs font-semibold">Feedback Message</Text>
+              <Input
                 value={feedback}
                 onChangeText={setFeedback}
                 placeholder="Describe your issue or suggestion..."
-                placeholderTextColor="#A0A5A2"
+                placeholderTextColor="#8A8F8C"
                 multiline
                 numberOfLines={4}
-                textAlignVertical="top"
-                className="h-24 rounded-xl border border-[#E5E0D8] bg-[#FDFBF7] p-3 text-xs font-medium text-[#2C302E] dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                className="border-border bg-popover text-foreground h-24 p-3"
               />
             </View>
 
@@ -320,11 +315,11 @@ export default function SettingsModal() {
             )}
 
             {/* Submit Button */}
-            <TouchableOpacity
+            <Button
               onPress={handleFeedbackSubmit}
               disabled={isSubmitting || !feedback.trim()}
               className={`flex-row items-center justify-center gap-2 rounded-xl py-3 ${
-                isSubmitting || !feedback.trim() ? 'bg-[#A8C3B1]' : 'bg-[#6A9C78]'
+                isSubmitting || !feedback.trim() ? 'bg-[#6A9C78]/50' : 'bg-[#6A9C78]'
               }`}
             >
               {isSubmitting ? (
@@ -335,103 +330,91 @@ export default function SettingsModal() {
                   <Text className="text-sm font-bold text-white">Submit Feedback</Text>
                 </>
               )}
-            </TouchableOpacity>
+            </Button>
           </CardContent>
         </Card>
 
         {/* SECTION 4: PRIVACY & LEGAL DISCLOSURES */}
-        <Card className="mb-8">
+        <Card className="border-border bg-card mb-8">
           <CardHeader className="pb-2">
             <View className="flex-row items-center gap-2">
               <ShieldCheck size={18} color="#8B6B9C" />
-              <CardTitle className="text-base font-bold text-[#2C302E] dark:text-white">
-                Privacy & Legal Disclosures
-              </CardTitle>
+              <CardTitle className="text-foreground text-base font-bold">Privacy & Legal Disclosures</CardTitle>
             </View>
-            <CardDescription className="text-xs text-[#6E7571] dark:text-gray-400">
+            <CardDescription className="text-muted-foreground text-xs">
               Review store privacy statements and manage local device data.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <TouchableOpacity
+            <Pressable
               onPress={() => setShowPrivacyModal(true)}
-              className="flex-row items-center justify-between rounded-xl border border-[#E5E0D8] bg-[#FDFBF7] p-3 dark:border-gray-800 dark:bg-gray-900"
+              className="border-border bg-popover flex-row items-center justify-between rounded-xl border p-3"
             >
               <View className="flex-row items-center gap-2">
                 <HelpCircle size={16} color="#8B6B9C" />
-                <Text className="text-xs font-bold text-[#2C302E] dark:text-white">View Store Privacy Statement</Text>
+                <Text className="text-foreground text-xs font-bold">View Store Privacy Statement</Text>
               </View>
-              <ExternalLink size={14} color="#6E7571" />
-            </TouchableOpacity>
+              <ExternalLink size={14} color="#5A605C" />
+            </Pressable>
 
-            <TouchableOpacity
+            <Button
               onPress={handleResetData}
-              className="flex-row items-center justify-between rounded-xl border border-[#FCE8E6] bg-[#FFF5F5] p-3 dark:bg-red-950/40"
+              variant="destructive"
+              className="flex-row items-center justify-between rounded-xl border border-red-200 bg-red-50 p-3 dark:border-red-900/40 dark:bg-red-950/40"
             >
               <View className="flex-row items-center gap-2">
                 <Trash2 size={16} color="#C5221F" />
-                <Text className="text-xs font-bold text-[#C5221F]">Reset Local Storage & Settings</Text>
+                <Text className="text-xs font-bold text-red-600 dark:text-red-400">Reset Local Storage & Settings</Text>
               </View>
-            </TouchableOpacity>
+            </Button>
           </CardContent>
         </Card>
 
-        <Text className="mb-8 text-center text-xs font-medium text-[#A0A5A2]">
+        <Text className="text-muted-foreground mb-8 text-center text-xs font-medium">
           Formspree Active • TallyHo v1.0.0 (Build 42) • GV Tech UI Native
         </Text>
       </ScrollView>
 
       {/* PRIVACY STATEMENT MODAL */}
       <Modal visible={showPrivacyModal} animationType="slide" transparent={false}>
-        <View className="flex-1 bg-[#FDFBF7] pt-12 dark:bg-[#181A1B]">
-          <View className="flex-row items-center justify-between border-b border-[#E5E0D8] bg-[#F7F4EE] px-6 py-4 dark:border-gray-800 dark:bg-[#202324]">
-            <Text className="text-lg font-black text-[#2C302E] dark:text-white">Privacy & Data Policy</Text>
-            <TouchableOpacity
-              onPress={() => setShowPrivacyModal(false)}
-              className="rounded-full bg-[#E8E3DA] p-2 dark:bg-gray-700"
-            >
-              <X size={20} color="#2C302E" />
-            </TouchableOpacity>
+        <View className="bg-background flex-1 pt-12">
+          <View className="border-border bg-card flex-row items-center justify-between border-b px-6 py-4">
+            <Text className="text-foreground text-lg font-black">Privacy & Data Policy</Text>
+            <Button onPress={() => setShowPrivacyModal(false)} variant="ghost" size="icon" className="rounded-full">
+              <X size={20} color="#5A605C" />
+            </Button>
           </View>
           <ScrollView className="flex-1 p-6">
-            <Text className="mb-2 text-base font-bold text-[#2C302E] dark:text-white">
-              1. Data Collection & Transparency
-            </Text>
-            <Text className="mb-4 text-xs leading-5 text-[#4A4F4C] dark:text-gray-300">
+            <Text className="text-foreground mb-2 text-base font-bold">1. Data Collection & Transparency</Text>
+            <Text className="text-muted-foreground mb-4 text-xs leading-5">
               User settings (theme mode, sound effects) are stored locally on your device using encrypted storage
               primitives. No personal data is collected without explicit user submission.
             </Text>
 
-            <Text className="mb-2 text-base font-bold text-[#2C302E] dark:text-white">
-              2. Formspree Feedback Processing
-            </Text>
-            <Text className="mb-4 text-xs leading-5 text-[#4A4F4C] dark:text-gray-300">
+            <Text className="text-foreground mb-2 text-base font-bold">2. Formspree Feedback Processing</Text>
+            <Text className="text-muted-foreground mb-4 text-xs leading-5">
               Submissions sent via the feedback form are securely transmitted over HTTPS to Formspree
               (https://formspree.io/f/xgawwval) for developer response handling.
             </Text>
 
-            <Text className="mb-2 text-base font-bold text-[#2C302E] dark:text-white">
-              3. ATT & Analytics Compliance
-            </Text>
-            <Text className="mb-4 text-xs leading-5 text-[#4A4F4C] dark:text-gray-300">
+            <Text className="text-foreground mb-2 text-base font-bold">3. ATT & Analytics Compliance</Text>
+            <Text className="text-muted-foreground mb-4 text-xs leading-5">
               We do NOT perform cross-app tracking or sell user data to third-party brokers (App Tracking Transparency
               compliant).
             </Text>
 
-            <Text className="mb-2 text-base font-bold text-[#2C302E] dark:text-white">
-              4. Data Reset & Deletion Rights
-            </Text>
-            <Text className="mb-6 text-xs leading-5 text-[#4A4F4C] dark:text-gray-300">
+            <Text className="text-foreground mb-2 text-base font-bold">4. Data Reset & Deletion Rights</Text>
+            <Text className="text-muted-foreground mb-6 text-xs leading-5">
               Use the "Reset Local Storage & Settings" button to purge device caches instantly. For feedback deletion
               requests, email privacy@tallyho.app.
             </Text>
 
-            <TouchableOpacity
+            <Button
               onPress={() => setShowPrivacyModal(false)}
-              className="mb-10 items-center rounded-xl bg-[#2C302E] py-3 dark:bg-gray-700"
+              className="bg-primary mb-10 items-center rounded-xl py-3"
             >
-              <Text className="text-xs font-bold text-white">Close Statement</Text>
-            </TouchableOpacity>
+              <Text className="text-primary-foreground text-xs font-bold">Close Statement</Text>
+            </Button>
           </ScrollView>
         </View>
       </Modal>

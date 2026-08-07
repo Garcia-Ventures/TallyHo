@@ -1,4 +1,4 @@
-import { Text } from '@gv-tech/ui-native';
+import { Button, Card, CardContent, Text } from '@gv-tech/ui-native';
 import React, { useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { GameSession, Player, RoundScore } from '../types/game';
@@ -74,21 +74,23 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
       contentContainerStyle={{ paddingBottom: 40, gap: 16 }}
     >
       {/* Header Controls */}
-      <View className="border-border bg-card flex-row items-center justify-between rounded-2xl border p-4 shadow">
-        <View>
-          <Text className="text-xs font-black tracking-widest text-[#E5A93C] uppercase">Turn-by-Turn Play Mode</Text>
-          <Text className="text-foreground text-lg font-black">Round {currentRoundNumber}</Text>
-        </View>
+      <Card className="border-border bg-card flex-row items-center justify-between rounded-2xl border p-4 shadow">
+        <CardContent className="w-full flex-row items-center justify-between p-0">
+          <View>
+            <Text className="text-xs font-black tracking-widest text-[#E5A93C] uppercase">Turn-by-Turn Play Mode</Text>
+            <Text className="text-foreground text-lg font-black">Round {currentRoundNumber}</Text>
+          </View>
 
-        <View className="flex-row gap-2">
-          <Pressable onPress={onFlipToDashboard} className="border-border bg-popover rounded-xl border px-3 py-2">
-            <Text className="text-foreground text-xs font-bold">📋 Dashboard</Text>
-          </Pressable>
-          <Pressable onPress={onEndMatch} className="rounded-xl bg-[#C84B31] px-3 py-2">
-            <Text className="text-xs font-bold text-white">🏆 End</Text>
-          </Pressable>
-        </View>
-      </View>
+          <View className="flex-row gap-2">
+            <Button onPress={onFlipToDashboard} variant="outline" size="sm" className="rounded-xl px-3 py-2">
+              <Text className="text-foreground text-xs font-bold">📋 Dashboard</Text>
+            </Button>
+            <Button onPress={onEndMatch} size="sm" className="rounded-xl bg-[#C84B31] px-3 py-2">
+              <Text className="text-xs font-bold text-white">🏆 End</Text>
+            </Button>
+          </View>
+        </CardContent>
+      </Card>
 
       {/* Player Turn Selector Carousel */}
       <ScrollView
@@ -126,75 +128,81 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
 
       {/* Score Input Card */}
       {activePlayer && (
-        <View className="border-border bg-card gap-4 rounded-2xl border p-4 shadow-sm">
-          <View className="border-border flex-row items-center justify-between border-b pb-3">
-            <View className="flex-row items-center gap-2.5">
-              <View
-                className="h-9 w-9 items-center justify-center rounded-full"
-                style={{ backgroundColor: activePlayer.color }}
-              >
-                <Text className="text-sm font-black text-white">{activePlayer.initials}</Text>
-              </View>
-              <View>
-                <Text className="text-muted-foreground text-xs">Logging score for:</Text>
-                <Text className="text-foreground text-base font-black">{activePlayer.name}</Text>
-              </View>
-            </View>
-
-            <View className="border-border bg-popover items-end rounded-xl border px-3.5 py-1.5">
-              <Text className="text-muted-foreground text-[10px]">Points Entry</Text>
-              <Text className="text-foreground text-2xl font-black">{scoreInput || '0'}</Text>
-            </View>
-          </View>
-
-          {/* Quick Keypad */}
-          <View className="gap-2">
-            <View className="flex-row gap-2">
-              {['1', '2', '3', '4', '5'].map((digit) => (
-                <Pressable
-                  key={digit}
-                  onPress={() => handleKeyTap(digit)}
-                  className="border-border bg-popover flex-1 items-center rounded-xl border py-3.5"
+        <Card className="border-border bg-card gap-4 rounded-2xl border p-4 shadow-sm">
+          <CardContent className="gap-4 p-0">
+            <View className="border-border flex-row items-center justify-between border-b pb-3">
+              <View className="flex-row items-center gap-2.5">
+                <View
+                  className="h-9 w-9 items-center justify-center rounded-full"
+                  style={{ backgroundColor: activePlayer.color }}
                 >
-                  <Text className="text-foreground text-lg font-black">{digit}</Text>
-                </Pressable>
-              ))}
-            </View>
-            <View className="flex-row gap-2">
-              {['6', '7', '8', '9', '0'].map((digit) => (
-                <Pressable
-                  key={digit}
-                  onPress={() => handleKeyTap(digit)}
-                  className="border-border bg-popover flex-1 items-center rounded-xl border py-3.5"
-                >
-                  <Text className="text-foreground text-lg font-black">{digit}</Text>
-                </Pressable>
-              ))}
-            </View>
-            <View className="flex-row gap-2">
-              <Pressable
-                onPress={() => handleKeyTap('CLR')}
-                className="flex-1 items-center rounded-xl border border-red-200 bg-red-50 py-3.5 dark:border-red-900/40 dark:bg-red-950/40"
-              >
-                <Text className="text-xs font-bold text-red-600 dark:text-red-400">CLR</Text>
-              </Pressable>
-              <Pressable
-                onPress={() => handleKeyTap('DEL')}
-                className="border-border bg-muted flex-1 items-center rounded-xl border py-3.5"
-              >
-                <Text className="text-muted-foreground text-xs font-bold">⌫</Text>
-              </Pressable>
-            </View>
-          </View>
+                  <Text className="text-sm font-black text-white">{activePlayer.initials}</Text>
+                </View>
+                <View>
+                  <Text className="text-muted-foreground text-xs">Logging score for:</Text>
+                  <Text className="text-foreground text-base font-black">{activePlayer.name}</Text>
+                </View>
+              </View>
 
-          {/* Submit Button */}
-          <Pressable
-            onPress={handleSubmit}
-            className="items-center justify-center rounded-xl bg-[#6A9C78] py-3.5 shadow"
-          >
-            <Text className="text-base font-black text-white">✓ Submit Round Score</Text>
-          </Pressable>
-        </View>
+              <View className="border-border bg-popover items-end rounded-xl border px-3.5 py-1.5">
+                <Text className="text-muted-foreground text-[10px]">Points Entry</Text>
+                <Text className="text-foreground text-2xl font-black">{scoreInput || '0'}</Text>
+              </View>
+            </View>
+
+            {/* Quick Keypad */}
+            <View className="gap-2">
+              <View className="flex-row gap-2">
+                {['1', '2', '3', '4', '5'].map((digit) => (
+                  <Button
+                    key={digit}
+                    onPress={() => handleKeyTap(digit)}
+                    variant="outline"
+                    className="flex-1 items-center rounded-xl py-3.5"
+                  >
+                    <Text className="text-foreground text-lg font-black">{digit}</Text>
+                  </Button>
+                ))}
+              </View>
+              <View className="flex-row gap-2">
+                {['6', '7', '8', '9', '0'].map((digit) => (
+                  <Button
+                    key={digit}
+                    onPress={() => handleKeyTap(digit)}
+                    variant="outline"
+                    className="flex-1 items-center rounded-xl py-3.5"
+                  >
+                    <Text className="text-foreground text-lg font-black">{digit}</Text>
+                  </Button>
+                ))}
+              </View>
+              <View className="flex-row gap-2">
+                <Button
+                  onPress={() => handleKeyTap('CLR')}
+                  variant="destructive"
+                  className="flex-1 items-center rounded-xl py-3.5"
+                >
+                  <Text className="text-xs font-bold text-white">CLR</Text>
+                </Button>
+                <Button
+                  onPress={() => handleKeyTap('DEL')}
+                  variant="secondary"
+                  className="flex-1 items-center rounded-xl py-3.5"
+                >
+                  <Text className="text-muted-foreground text-xs font-bold">⌫</Text>
+                </Button>
+              </View>
+            </View>
+
+            {/* Submit Button */}
+            <Button
+              onPress={handleSubmit}
+              className="items-center justify-center rounded-xl bg-[#6A9C78] py-3.5 shadow"
+            >
+              <Text className="text-base font-black text-white">✓ Submit Round Score</Text>
+            </Button>
+          </CardContent>
+        </Card>
       )}
     </ScrollView>
   );

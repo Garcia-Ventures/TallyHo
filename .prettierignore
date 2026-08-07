@@ -1,1 +1,8 @@
 .husky
+.expo
+dist
+ios
+android
+node_modules
+bun.lock
+type-errors.log
