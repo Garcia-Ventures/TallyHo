@@ -168,4 +168,15 @@ export const storage = {
       console.error('Failed to save settings', e);
     }
   },
+
+  clearAll: (): void => {
+    try {
+      removeStorageItem(ACTIVE_GAME_KEY);
+      removeStorageItem(MATCH_HISTORY_KEY);
+      removeStorageItem(PLAYER_LIBRARY_KEY);
+      removeStorageItem(SETTINGS_KEY);
+    } catch (e) {
+      console.error('Failed to clear storage', e);
+    }
+  },
 };
