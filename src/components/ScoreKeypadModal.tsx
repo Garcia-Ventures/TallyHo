@@ -56,63 +56,71 @@ export const ScoreKeypadModal: React.FC<ScoreKeypadModalProps> = ({
   };
 
   const content = (
-    <View className="bg-background flex-1 justify-between gap-4 p-5">
-      {/* Header */}
-      <View className="border-border flex-row items-center justify-between border-b pb-3">
-        <View className="flex-row items-center gap-2.5">
-          <View className="h-9 w-9 items-center justify-center rounded-full" style={{ backgroundColor: player.color }}>
-            <Text className="text-sm font-black text-white">{player.initials}</Text>
+    <View className="bg-background flex-1 items-center justify-between p-5">
+      <View className="w-full max-w-sm flex-1 justify-between gap-4">
+        {/* Header */}
+        <View className="border-border flex-row items-center justify-between border-b pb-3">
+          <View className="flex-row items-center gap-2.5">
+            <View
+              className="h-9 w-9 items-center justify-center rounded-full"
+              style={{ backgroundColor: player.color }}
+            >
+              <Text className="text-sm font-black text-white">{player.initials}</Text>
+            </View>
+            <View>
+              <Text className="text-muted-foreground text-xs">Entering score for</Text>
+              <Text className="text-foreground text-base font-black">{player.name}</Text>
+            </View>
           </View>
-          <View>
-            <Text className="text-muted-foreground text-xs">Entering score for</Text>
-            <Text className="text-foreground text-base font-black">{player.name}</Text>
-          </View>
+
+          {!isRouteModal && (
+            <Button onPress={onClose} variant="ghost" size="sm" className="p-1">
+              <Text className="text-muted-foreground text-base font-bold">✕</Text>
+            </Button>
+          )}
         </View>
 
-        {!isRouteModal && (
-          <Button onPress={onClose} variant="ghost" size="sm" className="p-1">
-            <Text className="text-muted-foreground text-base font-bold">✕</Text>
-          </Button>
-        )}
+        {/* Number Display */}
+        <Card className="border-border bg-card items-center justify-center rounded-2xl border px-4 py-6 shadow-inner">
+          <CardContent className="items-center justify-center p-0">
+            <Text className="text-muted-foreground mb-1 text-xs font-bold">SCORE</Text>
+            <Text className="text-foreground text-5xl font-black">{pointsStr || '0'}</Text>
+          </CardContent>
+        </Card>
+
+        {/* Keypad Grid */}
+        <View className="gap-2.5">
+          {[
+            ['1', '2', '3'],
+            ['4', '5', '6'],
+            ['7', '8', '9'],
+            ['CLR', '0', 'DEL'],
+          ].map((row, rIdx) => (
+            <View key={rIdx} className="flex-row gap-2.5">
+              {row.map((btn) => (
+                <Button
+                  key={btn}
+                  onPress={() => handleKeyPress(btn)}
+                  variant={btn === 'CLR' ? 'destructive' : btn === 'DEL' ? 'secondary' : 'outline'}
+                  className="flex-1 items-center justify-center rounded-2xl py-4"
+                >
+                  <Text className={`text-2xl font-black ${btn === 'CLR' ? 'text-white' : 'text-foreground'}`}>
+                    {btn === 'DEL' ? '⌫' : btn}
+                  </Text>
+                </Button>
+              ))}
+            </View>
+          ))}
+        </View>
+
+        {/* Submit Action */}
+        <Button
+          onPress={handleSubmit}
+          className="mt-2 items-center justify-center rounded-2xl bg-[#C84B31] py-4 shadow"
+        >
+          <Text className="text-base font-black text-white">Save Round Score</Text>
+        </Button>
       </View>
-
-      {/* Number Display */}
-      <Card className="border-border bg-card items-center justify-center rounded-2xl border px-4 py-6 shadow-inner">
-        <CardContent className="items-center justify-center p-0">
-          <Text className="text-muted-foreground mb-1 text-xs font-bold">SCORE</Text>
-          <Text className="text-foreground text-5xl font-black">{pointsStr || '0'}</Text>
-        </CardContent>
-      </Card>
-
-      {/* Keypad Grid */}
-      <View className="gap-2.5">
-        {[
-          ['1', '2', '3'],
-          ['4', '5', '6'],
-          ['7', '8', '9'],
-          ['CLR', '0', 'DEL'],
-        ].map((row, rIdx) => (
-          <View key={rIdx} className="flex-row gap-2.5">
-            {row.map((btn) => (
-              <Button
-                key={btn}
-                onPress={() => handleKeyPress(btn)}
-                variant={btn === 'CLR' ? 'destructive' : btn === 'DEL' ? 'secondary' : 'outline'}
-                className="flex-1 items-center justify-center rounded-2xl py-4"
-              >
-                <Text className={`text-2xl font-black ${btn === 'CLR' ? 'text-white' : 'text-foreground'}`}>
-                  {btn === 'DEL' ? '⌫' : btn}
-                </Text>
-              </Button>
-            ))}
-          </View>
-        ))}
-      </View>
-
-      {/* Submit Action */}
-      <Button onPress={handleSubmit} className="mt-2 items-center justify-center rounded-2xl bg-[#C84B31] py-4 shadow">
-        <Text className="text-base font-black text-white">Save Round Score</Text>
-      </Button>
     </View>
   );
 
