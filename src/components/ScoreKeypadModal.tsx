@@ -1,6 +1,7 @@
 import { Button, Card, CardContent, Text } from '@gv-tech/ui-native';
 import React, { useState } from 'react';
 import { Modal, View } from 'react-native';
+import { nativeSound } from '../services/audio';
 import { Player, RoundScore } from '../types/game';
 
 interface ScoreKeypadModalProps {
@@ -27,6 +28,12 @@ export const ScoreKeypadModal: React.FC<ScoreKeypadModalProps> = ({
   }
 
   const handleKeyPress = (val: string) => {
+    if (val === 'DEL' || val === 'CLR') {
+      nativeSound.playKeypadClear();
+    } else {
+      nativeSound.playKeypadTap();
+    }
+
     if (val === 'DEL') {
       setPointsStr((prev) => prev.slice(0, -1));
     } else if (val === 'CLR') {
@@ -41,7 +48,9 @@ export const ScoreKeypadModal: React.FC<ScoreKeypadModalProps> = ({
   };
 
   const handleSubmit = () => {
+    nativeSound.playRoundSubmit();
     const pts = parseInt(pointsStr || '0', 10);
+
     const bonus = parseInt(bonusStr || '0', 10);
     const penalty = parseInt(penaltyStr || '0', 10);
 

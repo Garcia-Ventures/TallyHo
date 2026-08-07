@@ -1,6 +1,7 @@
 import { Button, Card, CardContent, Input, Text } from '@gv-tech/ui-native';
 import React, { useState } from 'react';
 import { Modal, Pressable, ScrollView, View } from 'react-native';
+import { nativeSound } from '../services/audio';
 import { GAME_PRESETS, GamePreset, PLAYER_COLORS, Player, RoundScoringType, ScoringMode } from '../types/game';
 import { ScreenContainer } from './ScreenContainer';
 
@@ -50,6 +51,7 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
     if (!newPlayerName.trim()) {
       return;
     }
+    nativeSound.playKeypadTap();
     const name = newPlayerName.trim();
     const initials = name.slice(0, 2).toUpperCase();
     const color = PLAYER_COLORS[players.length % PLAYER_COLORS.length].hex;
@@ -58,10 +60,12 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
   };
 
   const handleRemovePlayer = (id: string) => {
+    nativeSound.playUndo();
     setPlayers((prev) => prev.filter((p) => p.id !== id));
   };
 
   const handleSelectPreset = (p: GamePreset) => {
+    nativeSound.playPresetSelect();
     setSelectedPresetId(p.id);
     setMatchName(p.name);
     setScoringMode(p.scoringMode);

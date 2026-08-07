@@ -39,24 +39,44 @@ class NativeSoundService {
     }
   }
 
-  public playPenClick(): void {
-    nativeHaptics.triggerLightImpact();
-    this.playAudioFile('pen_click');
-  }
-
-  public playPaperRustle(): void {
-    nativeHaptics.triggerMediumImpact();
-    this.playAudioFile('paper_rustle');
-  }
-
   public playKeypadTap(): void {
     nativeHaptics.triggerLightImpact();
     this.playAudioFile('keypad_tap');
   }
 
+  public playKeypadClear(): void {
+    nativeHaptics.triggerMediumImpact();
+    this.playAudioFile('keypad_clear');
+  }
+
   public playRoundSubmit(): void {
     nativeHaptics.triggerHeavyImpact();
     this.playAudioFile('round_submit');
+  }
+
+  public playPresetSelect(): void {
+    nativeHaptics.triggerLightImpact();
+    this.playAudioFile('preset_select');
+  }
+
+  public playGameStart(): void {
+    nativeHaptics.triggerHeavyImpact();
+    this.playAudioFile('game_start');
+  }
+
+  public playPlayerSwitch(): void {
+    nativeHaptics.triggerLightImpact();
+    this.playAudioFile('player_switch');
+  }
+
+  public playNavigationTap(): void {
+    nativeHaptics.triggerLightImpact();
+    this.playAudioFile('nav_tap');
+  }
+
+  public playToggle(enabled = true): void {
+    nativeHaptics.triggerLightImpact();
+    this.playAudioFile(enabled ? 'toggle_on' : 'toggle_off');
   }
 
   public playVictoryFanfare(): void {
@@ -65,8 +85,16 @@ class NativeSoundService {
   }
 
   public playUndo(): void {
-    nativeHaptics.triggerLightImpact();
+    nativeHaptics.triggerMediumImpact();
     this.playAudioFile('undo');
+  }
+
+  public playPenClick(): void {
+    this.playKeypadTap();
+  }
+
+  public playPaperRustle(): void {
+    this.playGameStart();
   }
 }
 

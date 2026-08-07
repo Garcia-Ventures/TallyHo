@@ -1,6 +1,7 @@
 import { Badge, Button, Card, CardContent, Text } from '@gv-tech/ui-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Modal, ScrollView, View } from 'react-native';
+import { nativeSound } from '../services/audio';
 import { GameSession } from '../types/game';
 import { calculateGameHighlights, calculatePlayerTotals, getSortedPlayers } from '../utils/scoring';
 import { ScreenContainer } from './ScreenContainer';
@@ -20,6 +21,12 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
   onRematch,
   isRouteModal = false,
 }) => {
+  useEffect(() => {
+    if (isOpen) {
+      nativeSound.playVictoryFanfare();
+    }
+  }, [isOpen]);
+
   if (!isOpen) {
     return null;
   }

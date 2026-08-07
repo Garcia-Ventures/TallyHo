@@ -204,13 +204,8 @@ export default function SettingsModal() {
               <Switch
                 checked={settings.soundEnabled}
                 onCheckedChange={(val) => {
-                  triggerHaptic();
+                  nativeSound.playToggle(val);
                   updateSettings({ soundEnabled: val });
-                  if (val) {
-                    setTimeout(() => {
-                      nativeSound.playKeypadTap();
-                    }, 50);
-                  }
                 }}
               />
             </View>
@@ -226,10 +221,8 @@ export default function SettingsModal() {
               <Switch
                 checked={settings.hapticsEnabled}
                 onCheckedChange={(val) => {
+                  nativeSound.playToggle(val);
                   updateSettings({ hapticsEnabled: val });
-                  if (val) {
-                    triggerHaptic();
-                  }
                 }}
               />
             </View>
