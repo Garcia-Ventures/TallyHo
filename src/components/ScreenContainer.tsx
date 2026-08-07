@@ -8,6 +8,7 @@ export type ScreenPadding = 'none' | 'sm' | 'normal' | 'large';
 
 export interface ScreenContainerProps {
   children: React.ReactNode;
+  header?: React.ReactNode;
   maxWidth?: ScreenMaxWidth;
   padding?: ScreenPadding;
   scrollable?: boolean;
@@ -35,10 +36,11 @@ const PADDING_MAP: Record<ScreenPadding, string> = {
 
 /**
  * ScreenContainer provides consistent max-width capping, horizontal centering,
- * responsive padding, and optional scrollable behavior across all app screens and modals.
+ * responsive padding, full-width headers, and optional scrollable behavior across all app screens and modals.
  */
 export const ScreenContainer: React.FC<ScreenContainerProps> = ({
   children,
+  header,
   maxWidth = '4xl',
   padding = 'normal',
   scrollable = true,
@@ -48,21 +50,35 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
   const maxWidthClass = MAX_WIDTH_MAP[maxWidth] || 'max-w-4xl';
   const paddingClass = PADDING_MAP[padding] || 'p-5 sm:p-8';
 
+  const headerElement = header ? (
+    <View className="border-border bg-card w-full border-b">
+      <View className={cn('mx-auto w-full px-5 py-4 sm:px-8', maxWidthClass)}>{header}</View>
+    </View>
+  ) : null;
+
   const innerContent = (
     <View className={cn('mx-auto w-full', maxWidthClass, paddingClass, contentClassName)}>{children}</View>
   );
 
   if (scrollable) {
     return (
-      <ScrollView
-        className={cn('bg-background flex-1', className)}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ alignItems: 'center', paddingBottom: 48 }}
-      >
-        {innerContent}
-      </ScrollView>
+      <View className={cn('bg-background flex-1', className)}>
+        {headerElement}
+        <ScrollView
+          className="flex-1"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ alignItems: 'center', paddingBottom: 48 }}
+        >
+          {innerContent}
+        </ScrollView>
+      </View>
     );
   }
 
-  return <View className={cn('bg-background flex-1 items-center', className)}>{innerContent}</View>;
+  return (
+    <View className={cn('bg-background flex-1', className)}>
+      {headerElement}
+      <View className="flex-1 items-center">{innerContent}</View>
+    </View>
+  );
 };

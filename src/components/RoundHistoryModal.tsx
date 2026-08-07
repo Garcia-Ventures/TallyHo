@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Modal, ScrollView, View } from 'react-native';
 import { nativeSound } from '../services/audio';
 import { GameSession, Round } from '../types/game';
+import { ScreenContainer } from './ScreenContainer';
 
 interface RoundHistoryModalProps {
   game: GameSession;
@@ -65,10 +66,11 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
   };
 
   const content = (
-    <View className="bg-background flex-1 items-center justify-between p-5">
-      <View className="w-full max-w-2xl flex-1 justify-between gap-4">
-        {/* Header */}
-        <View className="border-border flex-row items-center justify-between border-b pb-3">
+    <ScreenContainer
+      scrollable={false}
+      className="w-full flex-1"
+      header={
+        <View className="flex-row items-center justify-between">
           <View>
             <Text className="text-foreground text-xl font-black">Round History & Edit Log</Text>
             <Text className="text-muted-foreground text-xs font-semibold">
@@ -87,7 +89,9 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
             <Text className="text-foreground text-base font-bold">✕</Text>
           </Button>
         </View>
-
+      }
+    >
+      <View className="w-full flex-1 justify-between gap-4">
         {/* Content Sheet */}
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingBottom: 16 }}>
           {game.rounds.length === 0 ? (
@@ -183,7 +187,7 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
           </Button>
         </View>
       </View>
-    </View>
+    </ScreenContainer>
   );
 
   if (isRouteModal) {

@@ -3,6 +3,7 @@ import React from 'react';
 import { Modal, ScrollView, View } from 'react-native';
 import { GameSession } from '../types/game';
 import { calculateGameHighlights, calculatePlayerTotals, getSortedPlayers } from '../utils/scoring';
+import { ScreenContainer } from './ScreenContainer';
 
 interface GameOverModalProps {
   isOpen: boolean;
@@ -31,8 +32,8 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
   const { highlights } = calculateGameHighlights(game);
 
   const content = (
-    <View className="bg-background flex-1 items-center justify-between p-5">
-      <View className="w-full max-w-xl flex-1 justify-between gap-4">
+    <ScreenContainer scrollable={false} className="w-full flex-1">
+      <View className="w-full flex-1 justify-between gap-4">
         {/* Header */}
         <View className="bg-card items-center gap-1 rounded-2xl p-4">
           <Text className="text-3xl">👑</Text>
@@ -135,7 +136,7 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
           </Button>
         </View>
       </View>
-    </View>
+    </ScreenContainer>
   );
 
   if (isRouteModal) {

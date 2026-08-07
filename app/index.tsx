@@ -24,7 +24,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <ScreenContainer maxWidth="4xl">
+    <ScreenContainer>
       <View className="gap-8">
         {/* Active Game Resume Banner */}
         {activeGame && activeGame.status === 'ACTIVE' && (

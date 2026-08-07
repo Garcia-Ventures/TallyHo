@@ -69,7 +69,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
   };
 
   return (
-    <ScreenContainer maxWidth="2xl">
+    <ScreenContainer maxWidth="4xl">
       <View className="gap-4">
         {/* Header Controls */}
         <Card className="border-border bg-card flex-row items-center justify-between rounded-2xl border p-4 shadow">
@@ -178,9 +178,9 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
               {/* Submit Button */}
               <Button
                 onPress={handleSubmit}
-                className="mx-auto w-full max-w-xs items-center justify-center rounded-2xl bg-[#6A9C78] py-4 shadow"
+                className="mx-auto h-14 w-full max-w-xs items-center justify-center rounded-2xl bg-[#6A9C78] py-0 shadow"
               >
-                <Text className="text-base font-black text-white">✓ Submit Round Score</Text>
+                <Text className="text-base leading-none font-black text-white">✓ Submit Round Score</Text>
               </Button>
             </CardContent>
           </Card>

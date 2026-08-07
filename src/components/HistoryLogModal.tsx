@@ -3,6 +3,7 @@ import React from 'react';
 import { Modal, ScrollView, View } from 'react-native';
 import { GameSession } from '../types/game';
 import { calculatePlayerTotals, getSortedPlayers } from '../utils/scoring';
+import { ScreenContainer } from './ScreenContainer';
 
 interface HistoryLogModalProps {
   isOpen: boolean;
@@ -24,16 +25,19 @@ export const HistoryLogModal: React.FC<HistoryLogModalProps> = ({
   }
 
   const content = (
-    <View className="bg-background flex-1 items-center justify-between p-5">
-      <View className="w-full max-w-2xl flex-1 justify-between gap-4">
-        {/* Header */}
-        <View className="border-border flex-row items-center justify-between border-b pb-3">
+    <ScreenContainer
+      scrollable={false}
+      className="w-full flex-1"
+      header={
+        <View className="flex-row items-center justify-between">
           <Text className="text-foreground text-xl font-black">📜 Match History ({history.length})</Text>
           <Button onPress={onClose} variant="ghost" size="sm" className="p-1">
             <Text className="text-foreground text-base font-bold">✕</Text>
           </Button>
         </View>
-
+      }
+    >
+      <View className="w-full flex-1 justify-between gap-4">
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingBottom: 16 }}>
           {history.length === 0 ? (
             <Card className="border-border bg-card items-center justify-center p-8">
@@ -90,7 +94,7 @@ export const HistoryLogModal: React.FC<HistoryLogModalProps> = ({
           </Button>
         )}
       </View>
-    </View>
+    </ScreenContainer>
   );
 
   if (isRouteModal) {
