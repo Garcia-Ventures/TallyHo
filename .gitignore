@@ -98,3 +98,5 @@ dist/
 # Native builds
 android
 ios
+
+.env.local

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { storage } from '../services/storage';
 import { GameSession, Player, Round, RoundScore, RoundScoringType, ScoringMode } from '../types/game';
 import { checkWinCondition, shouldAdvanceRound } from '../utils/scoring';
+import { trackMatchEvent } from '../utils/sentry';
 
 interface GameState {
   activeGame: GameSession | null;
@@ -74,6 +75,13 @@ export const useGameStore = create<GameState>((set, get) => ({
     };
 
     storage.saveActiveGame(newGame);
+    trackMatchEvent('match_created', {
+      gameId: newGame.id,
+      name: newGame.name,
+      presetId: newGame.presetId,
+      playerCount: newGame.players.length,
+    });
+
     set({
       activeGame: newGame,
       viewMode: 'MATCH',

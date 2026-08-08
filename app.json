@@ -29,7 +29,15 @@
     },
     "plugins": [
       "expo-router",
-      "expo-audio"
+      "expo-audio",
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "react-native",
+          "organization": "garcia-ventures"
+        }
+      ]
     ],
     "scheme": "tallyho",
     "extra": {
