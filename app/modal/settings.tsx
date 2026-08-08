@@ -215,6 +215,7 @@ export default function SettingsModal() {
                     nativeSound.playToggle(val);
                     updateSettings({ soundEnabled: val });
                   }}
+                  className="data-[state=unchecked]:bg-muted/80 data-[state=checked]:bg-[#6A9C78]"
                 />
               </View>
 
@@ -235,6 +236,7 @@ export default function SettingsModal() {
                     nativeSound.playToggle(val);
                     updateSettings({ hapticsEnabled: val });
                   }}
+                  className="data-[state=unchecked]:bg-muted/80 data-[state=checked]:bg-[#6A9C78]"
                 />
               </View>
             </View>
