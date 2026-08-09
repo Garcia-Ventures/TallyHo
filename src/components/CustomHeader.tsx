@@ -1,6 +1,8 @@
 import React from 'react';
 import { ColorValue, Platform, StyleProp, Text, View, ViewStyle } from 'react-native';
 
+import { PALETTE } from '../constants/colors';
+
 export interface CustomHeaderProps {
   options: {
     title?: string;
@@ -26,7 +28,7 @@ export function CustomHeader({ options, route, back }: CustomHeaderProps) {
   const title = options.title || route.name;
   const maxWidthClass = options.maxWidthClass || 'max-w-4xl';
   const headerStyleObj = (options.headerStyle || {}) as { backgroundColor?: string };
-  const backgroundColor = headerStyleObj.backgroundColor || '#F7F4EE';
+  const backgroundColor = headerStyleObj.backgroundColor || PALETTE.paper[100];
 
   return (
     <View className="border-border w-full border-b" style={{ backgroundColor }}>

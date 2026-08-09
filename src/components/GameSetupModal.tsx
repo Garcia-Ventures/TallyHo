@@ -1,6 +1,7 @@
 import { Button, Card, CardContent, Input, Text } from '@gv-tech/ui-native';
 import React, { useState } from 'react';
 import { Modal, Pressable, ScrollView, View } from 'react-native';
+import { PALETTE } from '../constants/colors';
 import { nativeSound } from '../services/audio';
 import { GAME_PRESETS, GamePreset, PLAYER_COLORS, Player, RoundScoringType, ScoringMode } from '../types/game';
 import { ScreenContainer } from './ScreenContainer';
@@ -121,13 +122,13 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
                   key={p.id}
                   onPress={() => handleSelectPreset(p)}
                   className={`will-change-variable min-w-[145px] rounded-2xl border p-3.5 ${
-                    isSelected ? 'border-2 border-[#C84B31] bg-[#C84B31]/10 shadow-sm' : 'border-border bg-card'
+                    isSelected ? 'border-ink-stamp bg-ink-stamp/10 border-2 shadow-sm' : 'border-border bg-card'
                   }`}
                 >
                   <View className="mb-1 flex-row items-center justify-between">
                     <Text className="text-2xl">{p.icon}</Text>
                     {isSelected && (
-                      <View className="rounded-full bg-[#C84B31] px-2 py-0.5">
+                      <View className="bg-ink-stamp rounded-full px-2 py-0.5">
                         <Text className="text-[9px] font-black text-white">SELECTED</Text>
                       </View>
                     )}
@@ -148,7 +149,7 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
             onChangeText={setMatchName}
             className="border-border bg-popover text-foreground h-12 rounded-xl border px-3.5 text-sm font-bold"
             placeholder="e.g. Scrabble Finals"
-            placeholderTextColor="#8A8F8C"
+            placeholderTextColor={PALETTE.ink.light}
           />
         </View>
 
@@ -161,7 +162,7 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
             keyboardType="numeric"
             className="border-border bg-popover text-foreground h-12 rounded-xl border px-3.5 text-sm font-bold"
             placeholder="100"
-            placeholderTextColor="#8A8F8C"
+            placeholderTextColor={PALETTE.ink.light}
           />
         </View>
 
@@ -198,7 +199,7 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
               value={newPlayerName}
               onChangeText={setNewPlayerName}
               placeholder="Add player name..."
-              placeholderTextColor="#8A8F8C"
+              placeholderTextColor={PALETTE.ink.light}
               className="border-border bg-popover text-foreground h-11 flex-1 rounded-xl border px-3 text-xs font-bold"
             />
             <Button onPress={handleAddPlayer} className="bg-primary items-center justify-center rounded-xl px-4 py-3">
@@ -210,7 +211,7 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
         {/* Start Game Action */}
         <Button
           onPress={handleStart}
-          className="mt-2 h-14 items-center justify-center rounded-2xl bg-[#C84B31] py-0 shadow"
+          className="bg-ink-stamp mt-2 h-14 items-center justify-center rounded-2xl py-0 shadow"
         >
           <Text className="text-base leading-none font-black text-white">🚀 Start Match</Text>
         </Button>

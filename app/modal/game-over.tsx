@@ -14,7 +14,7 @@ export default function GameOverModalRoute() {
 
   if (!gameToDisplay) {
     return (
-      <View className="will-change-variable flex-1 bg-[#FDFBF7] dark:bg-[#181A19]">
+      <View className="will-change-variable bg-background flex-1">
         <ScreenContainer scrollable={true} className="w-full flex-1">
           <View className="w-full items-center justify-center gap-4 py-12">
             <Card className="border-border bg-card w-full items-center justify-center p-8 shadow-sm">
@@ -36,7 +36,7 @@ export default function GameOverModalRoute() {
   }
 
   return (
-    <View className="will-change-variable flex-1 bg-[#FDFBF7] dark:bg-[#181A19]">
+    <View className="will-change-variable bg-background flex-1">
       <GameOverModal
         isOpen={true}
         isRouteModal={true}

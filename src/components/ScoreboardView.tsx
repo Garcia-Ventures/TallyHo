@@ -68,7 +68,7 @@ export const ScoreboardView: React.FC<ScoreboardViewProps> = ({
             <View className="flex-row flex-wrap gap-2">
               <Button
                 onPress={onFlipToPlayMode}
-                className="flex-1 items-center justify-center rounded-xl bg-[#C84B31] py-3 shadow"
+                className="bg-ink-stamp flex-1 items-center justify-center rounded-xl py-3 shadow"
               >
                 <Text className="text-xs font-black text-white">🎮 Enter Play Mode →</Text>
               </Button>
@@ -126,7 +126,7 @@ export const ScoreboardView: React.FC<ScoreboardViewProps> = ({
                     </View>
 
                     {isLeader && (
-                      <View className="rounded bg-[#E5A93C] px-1.5 py-0.5">
+                      <View className="bg-chip-mustard rounded px-1.5 py-0.5">
                         <Text className="text-[9px] font-black text-black">👑 1st</Text>
                       </View>
                     )}
@@ -144,7 +144,7 @@ export const ScoreboardView: React.FC<ScoreboardViewProps> = ({
                   <View className="border-border border-t pt-2">
                     {hasLoggedCurrentRound ? (
                       <View className="flex-row items-center justify-between">
-                        <Text className="text-[10px] font-bold text-[#6A9C78]">✓ Done</Text>
+                        <Text className="text-chip-sage text-[10px] font-bold">✓ Done</Text>
                         <Button onPress={() => onOpenScoreKeypad(player)} variant="ghost" size="sm" className="p-0.5">
                           <Text className="text-muted-foreground text-[10px] underline">Edit</Text>
                         </Button>

@@ -10,6 +10,7 @@ import { CustomHeader } from '../src/components/CustomHeader';
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
 import { HeaderBackButton } from '../src/components/HeaderBackButton';
 import { HeaderCloseButton } from '../src/components/HeaderCloseButton';
+import { PALETTE } from '../src/constants/colors';
 import { useGameStore } from '../src/stores/useGameStore';
 import { usePlayerLibraryStore } from '../src/stores/usePlayerLibraryStore';
 import { useSettingsStore } from '../src/stores/useSettingsStore';
@@ -41,7 +42,7 @@ export default Sentry.wrap(function RootLayout() {
   const systemScheme = useColorScheme();
 
   const isDark = themeMode === 'dark' || (themeMode === 'system' && systemScheme === 'dark');
-  const tintColor = isDark ? '#F0ECE1' : '#2C302E';
+  const tintColor = isDark ? PALETTE.dark.foreground : PALETTE.ink.primary;
 
   useEffect(() => {
     loadInitialData();
@@ -54,11 +55,11 @@ export default Sentry.wrap(function RootLayout() {
       <ThemeProvider value={themeMode}>
         <Stack
           screenOptions={{
-            headerStyle: { backgroundColor: isDark ? '#232624' : '#F7F4EE' },
+            headerStyle: { backgroundColor: isDark ? PALETTE.dark.card : PALETTE.paper[100] },
             headerTintColor: tintColor,
             headerTitleStyle: { fontWeight: '900' },
             headerTitleAlign: 'center',
-            contentStyle: { backgroundColor: isDark ? '#181A19' : '#FDFBF7' },
+            contentStyle: { backgroundColor: isDark ? PALETTE.dark.background : PALETTE.paper[50] },
             header: Platform.OS === 'web' ? (props) => <CustomHeader {...props} /> : undefined,
           }}
         >

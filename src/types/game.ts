@@ -1,3 +1,5 @@
+import { PALETTE } from '../constants/colors';
+
 export type ScoringMode = 'RACE_HIGH' | 'RACE_LOW' | 'FIXED_ROUNDS';
 export type RoundScoringType = 'EVERY_PLAYER' | 'SINGLE_WINNER';
 
@@ -69,12 +71,12 @@ export interface UserSettings {
 }
 
 export const PLAYER_COLORS = [
-  { name: 'Mustard', hex: '#E5A93C', bg: 'bg-[#E5A93C]', text: 'text-[#E5A93C]' },
-  { name: 'Sage', hex: '#6A9C78', bg: 'bg-[#6A9C78]', text: 'text-[#6A9C78]' },
-  { name: 'Terracotta', hex: '#D96B43', bg: 'bg-[#D96B43]', text: 'text-[#D96B43]' },
-  { name: 'Navy', hex: '#3B5998', bg: 'bg-[#3B5998]', text: 'text-[#3B5998]' },
-  { name: 'Purple', hex: '#8B6B9C', bg: 'bg-[#8B6B9C]', text: 'text-[#8B6B9C]' },
-  { name: 'Rose', hex: '#C97A8B', bg: 'bg-[#C97A8B]', text: 'text-[#C97A8B]' },
+  { name: 'Mustard', hex: PALETTE.chip.mustard, bg: 'bg-chip-mustard', text: 'text-chip-mustard' },
+  { name: 'Sage', hex: PALETTE.chip.sage, bg: 'bg-chip-sage', text: 'text-chip-sage' },
+  { name: 'Terracotta', hex: PALETTE.chip.terracotta, bg: 'bg-chip-terracotta', text: 'text-chip-terracotta' },
+  { name: 'Navy', hex: PALETTE.chip.navy, bg: 'bg-chip-navy', text: 'text-chip-navy' },
+  { name: 'Purple', hex: PALETTE.chip.purple, bg: 'bg-chip-purple', text: 'text-chip-purple' },
+  { name: 'Rose', hex: PALETTE.chip.rose, bg: 'bg-chip-rose', text: 'text-chip-rose' },
 ];
 
 export const GAME_PRESETS: GamePreset[] = [

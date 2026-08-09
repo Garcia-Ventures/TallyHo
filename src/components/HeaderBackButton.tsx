@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
 import React from 'react';
 import { Pressable, Text } from 'react-native';
+import { PALETTE } from '../constants/colors';
 import { nativeSound } from '../services/audio';
 
 interface HeaderBackButtonProps {
@@ -32,7 +33,7 @@ export const HeaderBackButton: React.FC<HeaderBackButtonProps> = ({ onPress, lab
       accessibilityLabel="Go back"
       accessibilityRole="button"
     >
-      <ArrowLeft size={20} color={tintColor || '#5A605C'} />
+      <ArrowLeft size={20} color={tintColor || PALETTE.ink.muted} />
       {label ? <Text className="text-foreground text-xs font-bold">{label}</Text> : null}
     </Pressable>
   );

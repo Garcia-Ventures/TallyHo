@@ -83,7 +83,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
         <Card className="border-border bg-card flex-row items-center justify-between rounded-2xl border p-4 shadow">
           <CardContent className="w-full flex-row items-center justify-between p-0">
             <View className="gap-0.5">
-              <Text className="text-[10px] font-black tracking-widest text-[#E5A93C] uppercase">
+              <Text className="text-chip-mustard text-[10px] font-black tracking-widest uppercase">
                 Turn-by-Turn Play Mode
               </Text>
               <Text className="text-foreground text-lg font-black">Round {currentRoundNumber}</Text>
@@ -107,7 +107,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                   onEndMatch();
                 }}
                 size="sm"
-                className="rounded-xl bg-[#C84B31] px-3 py-2"
+                className="bg-ink-stamp rounded-xl px-3 py-2"
               >
                 <Text className="text-xs font-bold text-white">🏆 End</Text>
               </Button>
@@ -132,7 +132,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                   setSelectedPlayerIndex(idx);
                 }}
                 className={`will-change-variable min-w-[115px] items-center gap-1 rounded-2xl border p-3 ${
-                  isSelected ? 'border-2 border-[#E5A93C] bg-[#E5A93C]/15 shadow-sm' : 'border-border bg-card'
+                  isSelected ? 'border-chip-mustard bg-chip-mustard/15 border-2 shadow-sm' : 'border-border bg-card'
                 }`}
               >
                 <View
@@ -208,7 +208,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
               {/* Submit Button */}
               <Button
                 onPress={handleSubmit}
-                className="mx-auto h-14 w-full max-w-xs items-center justify-center rounded-2xl bg-[#6A9C78] py-0 shadow"
+                className="bg-chip-sage mx-auto h-14 w-full max-w-xs items-center justify-center rounded-2xl py-0 shadow"
               >
                 <Text className="text-base leading-none font-black text-white">✓ Submit Round Score</Text>
               </Button>

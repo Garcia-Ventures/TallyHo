@@ -71,7 +71,7 @@ export const HistoryLogModal: React.FC<HistoryLogModalProps> = ({
                     {winner && (
                       <Badge
                         variant="secondary"
-                        className="flex-row items-center gap-1.5 self-start bg-[#E5A93C]/15 p-2"
+                        className="bg-chip-mustard/15 flex-row items-center gap-1.5 self-start p-2"
                       >
                         <Text className="text-xs">👑</Text>
                         <Text className="text-foreground text-xs font-bold">

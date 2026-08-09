@@ -121,7 +121,7 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
 
                       <View className="flex-row items-center gap-2">
                         {isEditing ? (
-                          <Button onPress={() => handleSaveEdit(idx)} className="h-8 rounded-lg bg-[#6A9C78] px-3 py-1">
+                          <Button onPress={() => handleSaveEdit(idx)} className="bg-chip-sage h-8 rounded-lg px-3 py-1">
                             <Text className="text-xs font-bold text-white">✓ Save</Text>
                           </Button>
                         ) : (
@@ -139,7 +139,7 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
                           variant="ghost"
                           className="h-8 rounded-lg px-2 py-1"
                         >
-                          <Text className="text-xs font-bold text-[#C84B31]">🗑️</Text>
+                          <Text className="text-ink-stamp text-xs font-bold">🗑️</Text>
                         </Button>
                       </View>
                     </View>

@@ -127,7 +127,7 @@ export const ScoreKeypadModal: React.FC<ScoreKeypadModalProps> = ({
         {/* Submit Action */}
         <Button
           onPress={handleSubmit}
-          className="mt-2 h-14 items-center justify-center rounded-2xl bg-[#C84B31] py-0 shadow"
+          className="bg-ink-stamp mt-2 h-14 items-center justify-center rounded-2xl py-0 shadow"
         >
           <Text className="text-base leading-none font-black text-white">Save Round Score</Text>
         </Button>

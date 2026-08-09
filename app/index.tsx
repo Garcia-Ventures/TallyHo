@@ -28,20 +28,20 @@ export default function HomeScreen() {
       <View className="gap-8">
         {/* Active Game Resume Banner */}
         {activeGame && activeGame.status === 'ACTIVE' && (
-          <Card className="border-[#E5A93C] bg-[#E5A93C]/15 p-5 shadow-sm sm:p-6">
+          <Card className="border-chip-mustard bg-chip-mustard/15 p-5 shadow-sm sm:p-6">
             <CardContent className="gap-4 p-0">
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center gap-3">
                   <Text className="text-2xl">🎲</Text>
                   <View>
-                    <Text className="text-xs font-black tracking-widest text-[#E5A93C] uppercase">
+                    <Text className="text-chip-mustard text-xs font-black tracking-widest uppercase">
                       Active Match in Progress
                     </Text>
                     <Text className="text-foreground text-lg font-black">{activeGame.name}</Text>
                   </View>
                 </View>
 
-                <Badge className="bg-[#E5A93C] px-3 py-1">
+                <Badge className="bg-chip-mustard px-3 py-1">
                   <Text className="text-[10px] font-black text-black">Round {activeGame.rounds.length}</Text>
                 </Badge>
               </View>
@@ -75,7 +75,7 @@ export default function HomeScreen() {
 
               <Button
                 onPress={() => router.push('/modal/setup')}
-                className="items-center justify-center rounded-xl bg-[#C84B31] px-4 py-2.5 shadow"
+                className="bg-ink-stamp items-center justify-center rounded-xl px-4 py-2.5 shadow"
               >
                 <Text className="text-xs font-black text-white">+ Custom Match</Text>
               </Button>
@@ -115,7 +115,7 @@ export default function HomeScreen() {
 
             {matchHistory.length > 0 && (
               <Pressable onPress={() => router.push('/modal/history-log')}>
-                <Text className="text-xs font-bold text-[#C84B31]">View All ({matchHistory.length}) →</Text>
+                <Text className="text-ink-stamp text-xs font-bold">View All ({matchHistory.length}) →</Text>
               </Pressable>
             )}
           </View>
@@ -145,8 +145,8 @@ export default function HomeScreen() {
                       </View>
 
                       {winner && (
-                        <View className="items-end rounded-xl bg-[#E5A93C]/20 px-3.5 py-2">
-                          <Text className="text-[9px] font-black text-[#E5A93C] uppercase">👑 Winner</Text>
+                        <View className="bg-chip-mustard/20 items-end rounded-xl px-3.5 py-2">
+                          <Text className="text-chip-mustard text-[9px] font-black uppercase">👑 Winner</Text>
                           <Text className="text-foreground text-xs font-bold">{winner.name}</Text>
                         </View>
                       )}

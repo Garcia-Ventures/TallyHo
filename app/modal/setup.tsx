@@ -12,7 +12,7 @@ export default function SetupModalRoute() {
   const preset = GAME_PRESETS.find((p) => p.id === presetId) || null;
 
   return (
-    <View className="flex-1 bg-[#FDFBF7]">
+    <View className="bg-background flex-1">
       <GameSetupModal
         isOpen={true}
         isRouteModal={true}

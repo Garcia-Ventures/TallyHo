@@ -59,7 +59,7 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
         {/* Banner Card */}
         <View className="border-border bg-card items-center gap-1 rounded-2xl border p-5 shadow-sm">
           <Text className="text-4xl">👑</Text>
-          <Text className="text-xs font-black tracking-widest text-[#E5A93C] uppercase">Game Night Champion</Text>
+          <Text className="text-chip-mustard text-xs font-black tracking-widest uppercase">Game Night Champion</Text>
           <Text className="text-foreground text-2xl font-black">
             {winner ? `${winner.name} Wins!` : 'Match Completed'}
           </Text>
@@ -74,7 +74,7 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
           {secondPlace && (
             <Card className="border-border bg-card flex-1 items-center p-3.5">
               <CardContent className="items-center gap-1 p-0">
-                <View className="h-7 w-7 items-center justify-center rounded-full bg-[#3B5998]">
+                <View className="bg-chip-navy h-7 w-7 items-center justify-center rounded-full">
                   <Text className="text-xs font-black text-white">2</Text>
                 </View>
                 <Text className="text-foreground text-xs font-bold" numberOfLines={1}>
@@ -88,16 +88,16 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
 
           {/* 1st Place */}
           {winner && (
-            <Card className="flex-[1.2] items-center border-2 border-[#E5A93C] bg-[#E5A93C]/15 p-4 shadow-sm">
+            <Card className="border-chip-mustard bg-chip-mustard/15 flex-[1.2] items-center border-2 p-4 shadow-sm">
               <CardContent className="items-center gap-1 p-0">
-                <View className="h-9 w-9 items-center justify-center rounded-full bg-[#E5A93C]">
+                <View className="bg-chip-mustard h-9 w-9 items-center justify-center rounded-full">
                   <Text className="text-sm font-black text-black">1</Text>
                 </View>
                 <Text className="text-foreground text-sm font-black" numberOfLines={1}>
                   {winner.name}
                 </Text>
                 <Text className="text-foreground text-xl font-black">{totals[winner.id] ?? 0}</Text>
-                <Badge className="mt-0.5 bg-[#E5A93C] px-2 py-0.5">
+                <Badge className="bg-chip-mustard mt-0.5 px-2 py-0.5">
                   <Text className="text-[10px] font-black text-black uppercase">🏆 Winner</Text>
                 </Badge>
               </CardContent>
@@ -108,7 +108,7 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
           {thirdPlace && (
             <Card className="border-border bg-card flex-1 items-center p-3.5">
               <CardContent className="items-center gap-1 p-0">
-                <View className="h-7 w-7 items-center justify-center rounded-full bg-[#D96B43]">
+                <View className="bg-chip-terracotta h-7 w-7 items-center justify-center rounded-full">
                   <Text className="text-xs font-black text-white">3</Text>
                 </View>
                 <Text className="text-foreground text-xs font-bold" numberOfLines={1}>
@@ -157,7 +157,7 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
                     <Text className="text-foreground text-xs font-bold">{h.title}</Text>
                     <Text className="text-muted-foreground text-[10px]">{h.description}</Text>
                   </View>
-                  <Badge variant="secondary" className="bg-[#E5A93C]/20 px-2 py-1">
+                  <Badge variant="secondary" className="bg-chip-mustard/20 px-2 py-1">
                     <Text className="text-foreground text-[10px] font-bold">{h.badge}</Text>
                   </Badge>
                 </CardContent>

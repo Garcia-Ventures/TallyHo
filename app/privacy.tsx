@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { CheckCircle2, Database, Globe, Lock, Mail, RefreshCw, ShieldCheck, UserCheck } from 'lucide-react-native';
 import { View } from 'react-native';
 import { ScreenContainer } from '../src/components/ScreenContainer';
+import { PALETTE } from '../src/constants/colors';
 
 export default function PrivacyPolicyScreen() {
   const router = useRouter();
@@ -19,11 +20,11 @@ export default function PrivacyPolicyScreen() {
     <ScreenContainer maxWidth="4xl" padding="normal">
       <View className="gap-6 py-2">
         {/* HERO BANNER */}
-        <Card className="border-[#6A9C78]/30 bg-[#6A9C78]/10 p-6 shadow-sm">
+        <Card className="border-chip-sage/30 bg-chip-sage/10 p-6 shadow-sm">
           <CardContent className="gap-3 p-0">
             <View className="flex-row items-center gap-3">
-              <View className="h-10 w-10 items-center justify-center rounded-2xl bg-[#6A9C78]">
-                <ShieldCheck size={22} color="#FFFFFF" />
+              <View className="bg-chip-sage h-10 w-10 items-center justify-center rounded-2xl">
+                <ShieldCheck size={22} color={PALETTE.white} />
               </View>
               <View className="flex-1">
                 <Text className="text-foreground text-xl font-black">Tally Ho Privacy Commitment</Text>
@@ -45,15 +46,15 @@ export default function PrivacyPolicyScreen() {
         <Card className="border-border bg-card p-6 shadow-sm">
           <CardHeader className="mb-4 gap-1 p-0">
             <View className="flex-row items-center gap-2.5">
-              <View className="h-8 w-8 items-center justify-center rounded-full bg-[#6A9C78]/15">
-                <Lock size={18} color="#6A9C78" />
+              <View className="bg-chip-sage/15 h-8 w-8 items-center justify-center rounded-full">
+                <Lock size={18} color={PALETTE.chip.sage} />
               </View>
               <CardTitle className="text-foreground text-lg font-black">1. Core Data Principles</CardTitle>
             </View>
           </CardHeader>
           <CardContent className="gap-3 p-0">
             <View className="border-border bg-popover/50 flex-row items-start gap-3 rounded-xl border p-3.5">
-              <CheckCircle2 size={18} color="#6A9C78" className="mt-0.5" />
+              <CheckCircle2 size={18} color={PALETTE.chip.sage} className="mt-0.5" />
               <View className="flex-1">
                 <Text className="text-foreground mb-1 text-xs font-bold">Local-First Storage</Text>
                 <Text className="text-muted-foreground text-xs leading-5 font-medium">
@@ -65,7 +66,7 @@ export default function PrivacyPolicyScreen() {
             </View>
 
             <View className="border-border bg-popover/50 flex-row items-start gap-3 rounded-xl border p-3.5">
-              <CheckCircle2 size={18} color="#6A9C78" className="mt-0.5" />
+              <CheckCircle2 size={18} color={PALETTE.chip.sage} className="mt-0.5" />
               <View className="flex-1">
                 <Text className="text-foreground mb-1 text-xs font-bold">No Tracking or Ad Brokers</Text>
                 <Text className="text-muted-foreground text-xs leading-5 font-medium">
@@ -81,8 +82,8 @@ export default function PrivacyPolicyScreen() {
         <Card className="border-border bg-card p-6 shadow-sm">
           <CardHeader className="mb-4 gap-1 p-0">
             <View className="flex-row items-center gap-2.5">
-              <View className="h-8 w-8 items-center justify-center rounded-full bg-[#8B6B9C]/15">
-                <Database size={18} color="#8B6B9C" />
+              <View className="bg-chip-purple/15 h-8 w-8 items-center justify-center rounded-full">
+                <Database size={18} color={PALETTE.chip.purple} />
               </View>
               <CardTitle className="text-foreground text-lg font-black">
                 2. Data Collection & Safety Declaration
@@ -106,21 +107,21 @@ export default function PrivacyPolicyScreen() {
                 <Text className="text-foreground w-1/4 text-xs font-bold">Personal Info</Text>
                 <Text className="text-muted-foreground w-1/4 text-xs">Email (Optional)</Text>
                 <Text className="text-muted-foreground w-1/4 text-xs">Support Replies</Text>
-                <Text className="w-1/4 text-xs font-bold text-[#6A9C78]">HTTPS Encrypted</Text>
+                <Text className="text-chip-sage w-1/4 text-xs font-bold">HTTPS Encrypted</Text>
               </View>
 
               <View className="border-border/60 flex-row border-b p-3">
                 <Text className="text-foreground w-1/4 text-xs font-bold">User Content</Text>
                 <Text className="text-muted-foreground w-1/4 text-xs">Feedback Text</Text>
                 <Text className="text-muted-foreground w-1/4 text-xs">Bug Fixing / QA</Text>
-                <Text className="w-1/4 text-xs font-bold text-[#6A9C78]">Formspree Processor</Text>
+                <Text className="text-chip-sage w-1/4 text-xs font-bold">Formspree Processor</Text>
               </View>
 
               <View className="border-border/60 flex-row border-b p-3">
                 <Text className="text-foreground w-1/4 text-xs font-bold">Diagnostics</Text>
                 <Text className="text-muted-foreground w-1/4 text-xs">OS & App Version</Text>
                 <Text className="text-muted-foreground w-1/4 text-xs">App Stability</Text>
-                <Text className="w-1/4 text-xs font-bold text-[#6A9C78]">Sentry Telemetry</Text>
+                <Text className="text-chip-sage w-1/4 text-xs font-bold">Sentry Telemetry</Text>
               </View>
 
               <View className="flex-row p-3">
@@ -137,8 +138,8 @@ export default function PrivacyPolicyScreen() {
         <Card className="border-border bg-card p-6 shadow-sm">
           <CardHeader className="mb-4 gap-1 p-0">
             <View className="flex-row items-center gap-2.5">
-              <View className="h-8 w-8 items-center justify-center rounded-full bg-[#E5A93C]/15">
-                <Globe size={18} color="#E5A93C" />
+              <View className="bg-chip-mustard/15 h-8 w-8 items-center justify-center rounded-full">
+                <Globe size={18} color={PALETTE.chip.mustard} />
               </View>
               <CardTitle className="text-foreground text-lg font-black">3. Third-Party Service Processors</CardTitle>
             </View>
@@ -147,8 +148,8 @@ export default function PrivacyPolicyScreen() {
             <View className="border-border bg-popover gap-2 rounded-xl border p-4">
               <View className="flex-row items-center justify-between">
                 <Text className="text-foreground text-xs font-bold">Formspree (Feedback Collector)</Text>
-                <Badge className="border border-[#E5A93C]/40 bg-[#E5A93C]/20">
-                  <Text className="text-[10px] font-black text-[#E5A93C]">Form Processor</Text>
+                <Badge className="border-chip-mustard/40 bg-chip-mustard/20 border">
+                  <Text className="text-chip-mustard text-[10px] font-black">Form Processor</Text>
                 </Badge>
               </View>
               <Text className="text-muted-foreground text-xs leading-5 font-medium">
@@ -179,8 +180,8 @@ export default function PrivacyPolicyScreen() {
         <Card className="border-border bg-card p-6 shadow-sm">
           <CardHeader className="mb-4 gap-1 p-0">
             <View className="flex-row items-center gap-2.5">
-              <View className="h-8 w-8 items-center justify-center rounded-full bg-red-500/15">
-                <RefreshCw size={18} color="#C5221F" />
+              <View className="bg-status-error-bg h-8 w-8 items-center justify-center rounded-full">
+                <RefreshCw size={18} color={PALETTE.status.errorText} />
               </View>
               <CardTitle className="text-foreground text-lg font-black">4. Local Data Reset & Erasure Rights</CardTitle>
             </View>
@@ -188,7 +189,7 @@ export default function PrivacyPolicyScreen() {
           <CardContent className="gap-3 p-0">
             <View className="border-border bg-popover gap-2 rounded-xl border p-4">
               <View className="flex-row items-center gap-2">
-                <RefreshCw size={16} color="#6A9C78" />
+                <RefreshCw size={16} color={PALETTE.chip.sage} />
                 <Text className="text-foreground text-xs font-bold">Instant Local Device Purge</Text>
               </View>
               <Text className="text-muted-foreground text-xs leading-5 font-medium">
@@ -200,7 +201,7 @@ export default function PrivacyPolicyScreen() {
 
             <View className="border-border bg-popover gap-2 rounded-xl border p-4">
               <View className="flex-row items-center gap-2">
-                <Mail size={16} color="#8B6B9C" />
+                <Mail size={16} color={PALETTE.chip.purple} />
                 <Text className="text-foreground text-xs font-bold">Permanent Erasure of Submitted Feedback</Text>
               </View>
               <Text className="text-muted-foreground text-xs leading-5 font-medium">
@@ -219,8 +220,8 @@ export default function PrivacyPolicyScreen() {
         <Card className="border-border bg-card p-6 shadow-sm">
           <CardHeader className="mb-4 gap-1 p-0">
             <View className="flex-row items-center gap-2.5">
-              <View className="h-8 w-8 items-center justify-center rounded-full bg-blue-500/15">
-                <UserCheck size={18} color="#2563EB" />
+              <View className="bg-chip-navy/15 h-8 w-8 items-center justify-center rounded-full">
+                <UserCheck size={18} color={PALETTE.chip.navy} />
               </View>
               <CardTitle className="text-foreground text-lg font-black">5. Children’s Privacy & Security</CardTitle>
             </View>
@@ -243,8 +244,8 @@ export default function PrivacyPolicyScreen() {
         <Card className="border-border bg-card p-6 shadow-sm">
           <CardHeader className="mb-4 gap-1 p-0">
             <View className="flex-row items-center gap-2.5">
-              <View className="h-8 w-8 items-center justify-center rounded-full bg-[#6A9C78]/15">
-                <Mail size={18} color="#6A9C78" />
+              <View className="bg-chip-sage/15 h-8 w-8 items-center justify-center rounded-full">
+                <Mail size={18} color={PALETTE.chip.sage} />
               </View>
               <CardTitle className="text-foreground text-lg font-black">6. Developer & Legal Contact</CardTitle>
             </View>

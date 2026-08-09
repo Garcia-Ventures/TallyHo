@@ -27,6 +27,7 @@ import {
 import { useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, View } from 'react-native';
 import { ScreenContainer } from '../../src/components/ScreenContainer';
+import { PALETTE } from '../../src/constants/colors';
 import { nativeSound } from '../../src/services/audio';
 import { storage } from '../../src/services/storage';
 import { useSettingsStore } from '../../src/stores/useSettingsStore';
@@ -124,8 +125,8 @@ export default function SettingsModal() {
         <Card className="border-border bg-card rounded-2xl border p-6 shadow-sm">
           <CardHeader className="mb-4 gap-1 p-0">
             <View className="flex-row items-center gap-2">
-              <View className="h-8 w-8 items-center justify-center rounded-full bg-[#6A9C78]/15">
-                <Sun size={18} color="#6A9C78" />
+              <View className="bg-chip-sage/15 h-8 w-8 items-center justify-center rounded-full">
+                <Sun size={18} color={PALETTE.chip.sage} />
               </View>
               <CardTitle className="text-foreground text-lg font-black">Appearance</CardTitle>
             </View>
@@ -138,13 +139,13 @@ export default function SettingsModal() {
               <Pressable
                 onPress={() => handleThemeChange('system')}
                 className={`border-border bg-popover flex-1 flex-row items-center justify-center gap-2 rounded-xl border py-3 ${
-                  settings.themeMode === 'system' ? 'border-[#6A9C78] bg-[#6A9C78]/15' : ''
+                  settings.themeMode === 'system' ? 'border-chip-sage bg-chip-sage/15' : ''
                 }`}
               >
-                <Smartphone size={16} color={settings.themeMode === 'system' ? '#6A9C78' : '#5A605C'} />
+                <Smartphone size={16} color={settings.themeMode === 'system' ? PALETTE.chip.sage : PALETTE.ink.muted} />
                 <Text
                   className={`text-xs font-bold ${
-                    settings.themeMode === 'system' ? 'text-[#6A9C78]' : 'text-foreground'
+                    settings.themeMode === 'system' ? 'text-chip-sage' : 'text-foreground'
                   }`}
                 >
                   System
@@ -154,13 +155,13 @@ export default function SettingsModal() {
               <Pressable
                 onPress={() => handleThemeChange('light')}
                 className={`border-border bg-popover flex-1 flex-row items-center justify-center gap-2 rounded-xl border py-3 ${
-                  settings.themeMode === 'light' ? 'border-[#6A9C78] bg-[#6A9C78]/15' : ''
+                  settings.themeMode === 'light' ? 'border-chip-sage bg-chip-sage/15' : ''
                 }`}
               >
-                <Sun size={16} color={settings.themeMode === 'light' ? '#6A9C78' : '#5A605C'} />
+                <Sun size={16} color={settings.themeMode === 'light' ? PALETTE.chip.sage : PALETTE.ink.muted} />
                 <Text
                   className={`text-xs font-bold ${
-                    settings.themeMode === 'light' ? 'text-[#6A9C78]' : 'text-foreground'
+                    settings.themeMode === 'light' ? 'text-chip-sage' : 'text-foreground'
                   }`}
                 >
                   Light
@@ -170,13 +171,13 @@ export default function SettingsModal() {
               <Pressable
                 onPress={() => handleThemeChange('dark')}
                 className={`border-border bg-popover flex-1 flex-row items-center justify-center gap-2 rounded-xl border py-3 ${
-                  settings.themeMode === 'dark' ? 'border-[#6A9C78] bg-[#6A9C78]/15' : ''
+                  settings.themeMode === 'dark' ? 'border-chip-sage bg-chip-sage/15' : ''
                 }`}
               >
-                <Moon size={16} color={settings.themeMode === 'dark' ? '#6A9C78' : '#5A605C'} />
+                <Moon size={16} color={settings.themeMode === 'dark' ? PALETTE.chip.sage : PALETTE.ink.muted} />
                 <Text
                   className={`text-xs font-bold ${
-                    settings.themeMode === 'dark' ? 'text-[#6A9C78]' : 'text-foreground'
+                    settings.themeMode === 'dark' ? 'text-chip-sage' : 'text-foreground'
                   }`}
                 >
                   Dark
@@ -190,8 +191,8 @@ export default function SettingsModal() {
         <Card className="border-border bg-card rounded-2xl border p-6 shadow-sm">
           <CardHeader className="mb-4 gap-1 p-0">
             <View className="flex-row items-center gap-2">
-              <View className="h-8 w-8 items-center justify-center rounded-full bg-[#E5A93C]/15">
-                <Volume2 size={18} color="#E5A93C" />
+              <View className="bg-chip-mustard/15 h-8 w-8 items-center justify-center rounded-full">
+                <Volume2 size={18} color={PALETTE.chip.mustard} />
               </View>
               <CardTitle className="text-foreground text-lg font-black">Sensory Feedback</CardTitle>
             </View>
@@ -202,7 +203,7 @@ export default function SettingsModal() {
           <CardContent className="gap-4 p-0">
             <View className="flex-row items-center justify-between">
               <View className="flex-row items-center gap-2.5">
-                <Volume2 size={16} color="#5A605C" />
+                <Volume2 size={16} color={PALETTE.ink.muted} />
                 <View>
                   <Text className="text-foreground text-xs font-bold">Sound Effects</Text>
                   <Text className="text-muted-foreground text-[10px] font-medium">
@@ -223,7 +224,7 @@ export default function SettingsModal() {
 
             <View className="flex-row items-center justify-between">
               <View className="flex-row items-center gap-2.5">
-                <Vibrate size={16} color="#5A605C" />
+                <Vibrate size={16} color={PALETTE.ink.muted} />
                 <View>
                   <Text className="text-foreground text-xs font-bold">Haptic Feedback</Text>
                   <Text className="text-muted-foreground text-[10px] font-medium">
@@ -243,8 +244,8 @@ export default function SettingsModal() {
         <Card className="border-border bg-card rounded-2xl border p-6 shadow-sm">
           <CardHeader className="mb-4 gap-1 p-0">
             <View className="flex-row items-center gap-2">
-              <View className="h-8 w-8 items-center justify-center rounded-full bg-[#6A9C78]/15">
-                <Send size={18} color="#6A9C78" />
+              <View className="bg-chip-sage/15 h-8 w-8 items-center justify-center rounded-full">
+                <Send size={18} color={PALETTE.chip.sage} />
               </View>
               <CardTitle className="text-foreground text-lg font-black">Submit Feedback & Support</CardTitle>
             </View>
@@ -261,10 +262,10 @@ export default function SettingsModal() {
                     key={cat}
                     onPress={() => setCategory(cat)}
                     className={`border-border bg-popover flex-1 items-center justify-center rounded-xl border py-2.5 ${
-                      category === cat ? 'border-[#6A9C78] bg-[#6A9C78]/15' : ''
+                      category === cat ? 'border-chip-sage bg-chip-sage/15' : ''
                     }`}
                   >
-                    <Text className={`text-xs font-bold ${category === cat ? 'text-[#6A9C78]' : 'text-foreground'}`}>
+                    <Text className={`text-xs font-bold ${category === cat ? 'text-chip-sage' : 'text-foreground'}`}>
                       {cat}
                     </Text>
                   </Pressable>
@@ -278,7 +279,7 @@ export default function SettingsModal() {
                 value={email}
                 onChangeText={setEmail}
                 placeholder="name@example.com"
-                placeholderTextColor="#8A8F8C"
+                placeholderTextColor={PALETTE.ink.light}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 className="border-border bg-popover text-foreground h-11 px-3.5"
@@ -291,7 +292,7 @@ export default function SettingsModal() {
                 value={feedback}
                 onChangeText={setFeedback}
                 placeholder="Describe your issue or suggestion..."
-                placeholderTextColor="#8A8F8C"
+                placeholderTextColor={PALETTE.ink.light}
                 multiline
                 numberOfLines={4}
                 className="border-border bg-popover text-foreground min-h-[100px] p-3.5"
@@ -299,16 +300,16 @@ export default function SettingsModal() {
             </View>
 
             {feedbackStatus === 'success' && (
-              <View className="flex-row items-center gap-2 rounded-xl bg-[#E6F4EA] p-3.5">
-                <CheckCircle2 size={16} color="#137333" />
-                <Text className="flex-1 text-xs font-bold text-[#137333]">Thank you! Feedback received.</Text>
+              <View className="bg-status-success-bg flex-row items-center gap-2 rounded-xl p-3.5">
+                <CheckCircle2 size={16} color={PALETTE.status.successText} />
+                <Text className="text-status-success-text flex-1 text-xs font-bold">Thank you! Feedback received.</Text>
               </View>
             )}
 
             {feedbackStatus === 'error' && (
-              <View className="flex-row items-center gap-2 rounded-xl bg-[#FCE8E6] p-3.5">
-                <AlertCircle size={16} color="#C5221F" />
-                <Text className="flex-1 text-xs font-bold text-[#C5221F]">{errorMessage}</Text>
+              <View className="bg-status-error-bg flex-row items-center gap-2 rounded-xl p-3.5">
+                <AlertCircle size={16} color={PALETTE.status.errorText} />
+                <Text className="text-status-error-text flex-1 text-xs font-bold">{errorMessage}</Text>
               </View>
             )}
 
@@ -316,11 +317,11 @@ export default function SettingsModal() {
               onPress={handleFeedbackSubmit}
               disabled={isSubmitting || !feedback.trim()}
               className={`h-12 flex-row items-center justify-center gap-2 rounded-xl ${
-                isSubmitting || !feedback.trim() ? 'bg-[#6A9C78]/50' : 'bg-[#6A9C78]'
+                isSubmitting || !feedback.trim() ? 'bg-chip-sage/50' : 'bg-chip-sage'
               }`}
             >
               {isSubmitting ? (
-                <ActivityIndicator color="#FFFFFF" size="small" />
+                <ActivityIndicator color={PALETTE.white} size="small" />
               ) : (
                 <Text className="text-sm font-bold text-white">Send Feedback</Text>
               )}
@@ -332,8 +333,8 @@ export default function SettingsModal() {
         <Card className="border-border bg-card rounded-2xl border p-6 shadow-sm">
           <CardHeader className="mb-4 gap-1 p-0">
             <View className="flex-row items-center gap-2">
-              <View className="h-8 w-8 items-center justify-center rounded-full bg-[#8B6B9C]/15">
-                <ShieldCheck size={18} color="#8B6B9C" />
+              <View className="bg-chip-purple/15 h-8 w-8 items-center justify-center rounded-full">
+                <ShieldCheck size={18} color={PALETTE.chip.purple} />
               </View>
               <CardTitle className="text-foreground text-lg font-black">Privacy & Legal</CardTitle>
             </View>
@@ -350,10 +351,10 @@ export default function SettingsModal() {
               className="border-border bg-popover flex-row items-center justify-between rounded-xl border p-3.5"
             >
               <View className="flex-row items-center gap-2.5">
-                <HelpCircle size={16} color="#8B6B9C" />
+                <HelpCircle size={16} color={PALETTE.chip.purple} />
                 <Text className="text-foreground text-xs font-bold">View Store Privacy Policy Page</Text>
               </View>
-              <ExternalLink size={14} color="#5A605C" />
+              <ExternalLink size={14} color={PALETTE.ink.muted} />
             </Pressable>
 
             <Button
@@ -362,7 +363,7 @@ export default function SettingsModal() {
               className="flex-row items-center justify-between rounded-xl border border-red-200 bg-red-50 p-3.5 dark:border-red-900/40 dark:bg-red-950/40"
             >
               <View className="flex-row items-center gap-2.5">
-                <Trash2 size={16} color="#C5221F" />
+                <Trash2 size={16} color={PALETTE.status.errorText} />
                 <Text className="text-xs font-bold text-red-600 dark:text-red-400">Reset Local Storage & Settings</Text>
               </View>
             </Button>

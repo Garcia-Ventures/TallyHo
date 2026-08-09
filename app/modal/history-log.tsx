@@ -8,7 +8,7 @@ export default function HistoryLogModalRoute() {
   const { matchHistory, clearHistory } = useGameStore();
 
   return (
-    <View className="flex-1 bg-[#FDFBF7]">
+    <View className="bg-background flex-1">
       <HistoryLogModal
         isOpen={true}
         isRouteModal={true}

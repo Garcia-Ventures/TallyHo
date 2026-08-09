@@ -12,7 +12,7 @@ export default function RoundHistoryModalRoute() {
   }
 
   return (
-    <View className="flex-1 bg-[#FDFBF7]">
+    <View className="bg-background flex-1">
       <RoundHistoryModal
         isOpen={true}
         isRouteModal={true}

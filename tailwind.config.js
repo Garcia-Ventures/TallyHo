@@ -31,6 +31,14 @@ export default {
           purple: '#8B6B9C',
           rose: '#C97A8B',
         },
+        status: {
+          success: '#137333',
+          'success-bg': '#E6F4EA',
+          'success-text': '#137333',
+          error: '#C5221F',
+          'error-bg': '#FCE8E6',
+          'error-text': '#C5221F',
+        },
       },
       fontFamily: {
         sans: ['Nunito', 'Outfit', 'sans-serif'],

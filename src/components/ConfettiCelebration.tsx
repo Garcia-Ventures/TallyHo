@@ -2,9 +2,18 @@ import React, { useEffect } from 'react';
 import { Dimensions, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
 
+import { PALETTE } from '../constants/colors';
+
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-const CONFETTI_COLORS = ['#E5A93C', '#6A9C78', '#D96B43', '#3B5998', '#C84B31', '#8B6B9C'];
+const CONFETTI_COLORS = [
+  PALETTE.chip.mustard,
+  PALETTE.chip.sage,
+  PALETTE.chip.terracotta,
+  PALETTE.chip.navy,
+  PALETTE.ink.stamp,
+  PALETTE.chip.purple,
+];
 const PARTICLE_COUNT = 50;
 
 interface ConfettiParticleProps {

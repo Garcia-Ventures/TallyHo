@@ -4,6 +4,34 @@
 @import 'tailwindcss/utilities.css';
 @import 'nativewind/theme';
 
+@theme {
+  --color-paper-50: #fdfbf7;
+  --color-paper-100: #f7f4ee;
+  --color-paper-200: #efeae1;
+  --color-paper-300: #e5e0d8;
+  --color-paper-400: #d5cec2;
+  --color-paper-900: #2c302e;
+
+  --color-ink-primary: #2c302e;
+  --color-ink-muted: #5a605c;
+  --color-ink-light: #8e9490;
+  --color-ink-stamp: #c84b31;
+
+  --color-chip-mustard: #e5a93c;
+  --color-chip-sage: #6a9c78;
+  --color-chip-terracotta: #d96b43;
+  --color-chip-navy: #3b5998;
+  --color-chip-purple: #8b6b9c;
+  --color-chip-rose: #c97a8b;
+
+  --color-status-success: #137333;
+  --color-status-success-bg: #e6f4ea;
+  --color-status-success-text: #137333;
+  --color-status-error: #c5221f;
+  --color-status-error-bg: #fce8e6;
+  --color-status-error-text: #c5221f;
+}
+
 @layer base {
   :root {
     --background: 40 40% 98%;
@@ -63,7 +91,7 @@
 @layer utilities {
   .ink-underline {
     border-bottom-width: 2px;
-    border-color: #c84b31;
+    border-color: var(--color-ink-stamp, #c84b31);
   }
 
   .score-num {

@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { X } from 'lucide-react-native';
 import React from 'react';
 import { Pressable } from 'react-native';
+import { PALETTE } from '../constants/colors';
 import { nativeSound } from '../services/audio';
 
 interface HeaderCloseButtonProps {
@@ -29,7 +30,7 @@ export const HeaderCloseButton: React.FC<HeaderCloseButtonProps> = ({ onPress, t
       accessibilityLabel="Close modal"
       accessibilityRole="button"
     >
-      <X size={20} color={tintColor || '#5A605C'} />
+      <X size={20} color={tintColor || PALETTE.ink.muted} />
     </Pressable>
   );
 };
