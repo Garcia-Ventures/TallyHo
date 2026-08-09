@@ -145,7 +145,7 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
           <Input
             value={matchName}
             onChangeText={setMatchName}
-            className="border-border bg-popover text-foreground rounded-xl border p-3.5 text-sm font-bold"
+            className="border-border bg-popover text-foreground h-12 rounded-xl border px-3.5 text-sm font-bold"
             placeholder="e.g. Scrabble Finals"
             placeholderTextColor="#8A8F8C"
           />
@@ -158,7 +158,7 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
             value={targetScoreStr}
             onChangeText={setTargetScoreStr}
             keyboardType="numeric"
-            className="border-border bg-popover text-foreground rounded-xl border p-3.5 text-sm font-bold"
+            className="border-border bg-popover text-foreground h-12 rounded-xl border px-3.5 text-sm font-bold"
             placeholder="100"
             placeholderTextColor="#8A8F8C"
           />
@@ -198,7 +198,7 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
               onChangeText={setNewPlayerName}
               placeholder="Add player name..."
               placeholderTextColor="#8A8F8C"
-              className="border-border bg-popover text-foreground flex-1 rounded-xl border p-3 text-xs font-bold"
+              className="border-border bg-popover text-foreground h-11 flex-1 rounded-xl border px-3 text-xs font-bold"
             />
             <Button onPress={handleAddPlayer} className="bg-primary items-center justify-center rounded-xl px-4 py-3">
               <Text className="text-primary-foreground text-xs font-bold">+ Add</Text>
