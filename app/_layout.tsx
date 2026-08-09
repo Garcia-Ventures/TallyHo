@@ -3,16 +3,16 @@ import '../src/global.css';
 import { ThemeProvider } from '@gv-tech/ui-native';
 import { Stack } from 'expo-router';
 import { useEffect } from 'react';
-import { useColorScheme } from 'react-native';
+import { Platform, useColorScheme } from 'react-native';
 
 import * as Sentry from '@sentry/react-native';
+import { CustomHeader } from '../src/components/CustomHeader';
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
+import { HeaderBackButton } from '../src/components/HeaderBackButton';
+import { HeaderCloseButton } from '../src/components/HeaderCloseButton';
 import { useGameStore } from '../src/stores/useGameStore';
 import { usePlayerLibraryStore } from '../src/stores/usePlayerLibraryStore';
 import { useSettingsStore } from '../src/stores/useSettingsStore';
-
-import { HeaderBackButton } from '../src/components/HeaderBackButton';
-import { HeaderCloseButton } from '../src/components/HeaderCloseButton';
 
 Sentry.init({
   dsn: 'https://ba35c9ea2c45d64b131f6b854cd5c3ea@o4511873601306624.ingest.us.sentry.io/4511873607991296',
@@ -59,6 +59,7 @@ export default Sentry.wrap(function RootLayout() {
             headerTitleStyle: { fontWeight: '900' },
             headerTitleAlign: 'center',
             contentStyle: { backgroundColor: isDark ? '#181A19' : '#FDFBF7' },
+            header: Platform.OS === 'web' ? (props) => <CustomHeader {...props} /> : undefined,
           }}
         >
           <Stack.Screen

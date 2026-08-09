@@ -118,7 +118,7 @@ export default function SettingsModal() {
   };
 
   return (
-    <ScreenContainer maxWidth="2xl" padding="normal">
+    <ScreenContainer maxWidth="4xl" padding="normal">
       <View className="gap-6 py-2">
         {/* SECTION 1: APPEARANCE & THEME */}
         <Card className="border-border bg-card rounded-2xl border p-6 shadow-sm">
