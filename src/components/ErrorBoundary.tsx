@@ -40,7 +40,7 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <View className="flex-1 items-center justify-center bg-[#FDFBF7] p-6 dark:bg-[#181A19]">
+        <View className="will-change-variable flex-1 items-center justify-center bg-[#FDFBF7] p-6 dark:bg-[#181A19]">
           <Card className="border-border bg-card w-full max-w-md p-6 shadow-md">
             <CardContent className="items-center gap-4 text-center">
               <Text className="text-4xl">⚠️</Text>

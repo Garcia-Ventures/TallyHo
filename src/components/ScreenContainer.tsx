@@ -67,7 +67,7 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
         <ScrollView
           className="w-full flex-1"
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ alignItems: 'center', paddingBottom: 48 }}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 48 }}
         >
           {innerContent}
         </ScrollView>

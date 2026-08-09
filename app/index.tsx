@@ -87,7 +87,7 @@ export default function HomeScreen() {
             {GAME_PRESETS.map((preset) => (
               <Pressable key={preset.id} onPress={() => handleSelectPreset(preset)} className="w-[47.5%] sm:w-[31.5%]">
                 <Card className="border-border bg-card justify-between p-5 shadow-xs">
-                  <CardContent className="flex-1 justify-between gap-2.5 p-0">
+                  <CardContent className="justify-between gap-2.5 p-0">
                     <View className="gap-2">
                       <Text className="text-2xl">{preset.icon}</Text>
                       <Text className="text-foreground text-base font-black">{preset.name}</Text>

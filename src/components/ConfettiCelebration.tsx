@@ -80,7 +80,7 @@ export const ConfettiCelebration: React.FC = () => {
   }, []);
 
   return (
-    <View className="pointer-events-none absolute inset-0 z-50 overflow-hidden">
+    <View className="absolute inset-0 z-50 overflow-hidden" style={{ pointerEvents: 'none' }}>
       {Array.from({ length: PARTICLE_COUNT }).map((_, i) => (
         <Particle key={i} index={i} />
       ))}
