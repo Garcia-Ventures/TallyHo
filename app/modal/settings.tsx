@@ -16,9 +16,11 @@ import {
   ExternalLink,
   HelpCircle,
   Moon,
+  RotateCcw,
   Send,
   ShieldCheck,
   Smartphone,
+  Sparkles,
   Sun,
   Trash2,
   Vibrate,
@@ -26,6 +28,7 @@ import {
 } from 'lucide-react-native';
 import { useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, View } from 'react-native';
+import { RemoveAdsModal } from '../../src/components/RemoveAdsModal';
 import { ScreenContainer } from '../../src/components/ScreenContainer';
 import { PALETTE } from '../../src/constants/colors';
 import { nativeSound } from '../../src/services/audio';
@@ -34,7 +37,15 @@ import { useSettingsStore } from '../../src/stores/useSettingsStore';
 
 export default function SettingsModal() {
   const router = useSafeRouter();
-  const { settings, updateSettings, resetSettings } = useSettingsStore();
+  const {
+    settings,
+    updateSettings,
+    resetSettings,
+    purchaseRemoveAds,
+    restorePurchases,
+    resetAdFreeStatus,
+    setAdBlockedState,
+  } = useSettingsStore();
 
   const [category, setCategory] = useState<'General' | 'Bug' | 'Feature'>('General');
   const [email, setEmail] = useState('');
@@ -42,6 +53,7 @@ export default function SettingsModal() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedbackStatus, setFeedbackStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [isRemoveAdsModalOpen, setIsRemoveAdsModalOpen] = useState(false);
 
   function useSafeRouter() {
     try {
@@ -121,6 +133,101 @@ export default function SettingsModal() {
   return (
     <ScreenContainer maxWidth="4xl" padding="normal">
       <View className="gap-6 py-2">
+        {/* SECTION 0: TALLYHO PRO & MONETIZATION */}
+        <Card className="border-chip-mustard/40 bg-chip-mustard/10 rounded-2xl border p-6 shadow-sm">
+          <CardHeader className="mb-4 gap-1 p-0">
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row items-center gap-2">
+                <View className="bg-chip-mustard/20 h-8 w-8 items-center justify-center rounded-full">
+                  <Sparkles size={18} color={PALETTE.chip.mustard} />
+                </View>
+                <CardTitle className="text-foreground text-lg font-black">TallyHo Pro & Ads</CardTitle>
+              </View>
+
+              {settings.isAdFree && (
+                <View className="bg-status-success-bg flex-row items-center gap-1 rounded-full px-2.5 py-1">
+                  <CheckCircle2 size={12} color={PALETTE.status.successText} />
+                  <Text className="text-status-success-text text-[10px] font-black uppercase">Ad-Free Active</Text>
+                </View>
+              )}
+            </View>
+
+            <CardDescription className="text-muted-foreground text-xs font-medium">
+              Manage in-app ad options and upgrade to lifetime ad-free mode.
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="gap-4 p-0">
+            {!settings.isAdFree ? (
+              <View className="gap-3">
+                <View className="flex-row items-center justify-between">
+                  <View>
+                    <Text className="text-foreground text-xs font-bold">Remove All Ads ($1.99)</Text>
+                    <Text className="text-muted-foreground text-[10px] font-medium">
+                      One-time payment for 100% ad-free lifetime experience.
+                    </Text>
+                  </View>
+
+                  <Button
+                    onPress={() => setIsRemoveAdsModalOpen(true)}
+                    className="bg-chip-mustard h-9 items-center justify-center rounded-xl px-4 shadow"
+                  >
+                    <Text className="text-xs font-black text-black">Upgrade</Text>
+                  </Button>
+                </View>
+
+                <Pressable
+                  onPress={() => {
+                    const restored = restorePurchases();
+                    if (restored) {
+                      Alert.alert('Purchases Restored', 'Ad-Free mode enabled.');
+                    } else {
+                      Alert.alert('No Purchase Found', 'No active ad-free purchase found.');
+                    }
+                  }}
+                  className="border-border bg-popover flex-row items-center justify-between rounded-xl border p-3"
+                >
+                  <Text className="text-foreground text-xs font-bold">Restore Purchases</Text>
+                  <Text className="text-chip-mustard text-xs font-bold">→</Text>
+                </Pressable>
+              </View>
+            ) : (
+              <View className="gap-2">
+                <Text className="text-foreground text-xs font-bold">Thank you for supporting TallyHo! 🎉</Text>
+                <Text className="text-muted-foreground text-[11px] leading-relaxed">
+                  All sponsored ad cards are hidden across all screens.
+                </Text>
+
+                <Button
+                  onPress={() => {
+                    resetAdFreeStatus();
+                    Alert.alert('Reset for Testing', 'Ad-Free status has been reset to test free mode.');
+                  }}
+                  variant="outline"
+                  className="border-border bg-popover mt-2 flex-row items-center justify-center gap-2 rounded-xl border-dashed py-2.5"
+                >
+                  <RotateCcw size={14} color={PALETTE.ink.muted} />
+                  <Text className="text-foreground text-xs font-bold">[Dev Test] Reset Purchase</Text>
+                </Button>
+              </View>
+            )}
+
+            {/* Dev Mode Ad-Blocker Simulation Switch */}
+            <View className="border-border/60 flex-row items-center justify-between border-t pt-3">
+              <View>
+                <Text className="text-foreground text-xs font-bold">Simulate Ad-Blocker Fallback</Text>
+                <Text className="text-muted-foreground text-[10px] font-medium">
+                  Forces House Ad fallback banner for testing.
+                </Text>
+              </View>
+              <Switch
+                checked={settings.isAdBlocked ?? false}
+                onCheckedChange={(val: boolean) => setAdBlockedState(val)}
+              />
+            </View>
+          </CardContent>
+        </Card>
+
         {/* SECTION 1: APPEARANCE & THEME */}
         <Card className="border-border bg-card rounded-2xl border p-6 shadow-sm">
           <CardHeader className="mb-4 gap-1 p-0">
@@ -374,6 +481,8 @@ export default function SettingsModal() {
           Formspree Active • TallyHo v1.0.0 (Build 42) • GV Tech UI Native
         </Text>
       </View>
+
+      <RemoveAdsModal isOpen={isRemoveAdsModalOpen} onClose={() => setIsRemoveAdsModalOpen(false)} />
     </ScreenContainer>
   );
 }

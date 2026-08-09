@@ -4,6 +4,7 @@ import { Modal, View } from 'react-native';
 import { nativeSound } from '../services/audio';
 import { GameSession } from '../types/game';
 import { calculateGameHighlights, calculatePlayerTotals, getSortedPlayers } from '../utils/scoring';
+import { AdBannerCard } from './AdBannerCard';
 import { ScreenContainer } from './ScreenContainer';
 
 interface GameOverModalProps {
@@ -165,6 +166,9 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
             ))}
           </View>
         )}
+
+        {/* Post-Game Ad Surface */}
+        <AdBannerCard placement="game-over" />
 
         {/* Action Buttons */}
         <View className="flex-row gap-3 pt-2 pb-10">

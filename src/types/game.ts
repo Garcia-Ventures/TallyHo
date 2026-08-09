@@ -68,6 +68,9 @@ export interface UserSettings {
   hapticsEnabled: boolean;
   paperGridTexture: boolean;
   customServerUrl?: string;
+  isAdFree?: boolean;
+  devForceShowAds?: boolean;
+  isAdBlocked?: boolean;
 }
 
 export const PLAYER_COLORS = [

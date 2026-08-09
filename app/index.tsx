@@ -1,6 +1,7 @@
 import { Badge, Button, Card, CardContent, Text } from '@gv-tech/ui-native';
 import { useRouter } from 'expo-router';
 import { Pressable, View } from 'react-native';
+import { AdBannerCard } from '../src/components/AdBannerCard';
 import { ScreenContainer } from '../src/components/ScreenContainer';
 import { useGameStore } from '../src/stores/useGameStore';
 import { GAME_PRESETS, GamePreset } from '../src/types/game';
@@ -157,6 +158,9 @@ export default function HomeScreen() {
             </View>
           )}
         </View>
+
+        {/* Ad Banner Surface */}
+        <AdBannerCard placement="home" className="pt-2" />
       </View>
     </ScreenContainer>
   );

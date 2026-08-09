@@ -21,10 +21,10 @@ Use the table below when completing the **Data Safety Form** in Google Play Cons
 
 ## 2. Privacy Policy & Public Link Mandate
 
-- [x] **Hosted Privacy Policy URL**: A publicly accessible HTTPS URL containing the privacy policy (`https://<your-cloudflare-domain>/privacy`) generated directly from Expo web build (`expo export -p web`).
+- [x] **Hosted Privacy Policy URL**: A publicly accessible HTTPS URL containing the privacy policy (`https://tallyho.eng618-account.workers.dev/privacy`) generated directly from Expo web build (`expo export -p web`).
 - [x] **In-App Privacy Access**: Accessible inside the app via **Settings > View Store Privacy Policy Page** (navigates directly to `/privacy` route).
-- [ ] **Third-Party Disclosures**: Formspree (`https://formspree.io/f/xgawwval`) explicitly named as a data processor for feedback form submissions.
-- [ ] **Non-Tracking Declaration**: Clearly states that data is NOT sold, rented, or shared with third-party data brokers for cross-site targeting.
+- [x] **Third-Party Disclosures**: Formspree (`https://formspree.io/f/xgawwval`) and Sentry explicitly named as data processors for feedback form submissions and crash reporting.
+- [x] **Non-Tracking Declaration**: Clearly states that data is NOT sold, rented, or shared with third-party data brokers for cross-site targeting.
 
 ---
 
@@ -32,25 +32,25 @@ Use the table below when completing the **Data Safety Form** in Google Play Cons
 
 Per Google Play Policy requirements on Data & Account Deletion:
 
-- [ ] **In-App Purge Action**: App provides an immediate local cache and preference reset via **Settings > Reset Local Storage & Settings**.
-- [ ] **Submitted Feedback Deletion**: Privacy Policy provides an explicit email point of contact (`privacy.tallyho@garciaericn.com`) for requesting permanent erasure of submitted feedback.
-- [ ] **No Hidden Retainers**: Local storage clearing resets `themeMode`, `soundEnabled`, `hapticsEnabled`, and `customServerUrl` back to initial defaults.
+- [x] **In-App Purge Action**: App provides an immediate local cache and preference reset via **Settings > Reset Local Storage & Settings**.
+- [x] **Submitted Feedback Deletion**: Privacy Policy provides an explicit email point of contact (`privacy.tallyho@garciaericn.com`) for requesting permanent erasure of submitted feedback.
+- [x] **No Hidden Retainers**: Local storage clearing resets `themeMode`, `soundEnabled`, `hapticsEnabled`, and `customServerUrl` back to initial defaults.
 
 ---
 
 ## 4. Children’s Privacy & COPPA Verification
 
 - [ ] **Target Audience Declaration**: Specified in Play Console (**Policy > App Content > Target Audience and Content**).
-- [ ] **Zero Sensitive Tracking**: App does not request location, contacts, SMS, camera, microphone, or advertising ID (`GAID`) permissions.
-- [ ] **COPPA Statement**: Included in Privacy Policy confirming no intentional collection of data from children under 13.
+- [x] **Zero Sensitive Tracking**: App does not request location, contacts, SMS, camera, microphone (permission array removed in `app.json`), or advertising ID (`GAID`) permissions.
+- [x] **COPPA Statement**: Included in Privacy Policy confirming no intentional collection of data from children under 13.
 
 ---
 
 ## 5. Security & Network Protocols
 
-- [ ] **TLS 1.2 / 1.3 Enforcement**: Feedback submissions sent exclusively over `https://formspree.io/f/xgawwval`.
-- [ ] **Cleartext Traffic Disabled**: Android Manifest / Expo config restricts HTTP cleartext traffic (`android:usesCleartextTraffic="false"`).
-- [ ] **Sanitized Payload**: Submissions filter out sensitive internal tokens and include only category, user message, optional email, platform, and version.
+- [x] **TLS 1.2 / 1.3 Enforcement**: Feedback submissions sent exclusively over `https://formspree.io/f/xgawwval`.
+- [x] **Cleartext Traffic Disabled**: Android Manifest / Expo config restricts HTTP cleartext traffic (`android:usesCleartextTraffic="false"` by default in Expo Android builds).
+- [x] **Sanitized Payload**: Submissions filter out sensitive internal tokens and include only category, user message, optional email, platform, and version.
 
 ---
 
