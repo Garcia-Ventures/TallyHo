@@ -15,18 +15,7 @@ export default function GameOverModalRoute() {
   if (!gameToDisplay) {
     return (
       <View className="will-change-variable flex-1 bg-[#FDFBF7] dark:bg-[#181A19]">
-        <ScreenContainer
-          scrollable={true}
-          className="w-full flex-1"
-          header={
-            <View className="flex-row items-center justify-between">
-              <Text className="text-foreground text-xl font-black">🏆 Game Night Champion</Text>
-              <Button onPress={() => router.dismissTo('/')} variant="ghost" size="sm" className="p-1">
-                <Text className="text-foreground text-base font-bold">✕</Text>
-              </Button>
-            </View>
-          }
-        >
+        <ScreenContainer scrollable={true} className="w-full flex-1">
           <View className="w-full items-center justify-center gap-4 py-12">
             <Card className="border-border bg-card w-full items-center justify-center p-8 shadow-sm">
               <CardContent className="items-center justify-center gap-3 p-0 text-center">

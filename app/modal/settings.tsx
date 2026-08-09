@@ -23,7 +23,6 @@ import {
   Trash2,
   Vibrate,
   Volume2,
-  X,
 } from 'lucide-react-native';
 import { useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, View } from 'react-native';
@@ -119,23 +118,7 @@ export default function SettingsModal() {
   };
 
   return (
-    <ScreenContainer
-      maxWidth="2xl"
-      padding="normal"
-      header={
-        <View className="flex-row items-center justify-between py-1">
-          <Pressable
-            onPress={() => router.back()}
-            className="border-border bg-popover flex-row items-center gap-2 rounded-xl border px-3 py-2 shadow-xs"
-          >
-            <X size={16} color="#5A605C" />
-            <Text className="text-foreground text-xs font-bold">Close</Text>
-          </Pressable>
-          <Text className="text-foreground text-base font-black">App Settings</Text>
-          <View className="w-16" />
-        </View>
-      }
-    >
+    <ScreenContainer maxWidth="2xl" padding="normal">
       <View className="gap-6 py-2">
         {/* SECTION 1: APPEARANCE & THEME */}
         <Card className="border-border bg-card rounded-2xl border p-6 shadow-sm">

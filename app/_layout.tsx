@@ -11,6 +11,9 @@ import { useGameStore } from '../src/stores/useGameStore';
 import { usePlayerLibraryStore } from '../src/stores/usePlayerLibraryStore';
 import { useSettingsStore } from '../src/stores/useSettingsStore';
 
+import { HeaderBackButton } from '../src/components/HeaderBackButton';
+import { HeaderCloseButton } from '../src/components/HeaderCloseButton';
+
 Sentry.init({
   dsn: 'https://ba35c9ea2c45d64b131f6b854cd5c3ea@o4511873601306624.ingest.us.sentry.io/4511873607991296',
 
@@ -38,6 +41,7 @@ export default Sentry.wrap(function RootLayout() {
   const systemScheme = useColorScheme();
 
   const isDark = themeMode === 'dark' || (themeMode === 'system' && systemScheme === 'dark');
+  const tintColor = isDark ? '#F0ECE1' : '#2C302E';
 
   useEffect(() => {
     loadInitialData();
@@ -51,8 +55,9 @@ export default Sentry.wrap(function RootLayout() {
         <Stack
           screenOptions={{
             headerStyle: { backgroundColor: isDark ? '#232624' : '#F7F4EE' },
-            headerTintColor: isDark ? '#F0ECE1' : '#2C302E',
+            headerTintColor: tintColor,
             headerTitleStyle: { fontWeight: '900' },
+            headerTitleAlign: 'center',
             contentStyle: { backgroundColor: isDark ? '#181A19' : '#FDFBF7' },
           }}
         >
@@ -75,7 +80,10 @@ export default Sentry.wrap(function RootLayout() {
             options={{
               presentation: 'modal',
               title: 'New Game Setup',
-              headerShown: false,
+              headerShown: true,
+              headerBackVisible: false,
+              headerLeft: () => null,
+              headerRight: () => <HeaderCloseButton tintColor={tintColor} />,
             }}
           />
           <Stack.Screen
@@ -83,15 +91,28 @@ export default Sentry.wrap(function RootLayout() {
             options={{
               presentation: 'modal',
               title: 'Enter Score',
-              headerShown: false,
+              headerShown: true,
+              headerBackVisible: false,
+              headerLeft: () => null,
+              headerRight: () => <HeaderCloseButton tintColor={tintColor} />,
             }}
           />
           <Stack.Screen
             name="modal/game-over"
             options={{
               presentation: 'modal',
-              title: 'Game Over',
-              headerShown: false,
+              title: '🏆 Game Night Champion',
+              headerShown: true,
+              headerBackVisible: false,
+              headerLeft: () => null,
+              headerRight: () => (
+                <HeaderCloseButton
+                  tintColor={tintColor}
+                  onPress={() => {
+                    useGameStore.getState().clearActiveGame();
+                  }}
+                />
+              ),
             }}
           />
           <Stack.Screen
@@ -99,7 +120,10 @@ export default Sentry.wrap(function RootLayout() {
             options={{
               presentation: 'modal',
               title: 'Match History',
-              headerShown: false,
+              headerShown: true,
+              headerBackVisible: false,
+              headerLeft: () => null,
+              headerRight: () => <HeaderCloseButton tintColor={tintColor} />,
             }}
           />
           <Stack.Screen
@@ -107,22 +131,29 @@ export default Sentry.wrap(function RootLayout() {
             options={{
               presentation: 'modal',
               title: 'Round History',
-              headerShown: false,
+              headerShown: true,
+              headerBackVisible: false,
+              headerLeft: () => null,
+              headerRight: () => <HeaderCloseButton tintColor={tintColor} />,
             }}
           />
           <Stack.Screen
             name="modal/settings"
             options={{
               presentation: 'modal',
-              title: 'Settings',
-              headerShown: false,
+              title: 'App Settings',
+              headerShown: true,
+              headerBackVisible: false,
+              headerLeft: () => null,
+              headerRight: () => <HeaderCloseButton tintColor={tintColor} />,
             }}
           />
           <Stack.Screen
             name="privacy"
             options={{
               title: 'Privacy Policy',
-              headerShown: false,
+              headerShown: true,
+              headerLeft: () => <HeaderBackButton tintColor={tintColor} />,
             }}
           />
         </Stack>

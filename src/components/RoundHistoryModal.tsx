@@ -70,25 +70,27 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
       scrollable={false}
       className="w-full flex-1"
       header={
-        <View className="flex-row items-center justify-between">
-          <View>
-            <Text className="text-foreground text-xl font-black">Round History & Edit Log</Text>
-            <Text className="text-muted-foreground text-xs font-semibold">
-              Fix mistaken entries or adjust past scores
-            </Text>
+        !isRouteModal ? (
+          <View className="flex-row items-center justify-between">
+            <View>
+              <Text className="text-foreground text-xl font-black">Round History & Edit Log</Text>
+              <Text className="text-muted-foreground text-xs font-semibold">
+                Fix mistaken entries or adjust past scores
+              </Text>
+            </View>
+            <Button
+              onPress={() => {
+                nativeSound.playKeypadTap();
+                onClose();
+              }}
+              variant="ghost"
+              size="sm"
+              className="p-1"
+            >
+              <Text className="text-foreground text-base font-bold">✕</Text>
+            </Button>
           </View>
-          <Button
-            onPress={() => {
-              nativeSound.playKeypadTap();
-              onClose();
-            }}
-            variant="ghost"
-            size="sm"
-            className="p-1"
-          >
-            <Text className="text-foreground text-base font-bold">✕</Text>
-          </Button>
-        </View>
+        ) : undefined
       }
     >
       <View className="w-full flex-1 justify-between gap-4">

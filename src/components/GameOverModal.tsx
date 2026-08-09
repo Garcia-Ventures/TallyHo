@@ -45,12 +45,14 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
       className="w-full flex-1"
       padding="normal"
       header={
-        <View className="flex-row items-center justify-between">
-          <Text className="text-foreground text-xl font-black">🏆 Game Night Champion</Text>
-          <Button onPress={onClose} variant="ghost" size="sm" className="p-1">
-            <Text className="text-foreground text-base font-bold">✕</Text>
-          </Button>
-        </View>
+        !isRouteModal ? (
+          <View className="flex-row items-center justify-between">
+            <Text className="text-foreground text-xl font-black">🏆 Game Night Champion</Text>
+            <Button onPress={onClose} variant="ghost" size="sm" className="p-1">
+              <Text className="text-foreground text-base font-bold">✕</Text>
+            </Button>
+          </View>
+        ) : undefined
       }
     >
       <View className="w-full gap-5">

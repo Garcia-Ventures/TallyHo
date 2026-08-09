@@ -91,18 +91,15 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
   };
 
   const content = (
-    <ScreenContainer
-      scrollable={false}
-      className="w-full flex-1"
-      header={
-        <View className="flex-row items-center justify-between">
+    <ScreenContainer scrollable={false} className="w-full flex-1">
+      {!isRouteModal && (
+        <View className="flex-row items-center justify-between pb-4">
           <Text className="text-foreground text-xl font-black">New Game Setup</Text>
           <Button onPress={onClose} variant="ghost" size="sm" className="p-1">
             <Text className="text-muted-foreground text-base font-bold">✕</Text>
           </Button>
         </View>
-      }
-    >
+      )}
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}

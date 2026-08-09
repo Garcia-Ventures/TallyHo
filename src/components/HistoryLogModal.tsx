@@ -29,12 +29,14 @@ export const HistoryLogModal: React.FC<HistoryLogModalProps> = ({
       scrollable={false}
       className="w-full flex-1"
       header={
-        <View className="flex-row items-center justify-between">
-          <Text className="text-foreground text-xl font-black">📜 Match History ({history.length})</Text>
-          <Button onPress={onClose} variant="ghost" size="sm" className="p-1">
-            <Text className="text-foreground text-base font-bold">✕</Text>
-          </Button>
-        </View>
+        !isRouteModal ? (
+          <View className="flex-row items-center justify-between">
+            <Text className="text-foreground text-xl font-black">📜 Match History ({history.length})</Text>
+            <Button onPress={onClose} variant="ghost" size="sm" className="p-1">
+              <Text className="text-foreground text-base font-bold">✕</Text>
+            </Button>
+          </View>
+        ) : undefined
       }
     >
       <View className="w-full flex-1 justify-between gap-4">

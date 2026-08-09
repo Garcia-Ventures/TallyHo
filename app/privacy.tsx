@@ -1,17 +1,7 @@
 import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Text } from '@gv-tech/ui-native';
 import { useRouter } from 'expo-router';
-import {
-  ArrowLeft,
-  CheckCircle2,
-  Database,
-  Globe,
-  Lock,
-  Mail,
-  RefreshCw,
-  ShieldCheck,
-  UserCheck,
-} from 'lucide-react-native';
-import { Pressable, View } from 'react-native';
+import { CheckCircle2, Database, Globe, Lock, Mail, RefreshCw, ShieldCheck, UserCheck } from 'lucide-react-native';
+import { View } from 'react-native';
 import { ScreenContainer } from '../src/components/ScreenContainer';
 
 export default function PrivacyPolicyScreen() {
@@ -26,30 +16,7 @@ export default function PrivacyPolicyScreen() {
   };
 
   return (
-    <ScreenContainer
-      maxWidth="4xl"
-      padding="normal"
-      header={
-        <View className="flex-row items-center justify-between py-1">
-          <Pressable
-            onPress={handleBack}
-            className="border-border bg-popover flex-row items-center gap-2 rounded-xl border px-3 py-2 shadow-xs"
-          >
-            <ArrowLeft size={16} color="#6A9C78" />
-            <Text className="text-foreground text-xs font-bold">Back</Text>
-          </Pressable>
-
-          <View className="flex-row items-center gap-2">
-            <ShieldCheck size={20} color="#6A9C78" />
-            <Text className="text-foreground text-base font-black">Privacy Policy</Text>
-          </View>
-
-          <Badge className="border border-[#6A9C78]/30 bg-[#6A9C78]/15 px-2.5 py-1">
-            <Text className="text-[10px] font-black text-[#6A9C78]">v1.0 • August 2026</Text>
-          </Badge>
-        </View>
-      }
-    >
+    <ScreenContainer maxWidth="4xl" padding="normal">
       <View className="gap-6 py-2">
         {/* HERO BANNER */}
         <Card className="border-[#6A9C78]/30 bg-[#6A9C78]/10 p-6 shadow-sm">
