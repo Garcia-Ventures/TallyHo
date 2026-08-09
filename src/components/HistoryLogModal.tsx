@@ -38,7 +38,11 @@ export const HistoryLogModal: React.FC<HistoryLogModalProps> = ({
       }
     >
       <View className="w-full flex-1 justify-between gap-4">
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingBottom: 16 }}>
+        <ScrollView
+          className="flex-1"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ gap: 12, paddingBottom: 16 }}
+        >
           {history.length === 0 ? (
             <Card className="border-border bg-card items-center justify-center p-8">
               <CardContent className="items-center justify-center gap-2 p-0">
@@ -88,7 +92,7 @@ export const HistoryLogModal: React.FC<HistoryLogModalProps> = ({
           <Button
             onPress={onClearHistory}
             variant="destructive"
-            className="mt-1 items-center rounded-2xl border border-red-200 bg-red-50 py-3.5 dark:border-red-900/40 dark:bg-red-950/40"
+            className="mt-1 h-14 items-center rounded-2xl border border-red-200 bg-red-50 py-3.5 dark:border-red-900/40 dark:bg-red-950/40"
           >
             <Text className="text-xs font-bold text-red-600 dark:text-red-400">Clear All History</Text>
           </Button>

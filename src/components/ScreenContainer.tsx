@@ -57,7 +57,17 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
   ) : null;
 
   const innerContent = (
-    <View className={cn('mx-auto w-full', maxWidthClass, paddingClass, contentClassName)}>{children}</View>
+    <View
+      className={cn(
+        'mx-auto w-full self-stretch',
+        !scrollable && 'flex-1',
+        maxWidthClass,
+        paddingClass,
+        contentClassName,
+      )}
+    >
+      {children}
+    </View>
   );
 
   if (scrollable) {
@@ -78,7 +88,7 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
   return (
     <View className={cn('bg-background flex-1', className)}>
       {headerElement}
-      <View className="flex-1 items-center">{innerContent}</View>
+      <View className="w-full flex-1 items-center self-stretch">{innerContent}</View>
     </View>
   );
 };

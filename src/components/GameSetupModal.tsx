@@ -103,7 +103,11 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
         </View>
       }
     >
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 24, gap: 18 }}>
+      <ScrollView
+        className="flex-1"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 24, gap: 18 }}
+      >
         {/* Preset Selector */}
         <View className="gap-1.5">
           <Text className="text-muted-foreground text-xs font-bold">Select Preset Rulebook:</Text>

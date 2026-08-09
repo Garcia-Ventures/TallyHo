@@ -93,7 +93,11 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
     >
       <View className="w-full flex-1 justify-between gap-4">
         {/* Content Sheet */}
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingBottom: 16 }}>
+        <ScrollView
+          className="flex-1"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ gap: 12, paddingBottom: 16 }}
+        >
           {game.rounds.length === 0 ? (
             <Card className="border-border bg-card items-center justify-center p-8">
               <CardContent className="items-center justify-center gap-2 p-0">
