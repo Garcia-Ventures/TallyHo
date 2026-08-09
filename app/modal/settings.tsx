@@ -26,7 +26,7 @@ import {
   X,
 } from 'lucide-react-native';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, Modal, Pressable, ScrollView, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, View } from 'react-native';
 import { ScreenContainer } from '../../src/components/ScreenContainer';
 import { nativeSound } from '../../src/services/audio';
 import { storage } from '../../src/services/storage';
@@ -42,13 +42,12 @@ export default function SettingsModal() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedbackStatus, setFeedbackStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
-  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
 
   function useSafeRouter() {
     try {
       return useRouter();
     } catch {
-      return { back: () => {} };
+      return { back: () => {}, push: (_path: string) => {} };
     }
   }
 
@@ -61,13 +60,13 @@ export default function SettingsModal() {
     if (!feedback.trim()) {
       return;
     }
-    nativeSound.playRoundSubmit();
+
     setIsSubmitting(true);
     setFeedbackStatus('idle');
     setErrorMessage('');
 
     try {
-      const response = await fetch('https://formspree.io/f/xbjnedpn', {
+      const response = await fetch('https://formspree.io/f/xgawwval', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -75,11 +74,10 @@ export default function SettingsModal() {
         },
         body: JSON.stringify({
           category,
-          email: email.trim() || 'Anonymous',
+          email: email.trim() || undefined,
           message: feedback.trim(),
-          timestamp: new Date().toISOString(),
-          app: 'TallyHo Mobile / Web',
-          version: '1.0.0',
+          platform: 'Expo React Native',
+          appVersion: '1.0.0 (Build 42)',
         }),
       });
 
@@ -87,207 +85,216 @@ export default function SettingsModal() {
         setFeedbackStatus('success');
         setFeedback('');
         setEmail('');
+        nativeSound.playVictoryFanfare();
       } else {
-        const data = await response.json().catch(() => ({}));
+        const data = await response.json();
         setFeedbackStatus('error');
         setErrorMessage(data.error || 'Failed to submit feedback. Please try again.');
       }
-    } catch {
+    } catch (err) {
       setFeedbackStatus('error');
-      setErrorMessage('Network error. Check connection and try again.');
+      setErrorMessage(err instanceof Error ? err.message : 'Network error submitting feedback.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleResetData = () => {
-    nativeSound.playUndo();
-    const executeReset = () => {
-      storage.clearAll();
-      resetSettings();
-      if (typeof window !== 'undefined' && window.location) {
-        window.location.reload();
-      }
-    };
-
-    if (typeof window !== 'undefined' && window.confirm) {
-      if (window.confirm('Reset all local storage and settings? This will delete all saved games.')) {
-        executeReset();
-      }
-    } else {
-      Alert.alert('Reset Storage', 'Reset all local storage and settings? This will delete all saved games.', [
+    Alert.alert(
+      'Reset All Storage?',
+      'This will erase all local settings, player records, and saved game progress. This action cannot be undone.',
+      [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Reset', style: 'destructive', onPress: executeReset },
-      ]);
-    }
+        {
+          text: 'Reset Data',
+          style: 'destructive',
+          onPress: () => {
+            resetSettings();
+            storage.clearAll();
+            nativeSound.playNavigationTap();
+          },
+        },
+      ],
+    );
   };
 
   return (
     <ScreenContainer
+      maxWidth="2xl"
+      padding="normal"
       header={
-        <View className="flex-row items-center justify-between">
-          <View className="gap-0.5">
-            <Text className="text-foreground text-xl font-black">Settings</Text>
-            <Text className="text-muted-foreground text-xs font-semibold">
-              GV Tech UI Native • Preferences & Compliance
-            </Text>
-          </View>
-          <Button onPress={() => router.back()} variant="ghost" size="icon" className="rounded-full">
-            <X size={20} color="#5A605C" />
-          </Button>
+        <View className="flex-row items-center justify-between py-1">
+          <Pressable
+            onPress={() => router.back()}
+            className="border-border bg-popover flex-row items-center gap-2 rounded-xl border px-3 py-2 shadow-xs"
+          >
+            <X size={16} color="#5A605C" />
+            <Text className="text-foreground text-xs font-bold">Close</Text>
+          </Pressable>
+          <Text className="text-foreground text-base font-black">App Settings</Text>
+          <View className="w-16" />
         </View>
       }
     >
-      <View className="gap-6 pb-8">
+      <View className="gap-6 py-2">
         {/* SECTION 1: APPEARANCE & THEME */}
         <Card className="border-border bg-card rounded-2xl border p-6 shadow-sm">
           <CardHeader className="mb-4 gap-1 p-0">
             <View className="flex-row items-center gap-2">
-              <View className="h-8 w-8 items-center justify-center rounded-full bg-[#D96B43]/15">
-                <Sun size={18} color="#D96B43" />
+              <View className="h-8 w-8 items-center justify-center rounded-full bg-[#6A9C78]/15">
+                <Sun size={18} color="#6A9C78" />
               </View>
-              <CardTitle className="text-foreground text-lg font-black">Appearance & Theme</CardTitle>
+              <CardTitle className="text-foreground text-lg font-black">Appearance</CardTitle>
             </View>
             <CardDescription className="text-muted-foreground text-xs font-medium">
-              Customize color theme preferences or auto-sync with system settings.
+              Choose your visual presentation theme.
             </CardDescription>
           </CardHeader>
-          <CardContent className="gap-4 p-0">
-            {/* Theme Selector Pills */}
-            <View className="bg-muted flex-row rounded-2xl p-1.5">
-              {(
-                [
-                  { mode: 'system', label: 'System', icon: Smartphone },
-                  { mode: 'light', label: 'Light', icon: Sun },
-                  { mode: 'dark', label: 'Dark', icon: Moon },
-                ] as const
-              ).map((item) => {
-                const IconComp = item.icon;
-                const isActive = settings.themeMode === item.mode;
-                return (
-                  <Pressable
-                    key={item.mode}
-                    onPress={() => handleThemeChange(item.mode)}
-                    className={`flex-1 flex-row items-center justify-center gap-2 rounded-xl py-3 ${
-                      isActive ? 'bg-popover shadow-sm' : ''
-                    }`}
-                  >
-                    <IconComp size={16} color={isActive ? '#D96B43' : '#5A605C'} />
-                    <Text className={`text-xs font-extrabold ${isActive ? 'text-[#D96B43]' : 'text-muted-foreground'}`}>
-                      {item.label}
-                    </Text>
-                  </Pressable>
-                );
-              })}
+          <CardContent className="gap-3 p-0">
+            <View className="flex-row gap-2">
+              <Pressable
+                onPress={() => handleThemeChange('system')}
+                className={`border-border bg-popover flex-1 flex-row items-center justify-center gap-2 rounded-xl border py-3 ${
+                  settings.themeMode === 'system' ? 'border-[#6A9C78] bg-[#6A9C78]/15' : ''
+                }`}
+              >
+                <Smartphone size={16} color={settings.themeMode === 'system' ? '#6A9C78' : '#5A605C'} />
+                <Text
+                  className={`text-xs font-bold ${
+                    settings.themeMode === 'system' ? 'text-[#6A9C78]' : 'text-foreground'
+                  }`}
+                >
+                  System
+                </Text>
+              </Pressable>
+
+              <Pressable
+                onPress={() => handleThemeChange('light')}
+                className={`border-border bg-popover flex-1 flex-row items-center justify-center gap-2 rounded-xl border py-3 ${
+                  settings.themeMode === 'light' ? 'border-[#6A9C78] bg-[#6A9C78]/15' : ''
+                }`}
+              >
+                <Sun size={16} color={settings.themeMode === 'light' ? '#6A9C78' : '#5A605C'} />
+                <Text
+                  className={`text-xs font-bold ${
+                    settings.themeMode === 'light' ? 'text-[#6A9C78]' : 'text-foreground'
+                  }`}
+                >
+                  Light
+                </Text>
+              </Pressable>
+
+              <Pressable
+                onPress={() => handleThemeChange('dark')}
+                className={`border-border bg-popover flex-1 flex-row items-center justify-center gap-2 rounded-xl border py-3 ${
+                  settings.themeMode === 'dark' ? 'border-[#6A9C78] bg-[#6A9C78]/15' : ''
+                }`}
+              >
+                <Moon size={16} color={settings.themeMode === 'dark' ? '#6A9C78' : '#5A605C'} />
+                <Text
+                  className={`text-xs font-bold ${
+                    settings.themeMode === 'dark' ? 'text-[#6A9C78]' : 'text-foreground'
+                  }`}
+                >
+                  Dark
+                </Text>
+              </Pressable>
             </View>
           </CardContent>
         </Card>
 
-        {/* SECTION 2: AUDIO & TACTILE FEEDBACK */}
+        {/* SECTION 2: AUDIO & HAPTIC FEEDBACK */}
         <Card className="border-border bg-card rounded-2xl border p-6 shadow-sm">
           <CardHeader className="mb-4 gap-1 p-0">
             <View className="flex-row items-center gap-2">
-              <View className="h-8 w-8 items-center justify-center rounded-full bg-[#3B5998]/15">
-                <Volume2 size={18} color="#3B5998" />
+              <View className="h-8 w-8 items-center justify-center rounded-full bg-[#E5A93C]/15">
+                <Volume2 size={18} color="#E5A93C" />
               </View>
-              <CardTitle className="text-foreground text-lg font-black">Audio & Tactile Feedback</CardTitle>
+              <CardTitle className="text-foreground text-lg font-black">Sensory Feedback</CardTitle>
             </View>
             <CardDescription className="text-muted-foreground text-xs font-medium">
-              Control sound effects synthesizer and vibration cues across key actions.
+              Configure app sound effects and tactile vibrations.
             </CardDescription>
           </CardHeader>
           <CardContent className="gap-4 p-0">
-            <View className="gap-3">
-              {/* Sound Effects Toggle */}
-              <View className="border-border/60 flex-row items-center justify-between border-b pb-3.5">
-                <View className="flex-row items-center gap-3">
-                  <View className="bg-popover h-9 w-9 items-center justify-center rounded-xl">
-                    <Volume2 size={18} color="#3B5998" />
-                  </View>
-                  <View className="gap-0.5">
-                    <Text className="text-foreground text-sm font-bold">Sound Effects</Text>
-                    <Text className="text-muted-foreground text-xs">Audio feedback on score entries & actions</Text>
-                  </View>
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row items-center gap-2.5">
+                <Volume2 size={16} color="#5A605C" />
+                <View>
+                  <Text className="text-foreground text-xs font-bold">Sound Effects</Text>
+                  <Text className="text-muted-foreground text-[10px] font-medium">
+                    Play audio feedback during gameplay and taps
+                  </Text>
                 </View>
-                <Switch
-                  checked={settings.soundEnabled}
-                  onCheckedChange={(val) => {
-                    nativeSound.playToggle(val);
-                    updateSettings({ soundEnabled: val });
-                  }}
-                  className="data-[state=unchecked]:bg-muted/80 data-[state=checked]:bg-[#6A9C78]"
-                />
               </View>
+              <Switch
+                checked={settings.soundEnabled}
+                onCheckedChange={(val: boolean) => {
+                  updateSettings({ soundEnabled: val });
+                  if (val) {
+                    nativeSound.playPresetSelect();
+                  }
+                }}
+              />
+            </View>
 
-              {/* Haptic Feedback Toggle */}
-              <View className="flex-row items-center justify-between pt-1">
-                <View className="flex-row items-center gap-3">
-                  <View className="bg-popover h-9 w-9 items-center justify-center rounded-xl">
-                    <Vibrate size={18} color="#E5A93C" />
-                  </View>
-                  <View className="gap-0.5">
-                    <Text className="text-foreground text-sm font-bold">Haptic Feedback</Text>
-                    <Text className="text-muted-foreground text-xs">Tactile vibration cues on buttons & logs</Text>
-                  </View>
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row items-center gap-2.5">
+                <Vibrate size={16} color="#5A605C" />
+                <View>
+                  <Text className="text-foreground text-xs font-bold">Haptic Feedback</Text>
+                  <Text className="text-muted-foreground text-[10px] font-medium">
+                    Tactile vibrations for keypad and score taps
+                  </Text>
                 </View>
-                <Switch
-                  checked={settings.hapticsEnabled}
-                  onCheckedChange={(val) => {
-                    nativeSound.playToggle(val);
-                    updateSettings({ hapticsEnabled: val });
-                  }}
-                  className="data-[state=unchecked]:bg-muted/80 data-[state=checked]:bg-[#6A9C78]"
-                />
               </View>
+              <Switch
+                checked={settings.hapticsEnabled}
+                onCheckedChange={(val: boolean) => updateSettings({ hapticsEnabled: val })}
+              />
             </View>
           </CardContent>
         </Card>
 
-        {/* SECTION 3: SUBMIT FEEDBACK (FORMSPREE INTEGRATION) */}
+        {/* SECTION 3: FEEDBACK & SUPPORT */}
         <Card className="border-border bg-card rounded-2xl border p-6 shadow-sm">
           <CardHeader className="mb-4 gap-1 p-0">
             <View className="flex-row items-center gap-2">
               <View className="h-8 w-8 items-center justify-center rounded-full bg-[#6A9C78]/15">
                 <Send size={18} color="#6A9C78" />
               </View>
-              <CardTitle className="text-foreground text-lg font-black">Submit Feedback</CardTitle>
+              <CardTitle className="text-foreground text-lg font-black">Submit Feedback & Support</CardTitle>
             </View>
             <CardDescription className="text-muted-foreground text-xs font-medium">
-              Send bug reports or feature requests directly via Formspree.
+              Send suggestions or bug reports directly to the developer via Formspree.
             </CardDescription>
           </CardHeader>
           <CardContent className="gap-4 p-0">
-            {/* Category Pills */}
-            <View className="flex-row gap-2">
-              {(['General', 'Bug', 'Feature'] as const).map((cat) => (
-                <Pressable
-                  key={cat}
-                  onPress={() => {
-                    nativeSound.playPresetSelect();
-                    setCategory(cat);
-                  }}
-                  className={`flex-1 items-center justify-center rounded-xl border py-2.5 ${
-                    category === cat ? 'border-[#6A9C78] bg-[#6A9C78]/15' : 'border-border bg-popover'
-                  }`}
-                >
-                  <Text
-                    className={`text-xs font-bold ${category === cat ? 'text-[#6A9C78]' : 'text-muted-foreground'}`}
+            <View className="gap-1.5">
+              <Text className="text-foreground text-xs font-bold">Feedback Category</Text>
+              <View className="flex-row gap-2">
+                {(['General', 'Bug', 'Feature'] as const).map((cat) => (
+                  <Pressable
+                    key={cat}
+                    onPress={() => setCategory(cat)}
+                    className={`border-border bg-popover flex-1 items-center justify-center rounded-xl border py-2.5 ${
+                      category === cat ? 'border-[#6A9C78] bg-[#6A9C78]/15' : ''
+                    }`}
                   >
-                    {cat === 'Bug' ? '🐛 Bug' : cat === 'Feature' ? '💡 Feature' : '💬 General'}
-                  </Text>
-                </Pressable>
-              ))}
+                    <Text className={`text-xs font-bold ${category === cat ? 'text-[#6A9C78]' : 'text-foreground'}`}>
+                      {cat}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
             </View>
 
-            {/* Email Input */}
             <View className="gap-1.5">
-              <Text className="text-foreground text-xs font-bold">
-                Contact Email <Text className="text-muted-foreground font-normal">(Optional)</Text>
-              </Text>
+              <Text className="text-foreground text-xs font-bold">Your Email (Optional)</Text>
               <Input
                 value={email}
                 onChangeText={setEmail}
-                placeholder="you@example.com"
+                placeholder="name@example.com"
                 placeholderTextColor="#8A8F8C"
                 keyboardType="email-address"
                 autoCapitalize="none"
@@ -295,7 +302,6 @@ export default function SettingsModal() {
               />
             </View>
 
-            {/* Feedback Message Input */}
             <View className="gap-1.5">
               <Text className="text-foreground text-xs font-bold">Feedback Message</Text>
               <Input
@@ -309,13 +315,10 @@ export default function SettingsModal() {
               />
             </View>
 
-            {/* Status Feedback Banners */}
             {feedbackStatus === 'success' && (
               <View className="flex-row items-center gap-2 rounded-xl bg-[#E6F4EA] p-3.5">
                 <CheckCircle2 size={16} color="#137333" />
-                <Text className="flex-1 text-xs font-bold text-[#137333]">
-                  Thank you! Feedback transmitted successfully via Formspree.
-                </Text>
+                <Text className="flex-1 text-xs font-bold text-[#137333]">Thank you! Feedback received.</Text>
               </View>
             )}
 
@@ -326,21 +329,17 @@ export default function SettingsModal() {
               </View>
             )}
 
-            {/* Submit Button */}
             <Button
               onPress={handleFeedbackSubmit}
               disabled={isSubmitting || !feedback.trim()}
-              className={`h-12 flex-row items-center justify-center gap-2 rounded-2xl py-0 shadow ${
+              className={`h-12 flex-row items-center justify-center gap-2 rounded-xl ${
                 isSubmitting || !feedback.trim() ? 'bg-[#6A9C78]/50' : 'bg-[#6A9C78]'
               }`}
             >
               {isSubmitting ? (
                 <ActivityIndicator color="#FFFFFF" size="small" />
               ) : (
-                <>
-                  <Send size={16} color="#FFFFFF" />
-                  <Text className="text-sm leading-none font-bold text-white">Submit Feedback</Text>
-                </>
+                <Text className="text-sm font-bold text-white">Send Feedback</Text>
               )}
             </Button>
           </CardContent>
@@ -353,7 +352,7 @@ export default function SettingsModal() {
               <View className="h-8 w-8 items-center justify-center rounded-full bg-[#8B6B9C]/15">
                 <ShieldCheck size={18} color="#8B6B9C" />
               </View>
-              <CardTitle className="text-foreground text-lg font-black">Privacy & Legal Disclosures</CardTitle>
+              <CardTitle className="text-foreground text-lg font-black">Privacy & Legal</CardTitle>
             </View>
             <CardDescription className="text-muted-foreground text-xs font-medium">
               Review store privacy statements and manage local device data.
@@ -363,13 +362,13 @@ export default function SettingsModal() {
             <Pressable
               onPress={() => {
                 nativeSound.playNavigationTap();
-                setShowPrivacyModal(true);
+                router.push('/privacy');
               }}
               className="border-border bg-popover flex-row items-center justify-between rounded-xl border p-3.5"
             >
               <View className="flex-row items-center gap-2.5">
                 <HelpCircle size={16} color="#8B6B9C" />
-                <Text className="text-foreground text-xs font-bold">View Store Privacy Statement</Text>
+                <Text className="text-foreground text-xs font-bold">View Store Privacy Policy Page</Text>
               </View>
               <ExternalLink size={14} color="#5A605C" />
             </Pressable>
@@ -390,37 +389,6 @@ export default function SettingsModal() {
         <Text className="text-muted-foreground mb-4 text-center text-xs font-semibold">
           Formspree Active • TallyHo v1.0.0 (Build 42) • GV Tech UI Native
         </Text>
-
-        {/* PRIVACY STATEMENT MODAL */}
-        <Modal visible={showPrivacyModal} animationType="slide" transparent={false}>
-          <View className="bg-background flex-1 pt-12">
-            <View className="border-border bg-card flex-row items-center justify-between border-b px-6 py-4">
-              <Text className="text-foreground text-lg font-black">Privacy & Data Policy</Text>
-              <Button onPress={() => setShowPrivacyModal(false)} variant="ghost" size="icon" className="rounded-full">
-                <X size={20} color="#5A605C" />
-              </Button>
-            </View>
-            <ScrollView className="flex-1 p-6">
-              <Text className="text-foreground mb-2 text-base font-bold">1. Data Collection & Transparency</Text>
-              <Text className="text-muted-foreground mb-4 text-xs leading-5">
-                User settings (theme mode, sound effects, haptic preferences) are stored locally on your device using
-                encrypted storage mechanisms. TallyHo does not transmit personal data to third parties without your
-                express consent.
-              </Text>
-              <Text className="text-foreground mb-2 text-base font-bold">2. Feedback Submissions</Text>
-              <Text className="text-muted-foreground mb-4 text-xs leading-5">
-                When submitting feedback via the Formspree integration, optional email addresses and user messages are
-                processed strictly for quality assurance and support purposes.
-              </Text>
-              <Button
-                onPress={() => setShowPrivacyModal(false)}
-                className="bg-primary mb-10 items-center rounded-xl py-3"
-              >
-                <Text className="text-primary-foreground text-xs font-bold">Close Statement</Text>
-              </Button>
-            </ScrollView>
-          </View>
-        </Modal>
       </View>
     </ScreenContainer>
   );

@@ -21,8 +21,8 @@ Use the table below when completing the **Data Safety Form** in Google Play Cons
 
 ## 2. Privacy Policy & Public Link Mandate
 
-- [ ] **Hosted Privacy Policy URL**: A publicly accessible HTTPS URL containing the privacy policy must be entered into Google Play Console (**Store Presence > Store Listing > Privacy Policy**).
-- [ ] **In-App Privacy Access**: Accessible inside the app via **Settings > View Store Privacy Statement** (renders in-app modal policy).
+- [x] **Hosted Privacy Policy URL**: A publicly accessible HTTPS URL containing the privacy policy (`https://<your-cloudflare-domain>/privacy`) generated directly from Expo web build (`expo export -p web`).
+- [x] **In-App Privacy Access**: Accessible inside the app via **Settings > View Store Privacy Policy Page** (navigates directly to `/privacy` route).
 - [ ] **Third-Party Disclosures**: Formspree (`https://formspree.io/f/xgawwval`) explicitly named as a data processor for feedback form submissions.
 - [ ] **Non-Tracking Declaration**: Clearly states that data is NOT sold, rented, or shared with third-party data brokers for cross-site targeting.
 
@@ -33,7 +33,7 @@ Use the table below when completing the **Data Safety Form** in Google Play Cons
 Per Google Play Policy requirements on Data & Account Deletion:
 
 - [ ] **In-App Purge Action**: App provides an immediate local cache and preference reset via **Settings > Reset Local Storage & Settings**.
-- [ ] **Submitted Feedback Deletion**: Privacy Policy provides an explicit email point of contact (`privacy@tallyho.app`) for requesting permanent erasure of submitted feedback.
+- [ ] **Submitted Feedback Deletion**: Privacy Policy provides an explicit email point of contact (`privacy.tallyho@garciaericn.com`) for requesting permanent erasure of submitted feedback.
 - [ ] **No Hidden Retainers**: Local storage clearing resets `themeMode`, `soundEnabled`, `hapticsEnabled`, and `customServerUrl` back to initial defaults.
 
 ---

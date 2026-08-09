@@ -28,15 +28,17 @@ Ditch the scrap paper and keep game night moving with Tally Ho!
 
 ---
 
-## 2. Graphic Asset Specifications
+## 2. Generated Store Graphic Assets
 
-| Asset                          | Dimensions                    | Format       | Requirements                                                  |
-| :----------------------------- | :---------------------------- | :----------- | :------------------------------------------------------------ |
-| **App Icon**                   | $512 \times 512$ px           | PNG (32-bit) | Max 1024KB. High resolution version of `assets/icon.png`.     |
-| **Feature Graphic**            | $1024 \times 500$ px          | PNG or JPEG  | High resolution banner promoting Tally Ho score pad.          |
-| **Phone Screenshots**          | $1080 \times 1920$ px (min 4) | PNG or JPEG  | Active match score pad, game setup, winner podium, dark mode. |
-| **7-Inch Tablet Screenshots**  | $1200 \times 1920$ px (min 4) | PNG or JPEG  | Tablet layout screenshots.                                    |
-| **10-Inch Tablet Screenshots** | $1600 \times 2560$ px (min 4) | PNG or JPEG  | Large screen tablet screenshots.                              |
+The graphic assets required for Google Play Console have been generated and saved in [`assets/store/`](../assets/store/):
+
+| Asset Role                              | Dimensions            | File Path                                                                         | Status           |
+| :-------------------------------------- | :-------------------- | :-------------------------------------------------------------------------------- | :--------------- |
+| **High-Res App Icon**                   | $512 \times 512$ px   | [`assets/store/play_store_icon.jpg`](../assets/store/play_store_icon.jpg)         | Ready for upload |
+| **Feature Graphic Banner**              | $1024 \times 500$ px  | [`assets/store/feature_graphic.jpg`](../assets/store/feature_graphic.jpg)         | Ready for upload |
+| **Phone Screenshot 1 (Score Pad)**      | $1080 \times 1920$ px | [`assets/store/screenshot_scorepad.jpg`](../assets/store/screenshot_scorepad.jpg) | Ready for upload |
+| **Phone Screenshot 2 (Game Setup)**     | $1080 \times 1920$ px | [`assets/store/screenshot_presets.jpg`](../assets/store/screenshot_presets.jpg)   | Ready for upload |
+| **Phone Screenshot 3 (Victory Podium)** | $1080 \times 1920$ px | [`assets/store/screenshot_victory.jpg`](../assets/store/screenshot_victory.jpg)   | Ready for upload |
 
 ---
 
@@ -45,5 +47,5 @@ Ditch the scrap paper and keep game night moving with Tally Ho!
 - **Application Type**: App
 - **Category**: Board / Card / Utilities
 - **Content Rating**: Everyone
-- **Developer Contact Email**: `support@garciaventures.com` or `privacy@tallyho.app`
-- **Privacy Policy URL**: `https://garciaventures.github.io/TallyHo/privacy` (or hosted GitHub Pages URL)
+- **Developer Contact Email**: `support@garciaericn.com` or `privacy.tallyho@garciaericn.com`
+- **Privacy Policy URL**: `https://tallyho.pages.dev/privacy` (Cloudflare Pages deployment URL for web app `/privacy` route)

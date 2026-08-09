@@ -118,6 +118,13 @@ export default Sentry.wrap(function RootLayout() {
               headerShown: false,
             }}
           />
+          <Stack.Screen
+            name="privacy"
+            options={{
+              title: 'Privacy Policy',
+              headerShown: false,
+            }}
+          />
         </Stack>
       </ThemeProvider>
     </ErrorBoundary>

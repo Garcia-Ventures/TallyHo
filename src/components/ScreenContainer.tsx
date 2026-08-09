@@ -65,7 +65,7 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
       <View className={cn('bg-background flex-1', className)}>
         {headerElement}
         <ScrollView
-          className="flex-1"
+          className="w-full flex-1"
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ alignItems: 'center', paddingBottom: 48 }}
         >
