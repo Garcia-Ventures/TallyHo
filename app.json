@@ -43,7 +43,9 @@
           "project": "react-native",
           "organization": "garcia-ventures"
         }
-      ]
+      ],
+      "@sentry/react-native",
+      "expo-asset"
     ],
     "scheme": "tallyho",
     "extra": {
