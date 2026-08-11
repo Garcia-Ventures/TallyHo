@@ -95,8 +95,4 @@ dist/
 .eslintcache
 .expo/
 
-# Native builds
-android
-ios
-
 .env.local
