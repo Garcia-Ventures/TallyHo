@@ -209,7 +209,7 @@ export default function PrivacyPolicyScreen() {
                 to request permanent removal of your submission from our records, email us at:
               </Text>
               <View className="bg-card border-border mt-1 flex-row items-center justify-between rounded-lg border p-3">
-                <Text className="text-foreground text-xs font-black select-all">privacy.tallyho@garciaericn.com</Text>
+                <Text className="text-foreground text-xs font-black select-all">privacy.tallyho@gventureshq.com</Text>
                 <Text className="text-muted-foreground text-[10px] font-semibold">Response within 5 business days</Text>
               </View>
             </View>
@@ -260,10 +260,10 @@ export default function PrivacyPolicyScreen() {
               <Text className="text-muted-foreground text-xs font-medium">Privacy & Compliance Office</Text>
               <Text className="text-muted-foreground text-xs font-medium">
                 Privacy Email:{' '}
-                <Text className="text-foreground font-bold select-all">privacy.tallyho@garciaericn.com</Text>
+                <Text className="text-foreground font-bold select-all">privacy.tallyho@gventureshq.com</Text>
               </Text>
               <Text className="text-muted-foreground text-xs font-medium">
-                Support Email: <Text className="text-foreground font-bold select-all">support@garciaericn.com</Text>
+                Support Email: <Text className="text-foreground font-bold select-all">tallyho@gventureshq.com</Text>
               </Text>
             </View>
           </CardContent>

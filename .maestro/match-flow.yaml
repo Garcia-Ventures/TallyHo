@@ -1,4 +1,4 @@
-appId: com.garciaventures.tallyho
+appId: com.gventureshq.tallyho
 ---
 - launchApp
 - assertVisible: "Tally Ho"

@@ -8,14 +8,14 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.garciaventures.tallyho"
+      "bundleIdentifier": "com.gventureshq.tallyho"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FDFBF7"
       },
-      "package": "com.garciaventures.tallyho",
+      "package": "com.gventureshq.tallyho",
       "permissions": []
     },
     "web": {

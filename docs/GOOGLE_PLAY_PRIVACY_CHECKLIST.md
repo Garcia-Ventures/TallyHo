@@ -33,7 +33,7 @@ Use the table below when completing the **Data Safety Form** in Google Play Cons
 Per Google Play Policy requirements on Data & Account Deletion:
 
 - [x] **In-App Purge Action**: App provides an immediate local cache and preference reset via **Settings > Reset Local Storage & Settings**.
-- [x] **Submitted Feedback Deletion**: Privacy Policy provides an explicit email point of contact (`privacy.tallyho@garciaericn.com`) for requesting permanent erasure of submitted feedback.
+- [x] **Submitted Feedback Deletion**: Privacy Policy provides an explicit email point of contact (`privacy.tallyho@gventureshq.com`) for requesting permanent erasure of submitted feedback.
 - [x] **No Hidden Retainers**: Local storage clearing resets `themeMode`, `soundEnabled`, `hapticsEnabled`, and `customServerUrl` back to initial defaults.
 
 ---
