@@ -109,6 +109,9 @@ export default function HomeScreen() {
           </View>
         </View>
 
+        {/* Ad Banner Surface */}
+        <AdBannerCard placement="home" className="pt-2" />
+
         {/* Match History Overview */}
         <View className="gap-4 pt-4 sm:pt-6">
           <View className="mb-2 flex-row items-center justify-between">
@@ -158,9 +161,6 @@ export default function HomeScreen() {
             </View>
           )}
         </View>
-
-        {/* Ad Banner Surface */}
-        <AdBannerCard placement="home" className="pt-2" />
       </View>
     </ScreenContainer>
   );
