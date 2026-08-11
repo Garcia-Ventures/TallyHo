@@ -9,6 +9,7 @@
       "distribution": "internal",
       "env": {
         "EXPO_PUBLIC_SHOW_TEST_ADS": "true",
+        "EXPO_USE_BUN": "0",
         "REACT_NATIVE_NODE_BINARY": "node",
         "NODE_BINARY": "node"
       },
@@ -21,6 +22,7 @@
       "channel": "preview",
       "env": {
         "EXPO_PUBLIC_SHOW_TEST_ADS": "true",
+        "EXPO_USE_BUN": "0",
         "REACT_NATIVE_NODE_BINARY": "node",
         "NODE_BINARY": "node"
       },
@@ -33,6 +35,7 @@
       "channel": "production",
       "env": {
         "EXPO_PUBLIC_SHOW_TEST_ADS": "false",
+        "EXPO_USE_BUN": "0",
         "REACT_NATIVE_NODE_BINARY": "node",
         "NODE_BINARY": "node"
       },
