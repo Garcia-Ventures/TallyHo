@@ -5,26 +5,20 @@
   },
   "build": {
     "development": {
-      "bun": "1.3.14",
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_SHOW_TEST_ADS": "true",
-        "REACT_NATIVE_NODE_BINARY": "node",
-        "NODE_BINARY": "node"
+        "EXPO_PUBLIC_SHOW_TEST_ADS": "true"
       },
       "ios": {
         "simulator": true
       }
     },
     "preview": {
-      "bun": "1.3.14",
       "distribution": "internal",
       "channel": "preview",
       "env": {
-        "EXPO_PUBLIC_SHOW_TEST_ADS": "true",
-        "REACT_NATIVE_NODE_BINARY": "node",
-        "NODE_BINARY": "node"
+        "EXPO_PUBLIC_SHOW_TEST_ADS": "true"
       },
       "android": {
         "buildType": "apk"
@@ -32,12 +26,9 @@
     },
     "production": {
       "autoIncrement": true,
-      "bun": "1.3.14",
       "channel": "production",
       "env": {
-        "EXPO_PUBLIC_SHOW_TEST_ADS": "false",
-        "REACT_NATIVE_NODE_BINARY": "node",
-        "NODE_BINARY": "node"
+        "EXPO_PUBLIC_SHOW_TEST_ADS": "false"
       },
       "android": {
         "buildType": "app-bundle"
