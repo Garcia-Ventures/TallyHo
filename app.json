@@ -45,7 +45,15 @@
         }
       ],
       "@sentry/react-native",
-      "expo-asset"
+      "expo-asset",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#FDFBF7"
+        }
+      ]
     ],
     "scheme": "tallyho",
     "extra": {
