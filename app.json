@@ -8,7 +8,8 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.gventureshq.tallyho"
+      "bundleIdentifier": "com.gventureshq.tallyho",
+      "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {
@@ -16,7 +17,17 @@
         "backgroundColor": "#FDFBF7"
       },
       "package": "com.gventureshq.tallyho",
-      "permissions": []
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -41,6 +52,12 @@
         "projectId": "ce9f1e2a-8d51-47e7-a6eb-4baf66646574"
       }
     },
-    "owner": "gvtech"
+    "owner": "gvtech",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/ce9f1e2a-8d51-47e7-a6eb-4baf66646574"
+    }
   }
 }

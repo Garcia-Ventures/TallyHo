@@ -48,4 +48,4 @@ The graphic assets required for Google Play Console have been generated and save
 - **Category**: Board / Card / Utilities
 - **Content Rating**: Everyone
 - **Developer Contact Email**: `support@gventureshq.com` or `privacy.tallyho@gventureshq.com`
-- **Privacy Policy URL**: `https://tallyho.pages.dev/privacy` (Cloudflare Pages deployment URL for web app `/privacy` route)
+- **Privacy Policy URL**: `https://tallyho.gventureshq.com/privacy`
