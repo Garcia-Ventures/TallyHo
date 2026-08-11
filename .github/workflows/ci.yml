@@ -19,26 +19,22 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 22
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
+          cache: "npm"
 
       - name: Install Dependencies
-        run: bun install --frozen-lockfile
+        run: npm ci
 
       - name: Format Check (Prettier)
-        run: bun run format:ci
+        run: npm run format:ci
 
       - name: Lint Codebase (ESLint)
-        run: bun run lint
+        run: npm run lint
 
       - name: Type Check (TypeScript)
-        run: bun x tsc --noEmit
+        run: npx tsc --noEmit
 
       - name: Run Unit Tests
-        run: bun test
+        run: npm test
 
       - name: Execute Full Validation Suite
-        run: bun run validate
+        run: npm run validate

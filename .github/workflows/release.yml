@@ -29,11 +29,7 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 22
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
+          cache: "npm"
 
       - name: Setup Expo & EAS CLI
         uses: expo/expo-github-action@v9
@@ -42,15 +38,15 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Install Dependencies
-        run: bun install --frozen-lockfile
+        run: npm ci
 
       - name: Run Full Validation
-        run: bun run validate
+        run: npm run validate
 
       - name: Build Android App Bundle (Production)
         if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'android' || github.event_name == 'push' }}
-        run: eas build --platform android --profile production --non-interactive
+        run: npx eas-cli build --platform android --profile production --non-interactive
 
       - name: Build iOS App (Production)
         if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'ios' || github.event_name == 'push' }}
-        run: eas build --platform ios --profile production --non-interactive
+        run: npx eas-cli build --platform ios --profile production --non-interactive

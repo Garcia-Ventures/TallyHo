@@ -7,23 +7,23 @@ console.log(`\n🔍 Running project validation suite${isFix ? ' (with auto-fix e
 const steps = [
   {
     name: 'Formatting (Prettier)',
-    command: 'bun',
-    args: isFix ? ['x', 'prettier', '--write', '.'] : ['x', 'prettier', '--check', '.'],
+    command: 'npx',
+    args: isFix ? ['prettier', '--write', '.'] : ['prettier', '--check', '.'],
   },
   {
     name: 'Linting (ESLint)',
-    command: 'bun',
-    args: isFix ? ['x', 'eslint', '.', '--cache', '--fix'] : ['x', 'eslint', '.', '--cache'],
+    command: 'npx',
+    args: isFix ? ['eslint', '.', '--cache', '--fix'] : ['eslint', '.', '--cache'],
   },
   {
     name: 'Type Check (TypeScript)',
-    command: 'bun',
-    args: ['x', 'tsc', '--noEmit'],
+    command: 'npx',
+    args: ['tsc', '--noEmit'],
   },
   {
-    name: 'Unit Tests (Bun Test)',
-    command: 'bun',
-    args: ['test'],
+    name: 'Unit Tests (Vitest)',
+    command: 'npx',
+    args: ['vitest', 'run'],
   },
 ];
 
