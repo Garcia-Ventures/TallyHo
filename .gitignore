@@ -101,7 +101,9 @@ ios
 
 .env.local
 
-# Keystores
+# Keystores & API Keys
 *.keystore
 *.jks
 !android/app/debug.keystore
+pc-api-key.json
+google-service-account*.json

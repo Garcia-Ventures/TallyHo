@@ -19,6 +19,7 @@
     "build:ios:store": "eas build --platform ios --profile production",
     "build:android:apk": "eas build --platform android --profile preview",
     "build:android:play": "eas build --platform android --profile production",
+    "submit:android": "eas submit --platform android --profile production",
     "test": "vitest run",
     "build": "tsc && expo export -p web",
     "dev": "expo start --web",

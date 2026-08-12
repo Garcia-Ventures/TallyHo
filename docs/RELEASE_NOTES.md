@@ -16,4 +16,20 @@ TallyHo is your digital pencil & paper for game night! Designed to eliminate sco
 - **100% Private & Offline**: Works completely offline. No forced account sign-ups, no social logins, and zero intrusive tracking. All game data stays on your device.
 - **Ad-Free Option**: Enjoy non-intrusive gameplay or unlock the lifetime "Remove Ads" upgrade tier for $1.99.
 
+---
+
+## 📱 Google Play Console Copy-Paste Snippet (en-US, Max 500 chars)
+
+```text
+Welcome to TallyHo 1.0.0 — your digital pencil & paper for game night!
+
+🎲 Key Features:
+• Built-in Presets: Rummy 500, Uno, Pass the Pigs, Qwirkle, or custom games.
+• Fast Score Keypad: Quick turn handoffs and effortless score entry.
+• Paper Design: Warm, tactile layout with fluid card animations.
+• Live Leaderboards: Real-time standings and round history logs.
+• Victory Podium: Confetti celebrations for match winners.
+• 100% Offline: No login needed. All game data stays on your device.
+
 Happy Gaming! 🎯
+```
