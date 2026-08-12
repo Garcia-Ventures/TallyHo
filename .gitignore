@@ -100,3 +100,8 @@ android
 ios
 
 .env.local
+
+# Keystores
+*.keystore
+*.jks
+!android/app/debug.keystore

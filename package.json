@@ -29,6 +29,8 @@
     "lint:report": "eslint . --cache -o ./eslintReport.html -f html",
     "validate": "bun run ./scripts/validate.mjs",
     "validate:fix": "bun run ./scripts/validate.mjs --fix",
+    "changelog": "node ./scripts/release-notes.mjs",
+    "version:bump": "npm version --no-git-tag-version",
     "capture:android": "./scripts/capture-adb-screenshots.sh",
     "prepare": "husky"
   },
