@@ -5,6 +5,56 @@ All notable changes to the TallyHo project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-08-13
+
+### Added
+- add automated semver versioning script and update package.json commands
+- integrate OpenPanel analytics with tracking for game and settings events
+- implement automated changelog generation and GitHub release workflow with conventional commits support
+- initialize native project structures with Expo integration and Sentry configuration
+- configure Expo Updates with runtime versioning and required Android permissions
+- move AdBannerCard component to top of home screen layout
+- implement in-app monetization with ad-free state management, configuration, and UI banners.
+- add CustomHeader component and integrate it into stack navigation for web, and update settings screen max width
+- add victory screenshot asset and update input field heights in GameSetupModal
+- implement privacy policy screen, update store assets, and refactor settings UI for improved layout and feedback submission.
+- add dependabot configuration for bun package manager
+- integrate Sentry error tracking, add CI/CD pipelines, and document release and store procedures.
+- add setup-ui-native agent skill for @gv-tech/ui-native configuration
+- implement comprehensive haptic and sound effect service with global event triggers
+- introduce ScreenContainer component and standardize layout across app screens and modals
+- add wrangler.jsonc configuration for Cloudflare Pages deployment
+- implement system-wide theme support with dynamic dark mode switching
+- implement settings modal, add UI dependencies, and document Google Play privacy compliance
+- implement route-based modal navigation and redesign Game Over screen UI
+- transform repository from base template to Tally Ho scorekeeping application including assets and updated documentation
+- integrate NativeWind for styling and implement isomorphic storage layer
+- initialize Expo project configuration and EAS build profiles
+- implement expo-router navigation and main UI screens for game management
+- add native haptic, audio, and confetti celebration services for improved UX
+- implement native ScoreboardView with animated flip transition and supporting modular components
+- implement play mode state, sound effects, and enhanced game progression logic
+- initialize TallyHo project structure with scoreboard management and game UI components
+
+### Fixed
+- downgrade lightningcss to 1.30.1 and remove css layer syntax from global imports
+- remove fixed height from preset card to prevent content clipping
+
+### Changed
+- centralize color theme configuration in a new palette constant and integrate across application components
+- standardize modal navigation and headers using global Stack configuration with custom Back and Close buttons.
+- standardize flex-1 layouts across scroll views and screen containers to improve responsiveness
+- enhance game-over flow by adding support for historical matches, scrollable containers, and an improved victory podium layout.
+- add full storage reset capability and consolidate settings management logic
+- standardize keypad button height and text vertical alignment across modal and play view
+- add optional header support to ScreenContainer and update components to utilize the new layout pattern
+- update confetti animation logic and standardize modal layout structure across components
+- wrap component content in a centered container for improved tablet and wide-screen responsiveness
+- migrate ScoreboardView components to use consistent UI library primitives and design tokens
+- remove web-specific components and assets to finalize transition to mobile-only codebase
+- update component imports to use explicit .native file extensions
+- migrate game state, player library, and settings management to dedicated Zustand stores
+
 ## [1.0.0] - 2026-08-11
 
 ### Added
