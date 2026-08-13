@@ -31,7 +31,10 @@
     "validate": "bun run ./scripts/validate.mjs",
     "validate:fix": "bun run ./scripts/validate.mjs --fix",
     "changelog": "node ./scripts/release-notes.mjs",
-    "version:bump": "npm version --no-git-tag-version",
+    "version:patch": "node ./scripts/bump-version.mjs patch",
+    "version:minor": "node ./scripts/bump-version.mjs minor",
+    "version:major": "node ./scripts/bump-version.mjs major",
+    "version:bump": "node ./scripts/bump-version.mjs",
     "capture:android": "./scripts/capture-adb-screenshots.sh",
     "prepare": "husky"
   },
