@@ -11,6 +11,7 @@ import { ErrorBoundary } from '../src/components/ErrorBoundary';
 import { HeaderBackButton } from '../src/components/HeaderBackButton';
 import { HeaderCloseButton } from '../src/components/HeaderCloseButton';
 import { PALETTE } from '../src/constants/colors';
+import { initAnalytics } from '../src/services/analytics';
 import { useGameStore } from '../src/stores/useGameStore';
 import { usePlayerLibraryStore } from '../src/stores/usePlayerLibraryStore';
 import { useSettingsStore } from '../src/stores/useSettingsStore';
@@ -45,6 +46,7 @@ export default Sentry.wrap(function RootLayout() {
   const tintColor = isDark ? PALETTE.dark.foreground : PALETTE.ink.primary;
 
   useEffect(() => {
+    initAnalytics();
     loadInitialData();
     loadPlayers();
     loadSettings();

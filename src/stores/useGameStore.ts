@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { trackEvent } from '../services/analytics';
 import { storage } from '../services/storage';
 import { GameSession, Player, Round, RoundScore, RoundScoringType, ScoringMode } from '../types/game';
 import { checkWinCondition, shouldAdvanceRound } from '../utils/scoring';
@@ -81,6 +82,12 @@ export const useGameStore = create<GameState>((set, get) => ({
       presetId: newGame.presetId,
       playerCount: newGame.players.length,
     });
+    trackEvent('game_started', {
+      preset: newGame.presetId || 'custom',
+      player_count: newGame.players.length,
+      scoring_mode: newGame.scoringMode,
+      target_score: newGame.targetScore,
+    });
 
     set({
       activeGame: newGame,
@@ -110,6 +117,11 @@ export const useGameStore = create<GameState>((set, get) => ({
     latestRound.scores = updatedScores;
     currentRounds[latestRoundIdx] = latestRound;
 
+    trackEvent('round_submitted', {
+      round_number: latestRound.roundNumber,
+      scoring_mode: activeGame.scoringMode,
+    });
+
     if (shouldAdvanceRound(activeGame, updatedScores)) {
       currentRounds.push({
         roundNumber: latestRound.roundNumber + 1,
@@ -135,6 +147,11 @@ export const useGameStore = create<GameState>((set, get) => ({
       };
       storage.archiveMatch(completedGame);
       const updatedHistory = storage.getMatchHistory();
+      trackEvent('match_completed', {
+        preset: completedGame.presetId || 'custom',
+        total_rounds: completedGame.rounds.length,
+        player_count: completedGame.players.length,
+      });
       set({
         activeGame: completedGame,
         matchHistory: updatedHistory,
@@ -188,6 +205,12 @@ export const useGameStore = create<GameState>((set, get) => ({
     };
     storage.archiveMatch(completedGame);
     const updatedHistory = storage.getMatchHistory();
+    trackEvent('match_completed', {
+      preset: completedGame.presetId || 'custom',
+      total_rounds: completedGame.rounds.length,
+      player_count: completedGame.players.length,
+      manual_end: true,
+    });
     set({
       activeGame: completedGame,
       matchHistory: updatedHistory,

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { trackEvent } from '../services/analytics';
 import { storage } from '../services/storage';
 import { UserSettings } from '../types/game';
 
@@ -34,6 +35,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   updateSettings: (newSettings) => {
     const updated = { ...get().settings, ...newSettings };
     storage.saveSettings(updated);
+    trackEvent('settings_updated', newSettings as Record<string, unknown>);
     set({ settings: updated });
   },
 
