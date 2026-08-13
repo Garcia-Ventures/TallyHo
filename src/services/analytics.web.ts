@@ -6,13 +6,16 @@ const DEFAULT_API_URL = 'https://openpanel.gventureshq.com/api';
 let opInstance: OpenPanel | null = null;
 
 /**
- * Shared OpenPanel Analytics Service for Web and Node/Vitest environments.
+ * Initializes OpenPanel Web SDK on Web Target.
  */
 export function initAnalytics(): void {
   const clientId = process.env.EXPO_PUBLIC_OPENPANEL_CLIENT_ID || DEFAULT_CLIENT_ID;
   const apiUrl = process.env.EXPO_PUBLIC_OPENPANEL_API_URL || DEFAULT_API_URL;
 
   if (!clientId) {
+    if (__DEV__) {
+      console.log('[Analytics] No EXPO_PUBLIC_OPENPANEL_CLIENT_ID configured. OpenPanel Web disabled.');
+    }
     return;
   }
 
@@ -28,18 +31,29 @@ export function initAnalytics(): void {
     opInstance.track('app_opened', {
       platform: 'web',
     });
-  } catch {
-    // Silent fallback
+
+    if (__DEV__) {
+      console.log('[Analytics] Initialized OpenPanel Web SDK successfully:', clientId);
+    }
+  } catch (err) {
+    if (__DEV__) {
+      console.log('[Analytics] Failed to initialize OpenPanel Web SDK:', err);
+    }
   }
 }
 
+/**
+ * Tracks a custom event in OpenPanel Web SDK.
+ */
 export function trackEvent(name: string, payload?: Record<string, unknown>): void {
   if (!opInstance) {
     return;
   }
   try {
     opInstance.track(name, payload);
-  } catch {
-    // Silent fallback
+  } catch (err) {
+    if (__DEV__) {
+      console.log(`[Analytics] Error tracking event "${name}":`, err);
+    }
   }
 }
