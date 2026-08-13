@@ -1,9 +1,18 @@
 const CLIENT_ID = process.env.EXPO_PUBLIC_OPENPANEL_CLIENT_ID || '';
-const CLIENT_SECRET = process.env.EXPO_PUBLIC_OPENPANEL_CLIENT_SECRET || '';
 const API_URL = process.env.EXPO_PUBLIC_OPENPANEL_API_URL || '';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let opInstance: any = null;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function safeRequire(moduleName: string): any {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    return require(moduleName);
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Initializes the OpenPanel SDK instance if EXPO_PUBLIC_OPENPANEL_CLIENT_ID is provided.
@@ -18,30 +27,28 @@ export function initAnalytics(): void {
   }
 
   try {
-    // Dynamic requires prevent native module loading failures in unit tests and web environment
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const Constants = require('expo-constants').default;
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { Platform } = require('react-native');
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { OpenPanel } = require('@openpanel/react-native');
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const AsyncStorage = require('@react-native-async-storage/async-storage').default;
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const NetInfo = require('@react-native-community/netinfo').default;
+    const reactNative = safeRequire('react-native');
+    const platformOS = reactNative?.Platform?.OS || (typeof window !== 'undefined' ? 'web' : 'node');
+    const openPanelModule = safeRequire('@openpanel/react-native');
+    const asyncStorageModule = safeRequire('@react-native-async-storage/async-storage');
+    const netInfoModule = safeRequire('@react-native-community/netinfo');
+    const expoConstants = safeRequire('expo-constants');
 
-    opInstance = new OpenPanel({
+    if (!openPanelModule?.OpenPanel) {
+      return;
+    }
+
+    opInstance = new openPanelModule.OpenPanel({
       clientId: CLIENT_ID,
-      clientSecret: CLIENT_SECRET,
       apiUrl: API_URL || undefined,
-      storage: AsyncStorage,
-      networkInfo: NetInfo,
-      sdkVersion: Constants?.expoConfig?.version || '1.0.0',
+      storage: asyncStorageModule?.default || asyncStorageModule,
+      networkInfo: netInfoModule?.default || netInfoModule,
+      sdkVersion: expoConstants?.default?.expoConfig?.version || '1.0.0',
     });
 
     opInstance.track('app_opened', {
-      platform: Platform.OS,
-      appVersion: Constants?.expoConfig?.version || '1.0.0',
+      platform: platformOS,
+      appVersion: expoConstants?.default?.expoConfig?.version || '1.0.0',
     });
   } catch (err) {
     if (__DEV__) {
