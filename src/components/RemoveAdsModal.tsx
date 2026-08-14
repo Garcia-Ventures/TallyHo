@@ -3,7 +3,9 @@ import { CheckCircle2, ShieldCheck, Sparkles, X } from 'lucide-react-native';
 import { useState } from 'react';
 import { Alert, Modal, Pressable, ScrollView, View } from 'react-native';
 import { PALETTE } from '../constants/colors';
+import { trackEvent } from '../services/analytics';
 import { nativeSound } from '../services/audio';
+import { purchaseAdFreePackage, restoreAdFreePurchases } from '../services/purchases';
 import { useSettingsStore } from '../stores/useSettingsStore';
 
 interface RemoveAdsModalProps {
@@ -15,28 +17,43 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
   const { settings, purchaseRemoveAds, restorePurchases, resetAdFreeStatus } = useSettingsStore();
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handlePurchase = () => {
+  const handlePurchase = async () => {
     setIsProcessing(true);
-    setTimeout(() => {
+    trackEvent('purchase_attempt', { product: 'ad_free' });
+
+    const result = await purchaseAdFreePackage();
+    setIsProcessing(false);
+
+    if (result.success && result.isAdFree) {
       purchaseRemoveAds();
-      setIsProcessing(false);
       nativeSound.playVictoryFanfare();
+      trackEvent('purchase_success', { product: 'ad_free' });
       Alert.alert('Upgrade Successful! 🎉', 'TallyHo is now 100% ad-free forever. Thank you for your support!', [
         { text: 'Awesome', onPress: onClose },
       ]);
-    }, 600);
+    } else if (result.redirected) {
+      // Stripe Web redirect opened
+      onClose();
+    } else {
+      Alert.alert('Purchase Not Completed', 'The purchase process was not completed.');
+    }
   };
 
-  const handleRestore = () => {
-    const restored = restorePurchases();
-    if (restored) {
+  const handleRestore = async () => {
+    setIsProcessing(true);
+    const result = await restoreAdFreePurchases();
+    setIsProcessing(false);
+
+    if (result.success && result.isAdFree) {
+      restorePurchases();
       nativeSound.playPresetSelect();
-      Alert.alert('Purchases Restored', 'Your Ad-Free status has been restored successfully.');
+      trackEvent('purchases_restored');
+      Alert.alert('Purchases Restored! 🎉', 'Your Ad-Free status has been restored successfully.');
       onClose();
     } else {
       Alert.alert(
         'No Prior Purchase Found',
-        'We could not find an active Ad-Free purchase associated with this device.',
+        'We could not find an active Ad-Free purchase associated with this account or device.',
       );
     }
   };
@@ -131,10 +148,13 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
 
                 <Button
                   onPress={handleRestore}
+                  disabled={isProcessing}
                   variant="outline"
                   className="border-border h-11 items-center justify-center rounded-xl bg-transparent"
                 >
-                  <Text className="text-muted-foreground text-xs font-bold">Restore Previous Purchase</Text>
+                  <Text className="text-muted-foreground text-xs font-bold">
+                    {isProcessing ? 'Restoring...' : 'Restore Previous Purchase'}
+                  </Text>
                 </Button>
               </View>
             ) : (

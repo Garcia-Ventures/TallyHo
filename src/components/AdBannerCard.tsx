@@ -1,9 +1,10 @@
 import { Badge, Button, Card, CardContent, Text } from '@gv-tech/ui-native';
-import { Megaphone, Sparkles } from 'lucide-react-native';
-import { useState } from 'react';
-import { View } from 'react-native';
+import { ExternalLink, Megaphone, Sparkles } from 'lucide-react-native';
+import { useEffect, useState } from 'react';
+import { Linking, View } from 'react-native';
 import { PALETTE } from '../constants/colors';
-import { AD_CONFIG } from '../constants/config';
+import { AD_CONFIG, AdContent } from '../constants/config';
+import { trackEvent } from '../services/analytics';
 import { useSettingsStore } from '../stores/useSettingsStore';
 import { RemoveAdsModal } from './RemoveAdsModal';
 
@@ -15,15 +16,50 @@ interface AdBannerCardProps {
 export function AdBannerCard({ placement = 'home', className = '' }: AdBannerCardProps) {
   const { settings } = useSettingsStore();
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
+  const [adContent, setAdContent] = useState<AdContent>(AD_CONFIG.houseAds[0]);
+
+  // Select ad content on mount & track impression
+  useEffect(() => {
+    if (settings.isAdFree) {
+      return;
+    }
+
+    const selectedAd = settings.isAdBlocked
+      ? AD_CONFIG.adBlockerFallbackAd
+      : AD_CONFIG.houseAds[Math.floor(Math.random() * AD_CONFIG.houseAds.length)];
+
+    setAdContent(selectedAd);
+
+    // Track OpenPanel ad impression
+    trackEvent('ad_impression', {
+      adId: selectedAd.id,
+      placement,
+      badge: selectedAd.badge,
+    });
+  }, [placement, settings.isAdBlocked, settings.isAdFree]);
 
   // If user has purchased Ad-Free, do NOT render ads anywhere
   if (settings.isAdFree) {
     return null;
   }
 
-  // Determine if ad-blocker fallback is active
+  const handleAction = () => {
+    // Track OpenPanel ad click
+    trackEvent('ad_click', {
+      adId: adContent.id,
+      placement,
+      badge: adContent.badge,
+      hasExternalLink: Boolean(adContent.linkUrl),
+    });
+
+    if (adContent.linkUrl) {
+      Linking.openURL(adContent.linkUrl);
+    } else {
+      setIsUpgradeModalOpen(true);
+    }
+  };
+
   const isFallback = settings.isAdBlocked;
-  const adContent = isFallback ? AD_CONFIG.adBlockerFallbackAd : AD_CONFIG.defaultTestAd;
 
   return (
     <View className={className}>
@@ -50,6 +86,8 @@ export function AdBannerCard({ placement = 'home', className = '' }: AdBannerCar
             <View className="bg-chip-mustard/15 mt-0.5 h-9 w-9 items-center justify-center rounded-xl">
               {isFallback ? (
                 <Megaphone size={18} color={PALETTE.chip.purple} />
+              ) : adContent.linkUrl ? (
+                <ExternalLink size={18} color={PALETTE.chip.mustard} />
               ) : (
                 <Sparkles size={18} color={PALETTE.chip.mustard} />
               )}
@@ -62,7 +100,7 @@ export function AdBannerCard({ placement = 'home', className = '' }: AdBannerCar
           </View>
 
           <Button
-            onPress={() => setIsUpgradeModalOpen(true)}
+            onPress={handleAction}
             variant="outline"
             className="border-chip-mustard/40 bg-chip-mustard/10 h-10 w-full items-center justify-center rounded-xl"
           >
