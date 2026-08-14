@@ -1,22 +1,43 @@
-/**
- * Shared fallback Purchases service for Vitest unit test environments.
- * Platform-specific implementations exist in purchases.web.ts and purchases.native.ts.
- */
-
 export interface PurchaseResult {
   success: boolean;
-  isAdFree: boolean;
+  isPro: boolean;
+  userCancelled?: boolean;
+  error?: string;
   redirected?: boolean;
 }
 
 export async function initPurchases(): Promise<void> {
-  // Test fallback
+  // Vitest test fallback
+}
+
+export async function getCustomerInfo(): Promise<null> {
+  return null;
+}
+
+export async function getOfferings(): Promise<null> {
+  return null;
+}
+
+export async function purchasePackage(): Promise<PurchaseResult> {
+  return { success: true, isPro: true };
+}
+
+export async function purchasePackageByIdentifier(_tier: 'lifetime' | 'yearly' | 'monthly'): Promise<PurchaseResult> {
+  return { success: true, isPro: true };
 }
 
 export async function purchaseAdFreePackage(): Promise<PurchaseResult> {
-  return { success: true, isAdFree: true };
+  return { success: true, isPro: true };
 }
 
 export async function restoreAdFreePurchases(): Promise<PurchaseResult> {
-  return { success: true, isAdFree: true };
+  return { success: true, isPro: true };
+}
+
+export async function presentPaywall(): Promise<PurchaseResult> {
+  return { success: true, isPro: true };
+}
+
+export async function presentCustomerCenter(): Promise<void> {
+  // Test fallback
 }

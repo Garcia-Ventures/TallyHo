@@ -4,20 +4,32 @@ const STRIPE_CHECKOUT_URL = process.env.EXPO_PUBLIC_STRIPE_CHECKOUT_URL || 'http
 
 export interface PurchaseResult {
   success: boolean;
-  isAdFree: boolean;
+  isPro: boolean;
+  userCancelled?: boolean;
+  error?: string;
   redirected?: boolean;
 }
 
-/**
- * Initializes Purchases service on Web.
- */
 export async function initPurchases(): Promise<void> {
   // Web checkout uses Stripe link redirect
 }
 
-/**
- * Executes Ad-Free lifetime purchase on Web target via Stripe.
- */
+export async function getCustomerInfo(): Promise<null> {
+  return null;
+}
+
+export async function getOfferings(): Promise<null> {
+  return null;
+}
+
+export async function purchasePackage(): Promise<PurchaseResult> {
+  return purchaseAdFreePackage();
+}
+
+export async function purchasePackageByIdentifier(_tier: 'lifetime' | 'yearly' | 'monthly'): Promise<PurchaseResult> {
+  return purchaseAdFreePackage();
+}
+
 export async function purchaseAdFreePackage(): Promise<PurchaseResult> {
   try {
     if (typeof window !== 'undefined') {
@@ -25,16 +37,23 @@ export async function purchaseAdFreePackage(): Promise<PurchaseResult> {
     } else {
       await Linking.openURL(STRIPE_CHECKOUT_URL);
     }
-    return { success: true, isAdFree: false, redirected: true };
+    return { success: true, isPro: false, redirected: true };
   } catch (err) {
     console.error('[Purchases] Web Stripe redirect failed:', err);
-    return { success: false, isAdFree: false };
+    return { success: false, isPro: false };
   }
 }
 
-/**
- * Restores previous purchases on Web target.
- */
 export async function restoreAdFreePurchases(): Promise<PurchaseResult> {
-  return { success: false, isAdFree: false };
+  return { success: false, isPro: false };
+}
+
+export async function presentPaywall(): Promise<PurchaseResult> {
+  return purchaseAdFreePackage();
+}
+
+export async function presentCustomerCenter(): Promise<void> {
+  if (typeof window !== 'undefined') {
+    window.open('https://billing.stripe.com/p/login/test', '_blank');
+  }
 }
