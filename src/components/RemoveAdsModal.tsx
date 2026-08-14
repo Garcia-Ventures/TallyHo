@@ -1,6 +1,6 @@
 import { Badge, Button, Card, CardContent, Text } from '@gv-tech/ui-native';
 import { Check, CheckCircle2, Crown, Headphones, ShieldCheck, Sparkles, X, Zap } from 'lucide-react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, Modal, Pressable, ScrollView, View } from 'react-native';
 import { PALETTE } from '../constants/colors';
 import { trackEvent } from '../services/analytics';
@@ -58,9 +58,35 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
   const [selectedTier, setSelectedTier] = useState<PlanTier>('lifetime');
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // Track OpenPanel impression when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      trackEvent('paywall_impression', {
+        isAlreadyPro: settings.isAdFree,
+        defaultTier: selectedTier,
+      });
+    }
+  }, [isOpen]);
+
+  const handleTierSelect = (tier: PlanTier) => {
+    setSelectedTier(tier);
+    const plan = PLAN_OPTIONS.find((p) => p.id === tier);
+    trackEvent('paywall_tier_selected', {
+      tier,
+      title: plan?.title,
+      price: plan?.price,
+    });
+  };
+
   const handlePurchase = async () => {
+    const selectedPlan = PLAN_OPTIONS.find((p) => p.id === selectedTier) || PLAN_OPTIONS[0];
+
     setIsProcessing(true);
-    trackEvent('purchase_attempt', { product: `tallyho_pro_${selectedTier}` });
+    trackEvent('checkout_initiated', {
+      tier: selectedTier,
+      price: selectedPlan.price,
+      product: `tallyho_pro_${selectedTier}`,
+    });
 
     const result = await purchasePackageByIdentifier(selectedTier);
     setIsProcessing(false);
@@ -68,35 +94,46 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
     if (result.success && result.isPro) {
       purchaseRemoveAds();
       nativeSound.playVictoryFanfare();
-      trackEvent('purchase_success', { product: `tallyho_pro_${selectedTier}` });
+      trackEvent('purchase_success', {
+        tier: selectedTier,
+        price: selectedPlan.price,
+        product: `tallyho_pro_${selectedTier}`,
+      });
       Alert.alert(
         'Welcome to TallyHo Pro! 🎉',
         'Your Ad-Free & Pro upgrade is now active. Thank you for your support!',
         [{ text: 'Awesome', onPress: onClose }],
       );
     } else if (result.redirected) {
+      trackEvent('checkout_redirected', { tier: selectedTier });
       onClose();
     } else if (!result.userCancelled) {
+      trackEvent('purchase_error', { tier: selectedTier, error: result.error });
       Alert.alert('Purchase Error', result.error || 'The purchase process could not be completed.');
+    } else {
+      trackEvent('purchase_cancelled', { tier: selectedTier });
     }
   };
 
   const handlePresentCustomerCenter = async () => {
+    trackEvent('customer_center_opened');
     await presentCustomerCenter();
   };
 
   const handleRestore = async () => {
     setIsProcessing(true);
+    trackEvent('restore_attempt');
     const result = await restoreAdFreePurchases();
     setIsProcessing(false);
 
     if (result.success && result.isPro) {
       restorePurchases();
       nativeSound.playPresetSelect();
-      trackEvent('purchases_restored');
+      trackEvent('purchases_restored', { success: true });
       Alert.alert('Purchases Restored! 🎉', 'Your TallyHo Pro entitlement has been restored successfully.');
       onClose();
     } else if (!result.userCancelled) {
+      trackEvent('purchases_restored', { success: false });
       Alert.alert(
         'No Prior Purchase Found',
         'We could not find an active TallyHo Pro purchase associated with this account or device.',
@@ -123,7 +160,10 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
             </View>
 
             <Pressable
-              onPress={onClose}
+              onPress={() => {
+                trackEvent('paywall_dismissed', { isPro: settings.isAdFree });
+                onClose();
+              }}
               className="border-border bg-popover h-9 w-9 items-center justify-center rounded-full border"
             >
               <X size={18} color={PALETTE.ink.muted} />
@@ -155,7 +195,7 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
                   {PLAN_OPTIONS.map((plan) => {
                     const isSelected = selectedTier === plan.id;
                     return (
-                      <Pressable key={plan.id} onPress={() => setSelectedTier(plan.id)}>
+                      <Pressable key={plan.id} onPress={() => handleTierSelect(plan.id)}>
                         <Card
                           className={`rounded-2xl border p-4 transition-all ${
                             isSelected ? 'border-chip-mustard bg-chip-mustard/15 shadow-sm' : 'border-border bg-popover'
