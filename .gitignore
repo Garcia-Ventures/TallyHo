@@ -104,6 +104,12 @@ ios
 # Keystores & API Keys
 *.keystore
 *.jks
+*.pem
 !android/app/debug.keystore
+@*keystore*
 pc-api-key.json
 google-service-account*.json
+revenucat-key.json
+
+# Code Quality
+.codacy/
