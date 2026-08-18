@@ -6,6 +6,35 @@ export interface PurchaseResult {
   redirected?: boolean;
 }
 
+export interface PurchasesProduct {
+  identifier: string;
+  description: string;
+  title: string;
+  price: number;
+  priceString: string;
+  currencyCode: string;
+}
+
+export interface PurchasesPackage {
+  identifier: string;
+  packageType: string;
+  product: PurchasesProduct;
+}
+
+export interface PurchasesOffering {
+  identifier: string;
+  serverDescription: string;
+  availablePackages: PurchasesPackage[];
+  lifetime?: PurchasesPackage | null;
+  annual?: PurchasesPackage | null;
+  monthly?: PurchasesPackage | null;
+}
+
+export interface PurchasesOfferings {
+  all: Record<string, PurchasesOffering>;
+  current: PurchasesOffering | null;
+}
+
 export async function initPurchases(): Promise<void> {
   // Vitest test fallback
 }
@@ -14,7 +43,7 @@ export async function getCustomerInfo(): Promise<null> {
   return null;
 }
 
-export async function getOfferings(): Promise<null> {
+export async function getOfferings(): Promise<PurchasesOfferings | null> {
   return null;
 }
 

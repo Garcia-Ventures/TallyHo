@@ -162,9 +162,9 @@ export default function SettingsModal() {
               <View className="gap-3">
                 <View className="flex-row items-center justify-between">
                   <View>
-                    <Text className="text-foreground text-xs font-bold">Remove All Ads ($1.99)</Text>
+                    <Text className="text-foreground text-xs font-bold">Unlock TallyHo Pro</Text>
                     <Text className="text-muted-foreground text-[10px] font-medium">
-                      One-time payment for 100% ad-free lifetime experience.
+                      100% ad-free experience and premium table utility features.
                     </Text>
                   </View>
 
@@ -198,33 +198,37 @@ export default function SettingsModal() {
                   All sponsored ad cards are hidden across all screens.
                 </Text>
 
-                <Button
-                  onPress={() => {
-                    resetAdFreeStatus();
-                    Alert.alert('Reset for Testing', 'Ad-Free status has been reset to test free mode.');
-                  }}
-                  variant="outline"
-                  className="border-border bg-popover mt-2 flex-row items-center justify-center gap-2 rounded-xl border-dashed py-2.5"
-                >
-                  <RotateCcw size={14} color={PALETTE.ink.muted} />
-                  <Text className="text-foreground text-xs font-bold">[Dev Test] Reset Purchase</Text>
-                </Button>
+                {__DEV__ && (
+                  <Button
+                    onPress={() => {
+                      resetAdFreeStatus();
+                      Alert.alert('Reset for Testing', 'Ad-Free status has been reset to test free mode.');
+                    }}
+                    variant="outline"
+                    className="border-border bg-popover mt-2 flex-row items-center justify-center gap-2 rounded-xl border-dashed py-2.5"
+                  >
+                    <RotateCcw size={14} color={PALETTE.ink.muted} />
+                    <Text className="text-foreground text-xs font-bold">[Dev Test] Reset Purchase</Text>
+                  </Button>
+                )}
               </View>
             )}
 
             {/* Dev Mode Ad-Blocker Simulation Switch */}
-            <View className="border-border/60 flex-row items-center justify-between border-t pt-3">
-              <View>
-                <Text className="text-foreground text-xs font-bold">Simulate Ad-Blocker Fallback</Text>
-                <Text className="text-muted-foreground text-[10px] font-medium">
-                  Forces House Ad fallback banner for testing.
-                </Text>
+            {__DEV__ && (
+              <View className="border-border/60 flex-row items-center justify-between border-t pt-3">
+                <View>
+                  <Text className="text-foreground text-xs font-bold">Simulate Ad-Blocker Fallback</Text>
+                  <Text className="text-muted-foreground text-[10px] font-medium">
+                    Forces House Ad fallback banner for testing.
+                  </Text>
+                </View>
+                <Switch
+                  checked={settings.isAdBlocked ?? false}
+                  onCheckedChange={(val: boolean) => setAdBlockedState(val)}
+                />
               </View>
-              <Switch
-                checked={settings.isAdBlocked ?? false}
-                onCheckedChange={(val: boolean) => setAdBlockedState(val)}
-              />
-            </View>
+            )}
           </CardContent>
         </Card>
 

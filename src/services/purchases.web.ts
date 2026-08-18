@@ -18,7 +18,9 @@ export async function getCustomerInfo(): Promise<null> {
   return null;
 }
 
-export async function getOfferings(): Promise<null> {
+import type { PurchasesOfferings } from './purchases';
+
+export async function getOfferings(): Promise<PurchasesOfferings | null> {
   return null;
 }
 

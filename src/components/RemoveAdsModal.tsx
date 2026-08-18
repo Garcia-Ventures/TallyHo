@@ -5,7 +5,12 @@ import { Alert, Modal, Pressable, ScrollView, View } from 'react-native';
 import { PALETTE } from '../constants/colors';
 import { trackEvent } from '../services/analytics';
 import { nativeSound } from '../services/audio';
-import { presentCustomerCenter, purchasePackageByIdentifier, restoreAdFreePurchases } from '../services/purchases';
+import {
+  getOfferings,
+  presentCustomerCenter,
+  purchasePackageByIdentifier,
+  restoreAdFreePurchases,
+} from '../services/purchases';
 import { useSettingsStore } from '../stores/useSettingsStore';
 
 interface RemoveAdsModalProps {
@@ -25,11 +30,11 @@ interface PlanOption {
   highlighted?: boolean;
 }
 
-const PLAN_OPTIONS: PlanOption[] = [
+const DEFAULT_PLAN_OPTIONS: PlanOption[] = [
   {
     id: 'lifetime',
     title: 'Lifetime Access',
-    price: '$1.99',
+    price: '$4.99',
     subtext: 'Pay once, keep forever',
     badge: 'BEST VALUE',
     badgeColor: 'bg-chip-mustard text-black',
@@ -38,9 +43,9 @@ const PLAN_OPTIONS: PlanOption[] = [
   {
     id: 'yearly',
     title: 'Yearly Pro',
-    price: '$4.99 / year',
-    subtext: '$0.41/mo • Billed annually',
-    badge: 'SAVE 58%',
+    price: '$2.99 / year',
+    subtext: '$0.25/mo • Billed annually',
+    badge: 'SAVE 75%',
     badgeColor: 'bg-chip-sage/20 text-chip-sage',
   },
   {
@@ -56,11 +61,53 @@ const PLAN_OPTIONS: PlanOption[] = [
 export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
   const { settings, purchaseRemoveAds, restorePurchases, resetAdFreeStatus } = useSettingsStore();
   const [selectedTier, setSelectedTier] = useState<PlanTier>('lifetime');
+  const [plans, setPlans] = useState<PlanOption[]>(DEFAULT_PLAN_OPTIONS);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Track OpenPanel impression when modal opens
+  // Fetch live offerings from RevenueCat on mount/open
   useEffect(() => {
+    async function loadLivePrices() {
+      try {
+        const offerings = await getOfferings();
+        const current = offerings?.current;
+        if (!current) {
+          return;
+        }
+
+        setPlans((prevPlans) =>
+          prevPlans.map((plan) => {
+            if (plan.id === 'lifetime') {
+              const pkg = current.lifetime || current.availablePackages.find((p) => p.packageType === 'LIFETIME');
+              if (pkg?.product?.priceString) {
+                return { ...plan, price: pkg.product.priceString };
+              }
+            } else if (plan.id === 'yearly') {
+              const pkg = current.annual || current.availablePackages.find((p) => p.packageType === 'ANNUAL');
+              if (pkg?.product?.priceString) {
+                return {
+                  ...plan,
+                  price: `${pkg.product.priceString} / year`,
+                };
+              }
+            } else if (plan.id === 'monthly') {
+              const pkg = current.monthly || current.availablePackages.find((p) => p.packageType === 'MONTHLY');
+              if (pkg?.product?.priceString) {
+                return {
+                  ...plan,
+                  price: `${pkg.product.priceString} / month`,
+                };
+              }
+            }
+            return plan;
+          }),
+        );
+      } catch (err) {
+        console.warn('[RemoveAdsModal] Failed to load live offerings:', err);
+      }
+    }
+
     if (isOpen) {
+      loadLivePrices();
       trackEvent('paywall_impression', {
         isAlreadyPro: settings.isAdFree,
         defaultTier: selectedTier,
@@ -70,7 +117,7 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
 
   const handleTierSelect = (tier: PlanTier) => {
     setSelectedTier(tier);
-    const plan = PLAN_OPTIONS.find((p) => p.id === tier);
+    const plan = plans.find((p) => p.id === tier);
     trackEvent('paywall_tier_selected', {
       tier,
       title: plan?.title,
@@ -79,7 +126,7 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
   };
 
   const handlePurchase = async () => {
-    const selectedPlan = PLAN_OPTIONS.find((p) => p.id === selectedTier) || PLAN_OPTIONS[0];
+    const selectedPlan = plans.find((p) => p.id === selectedTier) || plans[0];
 
     setIsProcessing(true);
     trackEvent('checkout_initiated', {
@@ -141,7 +188,7 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
     }
   };
 
-  const selectedPlan = PLAN_OPTIONS.find((p) => p.id === selectedTier) || PLAN_OPTIONS[0];
+  const selectedPlan = plans.find((p) => p.id === selectedTier) || plans[0];
 
   return (
     <Modal visible={isOpen} animationType="slide" transparent onRequestClose={onClose}>
@@ -192,7 +239,7 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
                     Select Your Plan
                   </Text>
 
-                  {PLAN_OPTIONS.map((plan) => {
+                  {plans.map((plan) => {
                     const isSelected = selectedTier === plan.id;
                     return (
                       <Pressable key={plan.id} onPress={() => handleTierSelect(plan.id)}>
