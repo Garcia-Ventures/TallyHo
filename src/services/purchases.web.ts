@@ -211,5 +211,24 @@ export async function presentPaywall(): Promise<PurchaseResult> {
 }
 
 export async function presentCustomerCenter(): Promise<void> {
-  // Handled by customer portal or settings
+  const p = await initPurchases();
+  if (!p) {
+    return;
+  }
+
+  try {
+    const customerInfo = await p.getCustomerInfo();
+    const managementUrl = customerInfo?.managementURL;
+    if (managementUrl && typeof window !== 'undefined') {
+      window.open(managementUrl, '_blank');
+      return;
+    }
+
+    if (typeof window !== 'undefined') {
+      const fallbackUrl = process.env.EXPO_PUBLIC_STRIPE_PORTAL_URL || 'https://billing.stripe.com/p/login';
+      window.open(fallbackUrl, '_blank');
+    }
+  } catch (err) {
+    console.error('[Purchases Web] Failed to open customer center:', err);
+  }
 }

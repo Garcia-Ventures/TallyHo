@@ -1,4 +1,4 @@
-import { Platform } from 'react-native';
+import { Linking, Platform } from 'react-native';
 import Purchases, {
   CustomerInfo,
   LOG_LEVEL,
@@ -230,8 +230,18 @@ export async function presentCustomerCenter(): Promise<void> {
   }
 
   try {
+    const customerInfo = await Purchases.getCustomerInfo();
+    if (customerInfo?.managementURL) {
+      await Linking.openURL(customerInfo.managementURL);
+      return;
+    }
     await RevenueCatUI.presentCustomerCenter();
   } catch (err) {
-    console.error('[RevenueCat] Customer Center presentation failed:', err);
+    console.warn('[RevenueCat] Customer Center presentation failed, falling back to store link:', err);
+    if (Platform.OS === 'android') {
+      await Linking.openURL('https://play.google.com/store/account/subscriptions?package=com.gventureshq.tallyho');
+    } else if (Platform.OS === 'ios') {
+      await Linking.openURL('https://apps.apple.com/account/subscriptions');
+    }
   }
 }

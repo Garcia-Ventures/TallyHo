@@ -354,7 +354,7 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
                 </Button>
 
                 {/* Dev Testing Reset Button */}
-                {process.env.EXPO_PUBLIC_SHOW_TEST_ADS !== 'false' && (
+                {__DEV__ && (
                   <Button
                     onPress={() => {
                       resetAdFreeStatus();
