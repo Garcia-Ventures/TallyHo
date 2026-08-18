@@ -5,6 +5,21 @@ All notable changes to the TallyHo project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2026-08-18
+
+### Added
+- integrate live RevenueCat offerings and restrict developer settings to debug mode
+- enhance RemoveAdsModal analytics with comprehensive tracking for impressions, interactions, and purchase events
+- expand purchase options with tiered TallyHo Pro plans and add customer center support
+- integrate RevenueCat for ad-free IAP and implement dynamic ad impression tracking
+- implement multi-platform analytics service using OpenPanel for web and native targets
+
+### Fixed
+- update RevenueCat API key resolution logic to support platform-specific keys and remove hardcoded test key
+
+### Changed
+- restructure documentation directory to improve organization and maintainability.
+
 ## [1.0.2] - 2026-08-13
 
 ### Added
