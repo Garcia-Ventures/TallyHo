@@ -10,11 +10,9 @@ import RevenueCatUI, { PAYWALL_RESULT } from 'react-native-purchases-ui';
 import { trackEvent } from './analytics';
 
 const API_KEY =
-  process.env.EXPO_PUBLIC_REVENUECAT_API_KEY ||
   (Platform.OS === 'android'
-    ? process.env.EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID
-    : process.env.EXPO_PUBLIC_REVENUECAT_API_KEY_IOS) ||
-  'test_kHiPaoFakAarsAuCMHvjpgKjVPS';
+    ? process.env.EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID || 'goog_hzzfoeZEwqIKAhHYDtiicEvhQxb'
+    : process.env.EXPO_PUBLIC_REVENUECAT_API_KEY_IOS || process.env.EXPO_PUBLIC_REVENUECAT_API_KEY) || '';
 
 let isInitialized = false;
 
