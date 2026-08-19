@@ -21,7 +21,7 @@
     "build:android:play": "eas build --platform android --profile production",
     "build:android:local": "eas build --platform android --profile production --local --output ./build/production.aab",
     "build:android:local:apk": "eas build --platform android --profile preview --local --output ./build/preview.apk",
-    "build:android:local:submit": "eas build --platform android --profile production --local --auto-submit",
+    "build:android:local:submit": "eas build --platform android --profile production --local --output ./build/production.aab && eas submit --platform android --profile production --path ./build/production.aab",
     "submit:android": "eas submit --platform android --profile production",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
