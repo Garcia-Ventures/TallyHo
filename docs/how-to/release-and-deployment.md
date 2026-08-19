@@ -56,8 +56,13 @@ bun run changelog
 # Run full project validation
 bun run validate
 
-# Manual EAS Build triggers
-bun run build:android:play # Android Production App Bundle (Google Play)
-bun run build:android:apk  # Android Preview APK (for direct sideloading)
-bun run build:ios:device   # iOS Preview Build
+# Cloud EAS Build triggers (Subject to monthly Expo free tier quota)
+bun run build:android:play # Android Production App Bundle (Cloud EAS -> Google Play)
+bun run build:android:apk  # Android Preview APK (Cloud EAS)
+bun run build:ios:device   # iOS Preview Build (Cloud EAS)
+
+# Local EAS Build & Submit triggers (Zero quota usage, builds on your machine)
+bun run build:android:local        # Builds ./build/production.aab locally
+bun run build:android:local:submit # Builds locally and auto-submits to Google Play
+bun run submit:android             # Submits existing AAB to Google Play
 ```

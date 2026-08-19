@@ -8,8 +8,7 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.gventureshq.tallyho",
-      "buildNumber": "1"
+      "bundleIdentifier": "com.gventureshq.tallyho"
     },
     "android": {
       "adaptiveIcon": {
@@ -17,7 +16,6 @@
         "backgroundColor": "#FDFBF7"
       },
       "package": "com.gventureshq.tallyho",
-      "versionCode": 1,
       "permissions": [
         "com.android.vending.BILLING",
         "android.permission.INTERNET",
