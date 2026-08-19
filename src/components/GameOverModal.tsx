@@ -73,12 +73,12 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
         <View className="flex-row items-end justify-center gap-2 pt-1">
           {/* 2nd Place */}
           {secondPlace && (
-            <Card className="border-border bg-card flex-1 items-center p-3.5">
-              <CardContent className="items-center gap-1 p-0">
-                <View className="bg-chip-navy h-7 w-7 items-center justify-center rounded-full">
+            <Card className="border-border bg-card min-w-0 flex-1 items-center p-3.5">
+              <CardContent className="w-full min-w-0 items-center gap-1 p-0">
+                <View className="bg-chip-navy h-7 w-7 shrink-0 items-center justify-center rounded-full">
                   <Text className="text-xs font-black text-white">2</Text>
                 </View>
-                <Text className="text-foreground text-xs font-bold" numberOfLines={1}>
+                <Text className="text-foreground w-full text-center text-xs font-bold" numberOfLines={1}>
                   {secondPlace.name}
                 </Text>
                 <Text className="text-foreground text-base font-black">{totals[secondPlace.id] ?? 0}</Text>
@@ -89,12 +89,12 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
 
           {/* 1st Place */}
           {winner && (
-            <Card className="border-chip-mustard bg-chip-mustard/15 flex-[1.2] items-center border-2 p-4 shadow-sm">
-              <CardContent className="items-center gap-1 p-0">
-                <View className="bg-chip-mustard h-9 w-9 items-center justify-center rounded-full">
+            <Card className="border-chip-mustard bg-chip-mustard/15 min-w-0 flex-[1.2] items-center border-2 p-4 shadow-sm">
+              <CardContent className="w-full min-w-0 items-center gap-1 p-0">
+                <View className="bg-chip-mustard h-9 w-9 shrink-0 items-center justify-center rounded-full">
                   <Text className="text-sm font-black text-black">1</Text>
                 </View>
-                <Text className="text-foreground text-sm font-black" numberOfLines={1}>
+                <Text className="text-foreground w-full text-center text-sm font-black" numberOfLines={1}>
                   {winner.name}
                 </Text>
                 <Text className="text-foreground text-xl font-black">{totals[winner.id] ?? 0}</Text>
@@ -107,12 +107,12 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
 
           {/* 3rd Place */}
           {thirdPlace && (
-            <Card className="border-border bg-card flex-1 items-center p-3.5">
-              <CardContent className="items-center gap-1 p-0">
-                <View className="bg-chip-terracotta h-7 w-7 items-center justify-center rounded-full">
+            <Card className="border-border bg-card min-w-0 flex-1 items-center p-3.5">
+              <CardContent className="w-full min-w-0 items-center gap-1 p-0">
+                <View className="bg-chip-terracotta h-7 w-7 shrink-0 items-center justify-center rounded-full">
                   <Text className="text-xs font-black text-white">3</Text>
                 </View>
-                <Text className="text-foreground text-xs font-bold" numberOfLines={1}>
+                <Text className="text-foreground w-full text-center text-xs font-bold" numberOfLines={1}>
                   {thirdPlace.name}
                 </Text>
                 <Text className="text-foreground text-base font-black">{totals[thirdPlace.id] ?? 0}</Text>
@@ -133,13 +133,15 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
                     key={player.id}
                     className="border-border/40 flex-row items-center justify-between border-b py-1.5 last:border-b-0"
                   >
-                    <View className="flex-row items-center gap-2">
-                      <View className="bg-muted h-5 w-5 items-center justify-center rounded-full">
+                    <View className="min-w-0 flex-1 flex-row items-center gap-2 pr-2">
+                      <View className="bg-muted h-5 w-5 shrink-0 items-center justify-center rounded-full">
                         <Text className="text-muted-foreground text-[10px] font-black">{idx + 4}</Text>
                       </View>
-                      <Text className="text-foreground text-xs font-bold">{player.name}</Text>
+                      <Text className="text-foreground flex-1 text-xs font-bold" numberOfLines={1}>
+                        {player.name}
+                      </Text>
                     </View>
-                    <Text className="text-foreground text-xs font-black">{totals[player.id] ?? 0}</Text>
+                    <Text className="text-foreground shrink-0 text-xs font-black">{totals[player.id] ?? 0}</Text>
                   </View>
                 ))}
               </CardContent>
@@ -171,20 +173,20 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
         <AdBannerCard placement="game-over" />
 
         {/* Action Buttons */}
-        <View className="flex-row gap-3 pt-2 pb-10">
+        <View className="flex-row items-center gap-3 pt-2 pb-10">
           <Button
             onPress={onRematch}
-            className="bg-primary min-h-[52px] flex-1 items-center justify-center rounded-2xl py-4 shadow"
+            className="bg-primary h-13 min-h-[52px] flex-1 flex-row items-center justify-center rounded-2xl px-4 py-0 shadow"
           >
-            <Text className="text-primary-foreground text-sm font-black">🔄 Rematch</Text>
+            <Text className="text-primary-foreground text-sm leading-none font-black">🔄 Rematch</Text>
           </Button>
 
           <Button
             onPress={onClose}
             variant="outline"
-            className="border-border bg-popover min-h-[52px] items-center justify-center rounded-2xl px-6 py-4"
+            className="border-border bg-popover h-13 min-h-[52px] shrink-0 flex-row items-center justify-center rounded-2xl px-6 py-0"
           >
-            <Text className="text-foreground text-sm font-bold">Home</Text>
+            <Text className="text-foreground text-sm leading-none font-bold">Home</Text>
           </Button>
         </View>
       </View>

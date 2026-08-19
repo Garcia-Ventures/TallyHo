@@ -138,27 +138,29 @@ export default function SettingsModal() {
     <ScreenContainer>
       <ScrollView className="flex-1" contentContainerStyle={{ padding: 16, paddingBottom: 40, gap: 16 }}>
         {/* Support & Pro Upgrade Card */}
-        <Card className="border-border bg-card">
-          <CardHeader className="pb-3">
+        <Card className="border-border bg-card rounded-2xl border p-6 shadow-sm">
+          <CardHeader className="mb-4 gap-1 p-0">
             <View className="flex-row items-center gap-2">
               <Sparkles size={18} color={PALETTE.chip.mustard} />
-              <CardTitle className="text-foreground text-base font-black">TallyHo Pro & Ad-Free</CardTitle>
+              <CardTitle className="text-foreground text-lg font-black">TallyHo Pro & Ad-Free</CardTitle>
             </View>
-            <CardDescription className="text-muted-foreground text-xs font-semibold">
+            <CardDescription className="text-muted-foreground text-xs font-medium">
               Enjoy zero advertisements and unlock unlimited offline scoring tools.
             </CardDescription>
           </CardHeader>
-          <CardContent className="gap-3 pt-0">
+          <CardContent className="gap-3 p-0">
             {!settings.isAdFree ? (
               <View className="gap-3">
-                <View className="border-border bg-popover flex-row items-center justify-between rounded-xl border p-3">
-                  <View className="flex-1 pr-2">
+                <View className="border-border bg-popover flex-row items-center justify-between gap-3 rounded-xl border p-3.5">
+                  <View className="min-w-0 flex-1 pr-2">
                     <Text className="text-foreground text-xs font-bold">Ad-Free Upgrade</Text>
-                    <Text className="text-muted-foreground text-[11px]">Removes all banners and sponsor cards</Text>
+                    <Text className="text-muted-foreground text-[11px] leading-tight font-medium">
+                      Removes all banners and sponsor cards
+                    </Text>
                   </View>
                   <Button
                     onPress={() => setIsRemoveAdsModalOpen(true)}
-                    className="bg-chip-mustard h-9 rounded-xl px-4 shadow-sm"
+                    className="bg-chip-mustard h-9 shrink-0 rounded-xl px-4 shadow-sm"
                   >
                     <Text className="text-xs font-black text-black">Upgrade</Text>
                   </Button>
@@ -189,7 +191,7 @@ export default function SettingsModal() {
                     }
                   }}
                   disabled={isRestoring}
-                  className="border-border bg-popover flex-row items-center justify-between rounded-xl border p-3"
+                  className="border-border bg-popover flex-row items-center justify-between rounded-xl border p-3.5"
                 >
                   <Text className="text-foreground text-xs font-bold">
                     {isRestoring ? 'Restoring Purchases...' : 'Restore Purchases'}
@@ -221,7 +223,7 @@ export default function SettingsModal() {
                       );
                     }}
                     variant="outline"
-                    className="border-border bg-popover mt-2 flex-row items-center justify-center gap-2 rounded-xl border-dashed py-2.5"
+                    className="border-border bg-popover mt-2 h-auto min-h-[44px] flex-row items-center justify-center gap-2 rounded-xl border-dashed px-3 py-2.5"
                   >
                     <RotateCcw size={14} color={PALETTE.ink.muted} />
                     <Text className="text-foreground text-xs font-bold">[Dev Test] Reset Purchase & Web Session</Text>
@@ -232,14 +234,15 @@ export default function SettingsModal() {
 
             {/* Dev Mode Ad-Blocker Simulation Switch */}
             {__DEV__ && (
-              <View className="border-border/60 flex-row items-center justify-between border-t pt-3">
-                <View>
+              <View className="border-border/60 flex-row items-center justify-between gap-3 border-t pt-3">
+                <View className="min-w-0 flex-1 pr-2">
                   <Text className="text-foreground text-xs font-bold">Simulate Ad-Blocker Fallback</Text>
                   <Text className="text-muted-foreground text-[10px] font-medium">
                     Forces House Ad fallback banner for testing.
                   </Text>
                 </View>
                 <Switch
+                  className="shrink-0"
                   checked={settings.isAdBlocked ?? false}
                   onCheckedChange={(val: boolean) => setAdBlockedState(val)}
                 />
@@ -328,17 +331,18 @@ export default function SettingsModal() {
             </CardDescription>
           </CardHeader>
           <CardContent className="gap-4 p-0">
-            <View className="flex-row items-center justify-between">
-              <View className="flex-row items-center gap-2.5">
-                <Volume2 size={16} color={PALETTE.ink.muted} />
-                <View>
+            <View className="flex-row items-center justify-between gap-3">
+              <View className="min-w-0 flex-1 flex-row items-center gap-2.5 pr-2">
+                <Volume2 size={16} color={PALETTE.ink.muted} className="shrink-0" />
+                <View className="min-w-0 flex-1">
                   <Text className="text-foreground text-xs font-bold">Sound Effects</Text>
-                  <Text className="text-muted-foreground text-[10px] font-medium">
+                  <Text className="text-muted-foreground text-[10px] leading-tight font-medium">
                     Play audio feedback during gameplay and taps
                   </Text>
                 </View>
               </View>
               <Switch
+                className="shrink-0"
                 checked={settings.soundEnabled}
                 onCheckedChange={(val: boolean) => {
                   updateSettings({ soundEnabled: val });
@@ -349,17 +353,18 @@ export default function SettingsModal() {
               />
             </View>
 
-            <View className="flex-row items-center justify-between">
-              <View className="flex-row items-center gap-2.5">
-                <Vibrate size={16} color={PALETTE.ink.muted} />
-                <View>
+            <View className="flex-row items-center justify-between gap-3">
+              <View className="min-w-0 flex-1 flex-row items-center gap-2.5 pr-2">
+                <Vibrate size={16} color={PALETTE.ink.muted} className="shrink-0" />
+                <View className="min-w-0 flex-1">
                   <Text className="text-foreground text-xs font-bold">Haptic Feedback</Text>
-                  <Text className="text-muted-foreground text-[10px] font-medium">
+                  <Text className="text-muted-foreground text-[10px] leading-tight font-medium">
                     Tactile vibrations for keypad and score taps
                   </Text>
                 </View>
               </View>
               <Switch
+                className="shrink-0"
                 checked={settings.hapticsEnabled}
                 onCheckedChange={(val: boolean) => updateSettings({ hapticsEnabled: val })}
               />
@@ -388,7 +393,7 @@ export default function SettingsModal() {
                   <Pressable
                     key={cat}
                     onPress={() => setCategory(cat)}
-                    className={`border-border bg-popover flex-1 items-center justify-center rounded-xl border py-2.5 ${
+                    className={`border-border bg-popover min-h-[42px] flex-1 items-center justify-center rounded-xl border py-2.5 ${
                       category === cat ? 'border-chip-sage bg-chip-sage/15' : ''
                     }`}
                   >
@@ -443,7 +448,7 @@ export default function SettingsModal() {
             <Button
               onPress={handleFeedbackSubmit}
               disabled={isSubmitting || !feedback.trim()}
-              className={`h-12 flex-row items-center justify-center gap-2 rounded-xl ${
+              className={`h-12 min-h-[48px] flex-row items-center justify-center gap-2 rounded-xl ${
                 isSubmitting || !feedback.trim() ? 'bg-chip-sage/50' : 'bg-chip-sage'
               }`}
             >
@@ -487,12 +492,10 @@ export default function SettingsModal() {
             <Button
               onPress={handleResetData}
               variant="destructive"
-              className="flex-row items-center justify-between rounded-xl border border-red-200 bg-red-50 p-3.5 dark:border-red-900/40 dark:bg-red-950/40"
+              className="h-auto min-h-[48px] flex-row items-center justify-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 dark:border-red-900/40 dark:bg-red-950/40"
             >
-              <View className="flex-row items-center gap-2.5">
-                <Trash2 size={16} color={PALETTE.status.errorText} />
-                <Text className="text-xs font-bold text-red-600 dark:text-red-400">Reset Local Storage & Settings</Text>
-              </View>
+              <Trash2 size={16} color={PALETTE.status.errorText} className="shrink-0" />
+              <Text className="text-xs font-bold text-red-600 dark:text-red-400">Reset Local Storage & Settings</Text>
             </Button>
           </CardContent>
         </Card>

@@ -49,9 +49,9 @@ export default function HomeScreen() {
 
               <Button
                 onPress={handleResumeMatch}
-                className="bg-primary w-full items-center justify-center rounded-xl py-3.5 shadow"
+                className="bg-primary h-12 min-h-[48px] w-full flex-row items-center justify-center rounded-xl py-0 shadow"
               >
-                <Text className="text-primary-foreground text-xs font-black">▶ Resume Game</Text>
+                <Text className="text-primary-foreground text-xs leading-none font-black">▶ Resume Game</Text>
               </Button>
             </CardContent>
           </Card>
@@ -69,16 +69,16 @@ export default function HomeScreen() {
               <Button
                 onPress={() => router.push('/modal/settings')}
                 variant="outline"
-                className="border-border bg-card items-center justify-center rounded-xl px-3.5 py-2.5 shadow-xs"
+                className="border-border bg-card h-10 min-h-[40px] flex-row items-center justify-center rounded-xl px-3.5 py-0 shadow-xs"
               >
-                <Text className="text-foreground text-xs font-black">⚙️ Settings</Text>
+                <Text className="text-foreground text-xs leading-none font-black">⚙️ Settings</Text>
               </Button>
 
               <Button
                 onPress={() => router.push('/modal/setup')}
-                className="bg-ink-stamp items-center justify-center rounded-xl px-4 py-2.5 shadow"
+                className="bg-ink-stamp h-10 min-h-[40px] flex-row items-center justify-center rounded-xl px-4 py-0 shadow"
               >
-                <Text className="text-xs font-black text-white">+ Custom Match</Text>
+                <Text className="text-xs leading-none font-black text-white">+ Custom Match</Text>
               </Button>
             </View>
           </View>

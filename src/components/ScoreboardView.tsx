@@ -65,29 +65,27 @@ export const ScoreboardView: React.FC<ScoreboardViewProps> = ({
             </View>
 
             {/* Hero Actions Bar */}
-            <View className="flex-row flex-wrap gap-2">
+            <View className="flex-row items-center gap-2">
               <Button
                 onPress={onFlipToPlayMode}
-                className="bg-ink-stamp flex-1 items-center justify-center rounded-xl py-3 shadow"
+                className="bg-ink-stamp h-11 min-h-[44px] flex-1 flex-row items-center justify-center rounded-xl px-3 py-0 shadow"
               >
-                <Text className="text-xs font-black text-white">🎮 Enter Play Mode →</Text>
+                <Text className="text-xs leading-none font-black text-white">🎮 Enter Play Mode →</Text>
               </Button>
 
               <Button
                 onPress={onOpenRoundHistory}
                 variant="outline"
-                size="sm"
-                className="items-center justify-center rounded-xl px-3.5 py-3"
+                className="border-border bg-popover h-11 min-h-[44px] shrink-0 flex-row items-center justify-center rounded-xl px-3.5 py-0"
               >
-                <Text className="text-foreground text-xs font-bold">📜 Log ({game.rounds.length})</Text>
+                <Text className="text-foreground text-xs leading-none font-bold">📜 Log ({game.rounds.length})</Text>
               </Button>
 
               <Button
                 onPress={onEndMatch}
-                size="sm"
-                className="bg-primary items-center justify-center rounded-xl px-3.5 py-3"
+                className="bg-primary h-11 min-h-[44px] shrink-0 flex-row items-center justify-center rounded-xl px-3.5 py-0"
               >
-                <Text className="text-primary-foreground text-xs font-bold">🏆 End</Text>
+                <Text className="text-primary-foreground text-xs leading-none font-bold">🏆 End</Text>
               </Button>
             </View>
           </CardContent>
@@ -112,21 +110,21 @@ export const ScoreboardView: React.FC<ScoreboardViewProps> = ({
                 <View className="h-1.5 w-full" style={{ backgroundColor: player.color }} />
 
                 <CardContent className="gap-2 p-3">
-                  <View className="flex-row items-center justify-between">
-                    <View className="flex-1 flex-row items-center gap-1.5 pr-1">
+                  <View className="flex-row items-center justify-between gap-1">
+                    <View className="min-w-0 flex-1 flex-row items-center gap-1.5 pr-1">
                       <View
-                        className="h-7 w-7 items-center justify-center rounded-full"
+                        className="h-7 w-7 shrink-0 items-center justify-center rounded-full"
                         style={{ backgroundColor: player.color }}
                       >
                         <Text className="text-xs font-black text-white">{player.initials}</Text>
                       </View>
-                      <Text className="text-foreground text-xs font-bold" numberOfLines={1}>
+                      <Text className="text-foreground flex-1 text-xs font-bold" numberOfLines={1}>
                         {player.name}
                       </Text>
                     </View>
 
                     {isLeader && (
-                      <View className="bg-chip-mustard rounded px-1.5 py-0.5">
+                      <View className="bg-chip-mustard shrink-0 rounded px-1.5 py-0.5">
                         <Text className="text-[9px] font-black text-black">👑 1st</Text>
                       </View>
                     )}
@@ -153,10 +151,9 @@ export const ScoreboardView: React.FC<ScoreboardViewProps> = ({
                       <Button
                         onPress={() => onOpenScoreKeypad(player)}
                         variant="outline"
-                        size="sm"
-                        className="items-center rounded-lg py-1.5"
+                        className="border-border bg-popover h-8 min-h-8 w-full items-center justify-center rounded-lg py-0"
                       >
-                        <Text className="text-foreground text-[11px] font-bold">+ Score</Text>
+                        <Text className="text-foreground text-[11px] leading-none font-bold">+ Score</Text>
                       </Button>
                     )}
                   </View>
@@ -174,12 +171,12 @@ export const ScoreboardView: React.FC<ScoreboardViewProps> = ({
               horizontal
               showsHorizontalScrollIndicator={false}
               className="flex-row"
-              contentContainerStyle={{ gap: 8 }}
+              contentContainerStyle={{ gap: 8, paddingRight: 8 }}
             >
               {game.players.map((p, idx) => (
                 <View
                   key={p.id}
-                  className="border-border bg-popover flex-row items-center gap-1.5 rounded-lg border px-2.5 py-1.5"
+                  className="border-border bg-popover shrink-0 flex-row items-center gap-1.5 rounded-lg border px-2.5 py-1.5"
                 >
                   <Text className="text-muted-foreground text-[10px] font-bold">#{idx + 1}</Text>
                   <Text className="text-foreground text-xs font-bold">{p.name}</Text>

@@ -121,25 +121,28 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
 
                       <View className="flex-row items-center gap-2">
                         {isEditing ? (
-                          <Button onPress={() => handleSaveEdit(idx)} className="bg-chip-sage h-8 rounded-lg px-3 py-1">
-                            <Text className="text-xs font-bold text-white">✓ Save</Text>
+                          <Button
+                            onPress={() => handleSaveEdit(idx)}
+                            className="bg-chip-sage h-8 min-h-8 flex-row items-center justify-center rounded-lg px-3 py-0"
+                          >
+                            <Text className="text-xs leading-none font-bold text-white">✓ Save</Text>
                           </Button>
                         ) : (
                           <Button
                             onPress={() => handleStartEdit(idx, round)}
                             variant="ghost"
-                            className="h-8 rounded-lg px-2.5 py-1"
+                            className="h-8 min-h-8 flex-row items-center justify-center rounded-lg px-2.5 py-0"
                           >
-                            <Text className="text-muted-foreground text-xs font-bold">✏️ Edit</Text>
+                            <Text className="text-muted-foreground text-xs leading-none font-bold">✏️ Edit</Text>
                           </Button>
                         )}
 
                         <Button
                           onPress={() => handleDeleteRound(idx)}
                           variant="ghost"
-                          className="h-8 rounded-lg px-2 py-1"
+                          className="h-8 min-h-8 flex-row items-center justify-center rounded-lg px-2 py-0"
                         >
-                          <Text className="text-ink-stamp text-xs font-bold">🗑️</Text>
+                          <Text className="text-ink-stamp text-xs leading-none font-bold">🗑️</Text>
                         </Button>
                       </View>
                     </View>
@@ -187,9 +190,9 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
               nativeSound.playKeypadTap();
               onClose();
             }}
-            className="bg-primary rounded-xl px-6 py-2.5"
+            className="bg-primary h-11 min-h-11 flex-row items-center justify-center rounded-xl px-6 py-0"
           >
-            <Text className="text-primary-foreground text-xs font-extrabold">Done</Text>
+            <Text className="text-primary-foreground text-xs leading-none font-extrabold">Done</Text>
           </Button>
         </View>
       </View>

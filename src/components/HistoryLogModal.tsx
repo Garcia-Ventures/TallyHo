@@ -94,9 +94,9 @@ export const HistoryLogModal: React.FC<HistoryLogModalProps> = ({
           <Button
             onPress={onClearHistory}
             variant="destructive"
-            className="mt-1 h-14 items-center rounded-2xl border border-red-200 bg-red-50 py-3.5 dark:border-red-900/40 dark:bg-red-950/40"
+            className="mt-1 h-13 min-h-[48px] flex-row items-center justify-center rounded-2xl border border-red-200 bg-red-50 px-4 py-0 dark:border-red-900/40 dark:bg-red-950/40"
           >
-            <Text className="text-xs font-bold text-red-600 dark:text-red-400">Clear All History</Text>
+            <Text className="text-xs leading-none font-bold text-red-600 dark:text-red-400">Clear All History</Text>
           </Button>
         )}
       </View>

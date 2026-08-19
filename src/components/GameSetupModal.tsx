@@ -113,7 +113,7 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
             horizontal
             showsHorizontalScrollIndicator={false}
             className="flex-row"
-            contentContainerStyle={{ gap: 10 }}
+            contentContainerStyle={{ gap: 10, paddingRight: 12 }}
           >
             {GAME_PRESETS.map((p) => {
               const isSelected = selectedPresetId === p.id;
@@ -121,7 +121,7 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
                 <Pressable
                   key={p.id}
                   onPress={() => handleSelectPreset(p)}
-                  className={`will-change-variable min-w-[145px] rounded-2xl border p-3.5 ${
+                  className={`will-change-variable min-w-[145px] shrink-0 rounded-2xl border p-3.5 ${
                     isSelected ? 'border-ink-stamp bg-ink-stamp/10 border-2 shadow-sm' : 'border-border bg-card'
                   }`}
                 >
@@ -176,34 +176,44 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
                 key={p.id}
                 className="border-border bg-popover flex-row items-center justify-between rounded-xl border p-3"
               >
-                <CardContent className="w-full flex-row items-center justify-between p-0">
-                  <View className="flex-row items-center gap-2.5">
+                <CardContent className="w-full flex-row items-center justify-between gap-2 p-0">
+                  <View className="min-w-0 flex-1 flex-row items-center gap-2.5 pr-2">
                     <View
-                      className="h-7 w-7 items-center justify-center rounded-full"
+                      className="h-7 w-7 shrink-0 items-center justify-center rounded-full"
                       style={{ backgroundColor: p.color }}
                     >
                       <Text className="text-xs font-black text-white">{p.initials}</Text>
                     </View>
-                    <Text className="text-foreground text-xs font-bold">{p.name}</Text>
+                    <Text className="text-foreground flex-1 text-xs font-bold" numberOfLines={1}>
+                      {p.name}
+                    </Text>
                   </View>
-                  <Button onPress={() => handleRemovePlayer(p.id)} variant="ghost" size="sm" className="p-1">
-                    <Text className="text-xs font-bold text-red-500">Remove</Text>
+                  <Button
+                    onPress={() => handleRemovePlayer(p.id)}
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 min-h-[32px] shrink-0 p-1"
+                  >
+                    <Text className="text-xs leading-none font-bold text-red-500">Remove</Text>
                   </Button>
                 </CardContent>
               </Card>
             ))}
           </View>
 
-          <View className="mt-1 flex-row gap-2">
+          <View className="mt-1 flex-row items-center gap-2">
             <Input
               value={newPlayerName}
               onChangeText={setNewPlayerName}
               placeholder="Add player name..."
               placeholderTextColor={PALETTE.ink.light}
-              className="border-border bg-popover text-foreground h-11 flex-1 rounded-xl border px-3 text-xs font-bold"
+              className="border-border bg-popover text-foreground h-12 min-h-[48px] flex-1 rounded-xl border px-3 text-xs font-bold"
             />
-            <Button onPress={handleAddPlayer} className="bg-primary items-center justify-center rounded-xl px-4 py-3">
-              <Text className="text-primary-foreground text-xs font-bold">+ Add</Text>
+            <Button
+              onPress={handleAddPlayer}
+              className="bg-primary h-12 min-h-[48px] shrink-0 items-center justify-center rounded-xl px-4 py-0"
+            >
+              <Text className="text-primary-foreground text-xs leading-none font-bold">+ Add</Text>
             </Button>
           </View>
         </View>

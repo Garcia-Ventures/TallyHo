@@ -81,35 +81,35 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
       <View className="gap-4">
         {/* Header Controls */}
         <Card className="border-border bg-card flex-row items-center justify-between rounded-2xl border p-4 shadow">
-          <CardContent className="w-full flex-row items-center justify-between p-0">
-            <View className="gap-0.5">
+          <CardContent className="w-full flex-row items-center justify-between gap-2 p-0">
+            <View className="min-w-0 flex-1 gap-0.5 pr-2">
               <Text className="text-chip-mustard text-[10px] font-black tracking-widest uppercase">
                 Turn-by-Turn Play Mode
               </Text>
-              <Text className="text-foreground text-lg font-black">Round {currentRoundNumber}</Text>
+              <Text className="text-foreground text-lg font-black" numberOfLines={1}>
+                Round {currentRoundNumber}
+              </Text>
             </View>
 
-            <View className="flex-row gap-2">
+            <View className="flex-row items-center gap-2">
               <Button
                 onPress={() => {
                   nativeSound.playNavigationTap();
                   onFlipToDashboard();
                 }}
                 variant="outline"
-                size="sm"
-                className="rounded-xl px-3 py-2"
+                className="border-border bg-popover h-10 min-h-[40px] shrink-0 flex-row items-center justify-center rounded-xl px-3 py-0"
               >
-                <Text className="text-foreground text-xs font-bold">📋 Dashboard</Text>
+                <Text className="text-foreground text-xs leading-none font-bold">📋 Dashboard</Text>
               </Button>
               <Button
                 onPress={() => {
                   nativeSound.playNavigationTap();
                   onEndMatch();
                 }}
-                size="sm"
-                className="bg-ink-stamp rounded-xl px-3 py-2"
+                className="bg-ink-stamp h-10 min-h-[40px] shrink-0 flex-row items-center justify-center rounded-xl px-3.5 py-0"
               >
-                <Text className="text-xs font-bold text-white">🏆 End</Text>
+                <Text className="text-xs leading-none font-bold text-white">🏆 End</Text>
               </Button>
             </View>
           </CardContent>
@@ -120,7 +120,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
           horizontal
           showsHorizontalScrollIndicator={false}
           className="flex-row"
-          contentContainerStyle={{ gap: 10 }}
+          contentContainerStyle={{ gap: 10, paddingRight: 10 }}
         >
           {game.players.map((player, idx) => {
             const isSelected = idx === selectedPlayerIndex;
@@ -131,7 +131,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
                   nativeSound.playPlayerSwitch();
                   setSelectedPlayerIndex(idx);
                 }}
-                className={`will-change-variable min-w-[115px] items-center gap-1 rounded-2xl border p-3 ${
+                className={`will-change-variable min-w-[115px] shrink-0 items-center gap-1 rounded-2xl border p-3 ${
                   isSelected ? 'border-chip-mustard bg-chip-mustard/15 border-2 shadow-sm' : 'border-border bg-card'
                 }`}
               >
