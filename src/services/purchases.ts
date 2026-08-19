@@ -4,6 +4,7 @@ export interface PurchaseResult {
   userCancelled?: boolean;
   error?: string;
   redirected?: boolean;
+  needsEmail?: boolean;
 }
 
 export interface PurchasesProduct {
@@ -59,7 +60,7 @@ export async function purchaseAdFreePackage(): Promise<PurchaseResult> {
   return { success: true, isPro: true };
 }
 
-export async function restoreAdFreePurchases(): Promise<PurchaseResult> {
+export async function restoreAdFreePurchases(_email?: string): Promise<PurchaseResult> {
   return { success: true, isPro: true };
 }
 

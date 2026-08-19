@@ -27,25 +27,21 @@ import {
   Volume2,
 } from 'lucide-react-native';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, ScrollView, View } from 'react-native';
 import { RemoveAdsModal } from '../../src/components/RemoveAdsModal';
+import { RestorePurchaseModal } from '../../src/components/RestorePurchaseModal';
 import { ScreenContainer } from '../../src/components/ScreenContainer';
 import { PALETTE } from '../../src/constants/colors';
 import { nativeSound } from '../../src/services/audio';
+import { restoreAdFreePurchases } from '../../src/services/purchases';
 import { storage } from '../../src/services/storage';
 import { useSettingsStore } from '../../src/stores/useSettingsStore';
+import { showToast } from '../../src/utils/toast';
 
 export default function SettingsModal() {
   const router = useSafeRouter();
-  const {
-    settings,
-    updateSettings,
-    resetSettings,
-    purchaseRemoveAds,
-    restorePurchases,
-    resetAdFreeStatus,
-    setAdBlockedState,
-  } = useSettingsStore();
+  const { settings, updateSettings, resetSettings, purchaseRemoveAds, resetAdFreeStatus, setAdBlockedState } =
+    useSettingsStore();
 
   const [category, setCategory] = useState<'General' | 'Bug' | 'Feature'>('General');
   const [email, setEmail] = useState('');
@@ -54,6 +50,8 @@ export default function SettingsModal() {
   const [feedbackStatus, setFeedbackStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [isRemoveAdsModalOpen, setIsRemoveAdsModalOpen] = useState(false);
+  const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
 
   function useSafeRouter() {
     try {
@@ -68,6 +66,26 @@ export default function SettingsModal() {
     updateSettings({ themeMode: mode });
   };
 
+  const handleResetData = () => {
+    Alert.alert(
+      'Reset All Match Data?',
+      'This will erase all active matches, history logs, and player profiles. This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Erase Everything',
+          style: 'destructive',
+          onPress: () => {
+            storage.clearAll();
+            resetSettings();
+            nativeSound.playPresetSelect();
+            showToast('Data Cleared', 'All local app data and match logs have been erased.');
+          },
+        },
+      ],
+    );
+  };
+
   const handleFeedbackSubmit = async () => {
     if (!feedback.trim()) {
       return;
@@ -78,7 +96,7 @@ export default function SettingsModal() {
     setErrorMessage('');
 
     try {
-      const response = await fetch('https://formspree.io/f/xgawwval', {
+      const response = await fetch('https://formspree.io/f/mqaejddq', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -86,10 +104,15 @@ export default function SettingsModal() {
         },
         body: JSON.stringify({
           category,
-          email: email.trim() || undefined,
+          email: email.trim() || 'Anonymous User',
           message: feedback.trim(),
-          platform: 'Expo React Native',
-          appVersion: '1.0.0 (Build 42)',
+          timestamp: new Date().toISOString(),
+          settings: {
+            theme: settings.themeMode,
+            sound: settings.soundEnabled,
+            haptics: settings.hapticsEnabled,
+            isAdFree: settings.isAdFree,
+          },
         }),
       });
 
@@ -97,98 +120,85 @@ export default function SettingsModal() {
         setFeedbackStatus('success');
         setFeedback('');
         setEmail('');
-        nativeSound.playVictoryFanfare();
+        nativeSound.playPresetSelect();
+        showToast('Feedback Sent! 📬', 'Thank you for helping us improve TallyHo.');
       } else {
-        const data = await response.json();
         setFeedbackStatus('error');
-        setErrorMessage(data.error || 'Failed to submit feedback. Please try again.');
+        setErrorMessage('Failed to send feedback. Please try again later.');
       }
-    } catch (err) {
+    } catch {
       setFeedbackStatus('error');
-      setErrorMessage(err instanceof Error ? err.message : 'Network error submitting feedback.');
+      setErrorMessage('Network error occurred. Please check your connection.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleResetData = () => {
-    Alert.alert(
-      'Reset All Storage?',
-      'This will erase all local settings, player records, and saved game progress. This action cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Reset Data',
-          style: 'destructive',
-          onPress: () => {
-            resetSettings();
-            storage.clearAll();
-            nativeSound.playNavigationTap();
-          },
-        },
-      ],
-    );
-  };
-
   return (
-    <ScreenContainer maxWidth="4xl" padding="normal">
-      <View className="gap-6 py-2">
-        {/* SECTION 0: TALLYHO PRO & MONETIZATION */}
-        <Card className="border-chip-mustard/40 bg-chip-mustard/10 rounded-2xl border p-6 shadow-sm">
-          <CardHeader className="mb-4 gap-1 p-0">
-            <View className="flex-row items-center justify-between">
-              <View className="flex-row items-center gap-2">
-                <View className="bg-chip-mustard/20 h-8 w-8 items-center justify-center rounded-full">
-                  <Sparkles size={18} color={PALETTE.chip.mustard} />
-                </View>
-                <CardTitle className="text-foreground text-lg font-black">TallyHo Pro & Ads</CardTitle>
-              </View>
-
-              {settings.isAdFree && (
-                <View className="bg-status-success-bg flex-row items-center gap-1 rounded-full px-2.5 py-1">
-                  <CheckCircle2 size={12} color={PALETTE.status.successText} />
-                  <Text className="text-status-success-text text-[10px] font-black uppercase">Ad-Free Active</Text>
-                </View>
-              )}
+    <ScreenContainer>
+      <ScrollView className="flex-1" contentContainerStyle={{ padding: 16, paddingBottom: 40, gap: 16 }}>
+        {/* Support & Pro Upgrade Card */}
+        <Card className="border-border bg-card">
+          <CardHeader className="pb-3">
+            <View className="flex-row items-center gap-2">
+              <Sparkles size={18} color={PALETTE.chip.mustard} />
+              <CardTitle className="text-foreground text-base font-black">TallyHo Pro & Ad-Free</CardTitle>
             </View>
-
-            <CardDescription className="text-muted-foreground text-xs font-medium">
-              Manage in-app ad options and upgrade to lifetime ad-free mode.
+            <CardDescription className="text-muted-foreground text-xs font-semibold">
+              Enjoy zero advertisements and unlock unlimited offline scoring tools.
             </CardDescription>
           </CardHeader>
-
-          <CardContent className="gap-4 p-0">
+          <CardContent className="gap-3 pt-0">
             {!settings.isAdFree ? (
               <View className="gap-3">
-                <View className="flex-row items-center justify-between">
-                  <View>
-                    <Text className="text-foreground text-xs font-bold">Unlock TallyHo Pro</Text>
-                    <Text className="text-muted-foreground text-[10px] font-medium">
-                      100% ad-free experience and premium table utility features.
-                    </Text>
+                <View className="border-border bg-popover flex-row items-center justify-between rounded-xl border p-3">
+                  <View className="flex-1 pr-2">
+                    <Text className="text-foreground text-xs font-bold">Ad-Free Upgrade</Text>
+                    <Text className="text-muted-foreground text-[11px]">Removes all banners and sponsor cards</Text>
                   </View>
-
                   <Button
                     onPress={() => setIsRemoveAdsModalOpen(true)}
-                    className="bg-chip-mustard h-9 items-center justify-center rounded-xl px-4 shadow"
+                    className="bg-chip-mustard h-9 rounded-xl px-4 shadow-sm"
                   >
                     <Text className="text-xs font-black text-black">Upgrade</Text>
                   </Button>
                 </View>
 
                 <Pressable
-                  onPress={() => {
-                    const restored = restorePurchases();
-                    if (restored) {
-                      Alert.alert('Purchases Restored', 'Ad-Free mode enabled.');
-                    } else {
-                      Alert.alert('No Purchase Found', 'No active ad-free purchase found.');
+                  onPress={async () => {
+                    setIsRestoring(true);
+                    try {
+                      const result = await restoreAdFreePurchases();
+                      if (result.success && result.isPro) {
+                        purchaseRemoveAds();
+                        nativeSound.playVictoryFanfare();
+                        showToast('Purchases Restored! 🎉', 'Your TallyHo Pro entitlement is active.');
+                      } else if (result.needsEmail) {
+                        setIsRestoreModalOpen(true);
+                      } else {
+                        showToast(
+                          'No Prior Purchase Found',
+                          'We could not find an active TallyHo Pro purchase on this device.',
+                          'destructive',
+                        );
+                      }
+                    } catch {
+                      showToast('Restore Failed', 'Unable to restore purchases at this time.', 'destructive');
+                    } finally {
+                      setIsRestoring(false);
                     }
                   }}
+                  disabled={isRestoring}
                   className="border-border bg-popover flex-row items-center justify-between rounded-xl border p-3"
                 >
-                  <Text className="text-foreground text-xs font-bold">Restore Purchases</Text>
-                  <Text className="text-chip-mustard text-xs font-bold">→</Text>
+                  <Text className="text-foreground text-xs font-bold">
+                    {isRestoring ? 'Restoring Purchases...' : 'Restore Purchases'}
+                  </Text>
+                  {isRestoring ? (
+                    <ActivityIndicator size="small" color={PALETTE.chip.mustard} />
+                  ) : (
+                    <Text className="text-chip-mustard text-xs font-bold">→</Text>
+                  )}
                 </Pressable>
               </View>
             ) : (
@@ -484,9 +494,10 @@ export default function SettingsModal() {
         <Text className="text-muted-foreground mb-4 text-center text-xs font-semibold">
           Formspree Active • TallyHo v1.0.0 (Build 42) • GV Tech UI Native
         </Text>
-      </View>
+      </ScrollView>
 
       <RemoveAdsModal isOpen={isRemoveAdsModalOpen} onClose={() => setIsRemoveAdsModalOpen(false)} />
+      <RestorePurchaseModal isOpen={isRestoreModalOpen} onClose={() => setIsRestoreModalOpen(false)} />
     </ScreenContainer>
   );
 }

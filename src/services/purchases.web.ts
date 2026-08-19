@@ -1,18 +1,10 @@
 import { PackageType, Purchases } from '@revenuecat/purchases-js';
 import { trackEvent } from './analytics';
-import type { PurchasesOffering, PurchasesOfferings, PurchasesPackage } from './purchases';
+import type { PurchaseResult, PurchasesOffering, PurchasesOfferings, PurchasesPackage } from './purchases';
 
 const API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY_WEB || 'rcb_sb_PRFcNQAFMCRmvpqxBAZZtuxvG';
 
 let purchasesInstance: Purchases | null = null;
-
-export interface PurchaseResult {
-  success: boolean;
-  isPro: boolean;
-  userCancelled?: boolean;
-  error?: string;
-  redirected?: boolean;
-}
 
 export function getAnonymousUserId(): string {
   if (typeof window === 'undefined') {
@@ -188,21 +180,43 @@ export async function purchaseAdFreePackage(): Promise<PurchaseResult> {
   return purchasePackageByIdentifier('lifetime');
 }
 
-export async function restoreAdFreePurchases(): Promise<PurchaseResult> {
+export async function restoreAdFreePurchases(email?: string): Promise<PurchaseResult> {
   const p = await initPurchases();
   if (!p) {
-    return { success: false, isPro: false };
+    return { success: false, isPro: false, error: 'Purchases could not be initialized' };
   }
 
   try {
+    if (email && email.trim()) {
+      const cleanEmail = email.trim().toLowerCase();
+      localStorage.setItem('tallyho_web_app_user_id', cleanEmail);
+      await p.changeUser(cleanEmail);
+      try {
+        await p.setAttributes({ $email: cleanEmail });
+      } catch {}
+    }
+
     const customerInfo = await p.getCustomerInfo();
     const isPro = Boolean(
       customerInfo?.entitlements?.active?.['TallyHo Pro'] || customerInfo?.entitlements?.active?.pro,
     );
-    return { success: isPro, isPro };
-  } catch (err) {
+
+    if (isPro) {
+      return { success: true, isPro: true };
+    }
+
+    return {
+      success: false,
+      isPro: false,
+      needsEmail: !email,
+      error: email
+        ? `No active TallyHo Pro subscription found for ${email}.`
+        : 'No prior purchases found on this browser session.',
+    };
+  } catch (err: unknown) {
+    const error = err as { message?: string };
     console.error('[Purchases Web] Failed to restore purchases:', err);
-    return { success: false, isPro: false };
+    return { success: false, isPro: false, error: error.message || 'Unable to restore purchases at this time.' };
   }
 }
 

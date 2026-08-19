@@ -12,6 +12,8 @@ import {
   restoreAdFreePurchases,
 } from '../services/purchases';
 import { useSettingsStore } from '../stores/useSettingsStore';
+import { showToast } from '../utils/toast';
+import { RestorePurchaseModal } from './RestorePurchaseModal';
 
 interface RemoveAdsModalProps {
   isOpen: boolean;
@@ -59,63 +61,69 @@ const DEFAULT_PLAN_OPTIONS: PlanOption[] = [
 ];
 
 export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
-  const { settings, purchaseRemoveAds, restorePurchases, resetAdFreeStatus } = useSettingsStore();
+  const { settings, purchaseRemoveAds, resetAdFreeStatus } = useSettingsStore();
   const [selectedTier, setSelectedTier] = useState<PlanTier>('lifetime');
-  const [plans, setPlans] = useState<PlanOption[]>(DEFAULT_PLAN_OPTIONS);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [plans, setPlans] = useState<PlanOption[]>(DEFAULT_PLAN_OPTIONS);
+  const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
 
-  // Fetch live offerings from RevenueCat on mount/open
   useEffect(() => {
-    async function loadLivePrices() {
+    let isMounted = true;
+
+    async function loadDynamicOfferings() {
       try {
         const offerings = await getOfferings();
-        const current = offerings?.current;
-        if (!current) {
+        if (!offerings?.current || !isMounted) {
           return;
         }
 
-        setPlans((prevPlans) =>
-          prevPlans.map((plan) => {
-            if (plan.id === 'lifetime') {
-              const pkg = current.lifetime || current.availablePackages.find((p) => p.packageType === 'LIFETIME');
-              if (pkg?.product?.priceString) {
-                return { ...plan, price: pkg.product.priceString };
-              }
-            } else if (plan.id === 'yearly') {
-              const pkg = current.annual || current.availablePackages.find((p) => p.packageType === 'ANNUAL');
-              if (pkg?.product?.priceString) {
-                return {
-                  ...plan,
-                  price: `${pkg.product.priceString} / year`,
-                };
-              }
-            } else if (plan.id === 'monthly') {
-              const pkg = current.monthly || current.availablePackages.find((p) => p.packageType === 'MONTHLY');
-              if (pkg?.product?.priceString) {
-                return {
-                  ...plan,
-                  price: `${pkg.product.priceString} / month`,
-                };
-              }
-            }
-            return plan;
-          }),
-        );
+        const currentOffering = offerings.current;
+        const updatedPlans = DEFAULT_PLAN_OPTIONS.map((plan) => {
+          let pkg = null;
+          if (plan.id === 'lifetime') {
+            pkg = currentOffering.lifetime;
+          }
+          if (plan.id === 'yearly') {
+            pkg = currentOffering.annual;
+          }
+          if (plan.id === 'monthly') {
+            pkg = currentOffering.monthly;
+          }
+
+          if (pkg && pkg.product.priceString) {
+            const formattedPrice =
+              plan.id === 'yearly'
+                ? `${pkg.product.priceString} / year`
+                : plan.id === 'monthly'
+                  ? `${pkg.product.priceString} / month`
+                  : pkg.product.priceString;
+
+            return {
+              ...plan,
+              price: formattedPrice,
+            };
+          }
+          return plan;
+        });
+
+        if (isMounted) {
+          setPlans(updatedPlans);
+        }
       } catch (err) {
-        console.warn('[RemoveAdsModal] Failed to load live offerings:', err);
+        console.warn('[RemoveAdsModal] Failed to load dynamic offerings from RevenueCat:', err);
       }
     }
 
     if (isOpen) {
-      loadLivePrices();
-      trackEvent('paywall_impression', {
-        isAlreadyPro: settings.isAdFree,
-        defaultTier: selectedTier,
-      });
+      loadDynamicOfferings();
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [isOpen]);
 
-  const handleTierSelect = (tier: PlanTier) => {
+  const handleSelectTier = (tier: PlanTier) => {
     setSelectedTier(tier);
     const plan = plans.find((p) => p.id === tier);
     trackEvent('paywall_tier_selected', {
@@ -146,17 +154,14 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
         price: selectedPlan.price,
         product: `tallyho_pro_${selectedTier}`,
       });
-      Alert.alert(
-        'Welcome to TallyHo Pro! 🎉',
-        'Your Ad-Free & Pro upgrade is now active. Thank you for your support!',
-        [{ text: 'Awesome', onPress: onClose }],
-      );
+      showToast('Welcome to TallyHo Pro! 🎉', 'Your Ad-Free & Pro upgrade is now active. Thank you for your support!');
+      onClose();
     } else if (result.redirected) {
       trackEvent('checkout_redirected', { tier: selectedTier });
       onClose();
     } else if (!result.userCancelled) {
       trackEvent('purchase_error', { tier: selectedTier, error: result.error });
-      Alert.alert('Purchase Error', result.error || 'The purchase process could not be completed.');
+      showToast('Purchase Error', result.error || 'The purchase process could not be completed.', 'destructive');
     } else {
       trackEvent('purchase_cancelled', { tier: selectedTier });
     }
@@ -174,16 +179,19 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
     setIsProcessing(false);
 
     if (result.success && result.isPro) {
-      restorePurchases();
-      nativeSound.playPresetSelect();
+      purchaseRemoveAds();
+      nativeSound.playVictoryFanfare();
       trackEvent('purchases_restored', { success: true });
-      Alert.alert('Purchases Restored! 🎉', 'Your TallyHo Pro entitlement has been restored successfully.');
+      showToast('Purchases Restored! 🎉', 'Your TallyHo Pro entitlement has been restored successfully.');
       onClose();
+    } else if (result.needsEmail) {
+      setIsRestoreModalOpen(true);
     } else if (!result.userCancelled) {
       trackEvent('purchases_restored', { success: false });
-      Alert.alert(
+      showToast(
         'No Prior Purchase Found',
         'We could not find an active TallyHo Pro purchase associated with this account or device.',
+        'destructive',
       );
     }
   };
@@ -242,7 +250,7 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
                   {plans.map((plan) => {
                     const isSelected = selectedTier === plan.id;
                     return (
-                      <Pressable key={plan.id} onPress={() => handleTierSelect(plan.id)}>
+                      <Pressable key={plan.id} onPress={() => handleSelectTier(plan.id)}>
                         <Card
                           className={`rounded-2xl border p-4 transition-all ${
                             isSelected ? 'border-chip-mustard bg-chip-mustard/15 shadow-sm' : 'border-border bg-popover'
@@ -373,6 +381,12 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
           </ScrollView>
         </View>
       </View>
+
+      <RestorePurchaseModal
+        isOpen={isRestoreModalOpen}
+        onClose={() => setIsRestoreModalOpen(false)}
+        onSuccess={onClose}
+      />
     </Modal>
   );
 }

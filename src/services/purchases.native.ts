@@ -22,6 +22,7 @@ export interface PurchaseResult {
   userCancelled?: boolean;
   error?: string;
   redirected?: boolean;
+  needsEmail?: boolean;
 }
 
 /**
@@ -33,7 +34,7 @@ export async function initPurchases(): Promise<void> {
   }
 
   try {
-    if (__DEV__) {
+    if (typeof __DEV__ !== 'undefined' && __DEV__) {
       Purchases.setLogLevel(LOG_LEVEL.DEBUG);
     }
     Purchases.configure({ apiKey: API_KEY });
@@ -44,7 +45,7 @@ export async function initPurchases(): Promise<void> {
       checkProEntitlement(customerInfo);
     });
 
-    if (__DEV__) {
+    if (typeof __DEV__ !== 'undefined' && __DEV__) {
       console.log('[RevenueCat] Initialized successfully with API Key:', API_KEY);
     }
   } catch (err) {
@@ -174,17 +175,35 @@ export async function purchaseAdFreePackage(): Promise<PurchaseResult> {
 }
 
 /**
- * Restores previous purchases via RevenueCat.
+ * Restores previous purchases via RevenueCat (Google Play Store receipt or cross-platform email lookup).
  */
-export async function restoreAdFreePurchases(): Promise<PurchaseResult> {
+export async function restoreAdFreePurchases(email?: string): Promise<PurchaseResult> {
   if (!isInitialized) {
     await initPurchases();
   }
 
   try {
+    if (email && email.trim()) {
+      const cleanEmail = email.trim().toLowerCase();
+      const { customerInfo } = await Purchases.logIn(cleanEmail);
+      const isPro = checkProEntitlement(customerInfo);
+      trackEvent('purchases_restored', { isPro, method: 'email' });
+      return { success: true, isPro };
+    }
+
     const customerInfo = await Purchases.restorePurchases();
     const isPro = checkProEntitlement(customerInfo);
-    trackEvent('purchases_restored', { isPro });
+    trackEvent('purchases_restored', { isPro, method: 'native_store' });
+
+    if (!isPro) {
+      return {
+        success: false,
+        isPro: false,
+        needsEmail: true,
+        error: 'No Google Play purchase found. If you purchased on Web/Stripe, please verify your billing email.',
+      };
+    }
+
     return { success: true, isPro };
   } catch (err: unknown) {
     const error = err as { message?: string };

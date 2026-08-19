@@ -15,6 +15,7 @@ import { initAnalytics } from '../src/services/analytics';
 import { useGameStore } from '../src/stores/useGameStore';
 import { usePlayerLibraryStore } from '../src/stores/usePlayerLibraryStore';
 import { useSettingsStore } from '../src/stores/useSettingsStore';
+import { AppToaster } from '../src/utils/toast';
 
 Sentry.init({
   dsn: 'https://ba35c9ea2c45d64b131f6b854cd5c3ea@o4511873601306624.ingest.us.sentry.io/4511873607991296',
@@ -161,6 +162,7 @@ export default Sentry.wrap(function RootLayout() {
             }}
           />
         </Stack>
+        <AppToaster />
       </ThemeProvider>
     </ErrorBoundary>
   );
