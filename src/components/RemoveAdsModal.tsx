@@ -1,7 +1,18 @@
-import { Badge, Button, Card, CardContent, Text } from '@gv-tech/ui-native';
-import { Check, CheckCircle2, Crown, Headphones, ShieldCheck, Sparkles, X, Zap } from 'lucide-react-native';
+import { Badge, Button, Card, CardContent, Input, Text } from '@gv-tech/ui-native';
+import {
+  AlertCircle,
+  Check,
+  CheckCircle2,
+  Crown,
+  Headphones,
+  Mail,
+  ShieldCheck,
+  Sparkles,
+  X,
+  Zap,
+} from 'lucide-react-native';
 import { useEffect, useState } from 'react';
-import { Alert, Modal, Pressable, ScrollView, View } from 'react-native';
+import { Alert, Modal, Platform, Pressable, ScrollView, View } from 'react-native';
 import { PALETTE } from '../constants/colors';
 import { trackEvent } from '../services/analytics';
 import { nativeSound } from '../services/audio';
@@ -64,6 +75,8 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
   const { settings, purchaseRemoveAds, resetAdFreeStatus } = useSettingsStore();
   const [selectedTier, setSelectedTier] = useState<PlanTier>('lifetime');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [email, setEmail] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [plans, setPlans] = useState<PlanOption[]>(DEFAULT_PLAN_OPTIONS);
   const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
 
@@ -115,6 +128,7 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
     }
 
     if (isOpen) {
+      setErrorMessage('');
       loadDynamicOfferings();
     }
 
@@ -125,6 +139,7 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
 
   const handleSelectTier = (tier: PlanTier) => {
     setSelectedTier(tier);
+    setErrorMessage('');
     const plan = plans.find((p) => p.id === tier);
     trackEvent('paywall_tier_selected', {
       tier,
@@ -135,15 +150,29 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
 
   const handlePurchase = async () => {
     const selectedPlan = plans.find((p) => p.id === selectedTier) || plans[0];
+    const cleanEmail = email.trim().toLowerCase();
 
+    if (Platform.OS === 'web') {
+      if (!cleanEmail) {
+        setErrorMessage('Please enter your email to proceed to checkout and enable cross-device restore.');
+        return;
+      }
+      if (!cleanEmail.includes('@') || !cleanEmail.includes('.')) {
+        setErrorMessage('Please enter a valid email address (e.g. name@example.com).');
+        return;
+      }
+    }
+
+    setErrorMessage('');
     setIsProcessing(true);
     trackEvent('checkout_initiated', {
       tier: selectedTier,
       price: selectedPlan.price,
       product: `tallyho_pro_${selectedTier}`,
+      email: cleanEmail || undefined,
     });
 
-    const result = await purchasePackageByIdentifier(selectedTier);
+    const result = await purchasePackageByIdentifier(selectedTier, cleanEmail || undefined);
     setIsProcessing(false);
 
     if (result.success && result.isPro) {
@@ -161,7 +190,7 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
       onClose();
     } else if (!result.userCancelled) {
       trackEvent('purchase_error', { tier: selectedTier, error: result.error });
-      showToast('Purchase Error', result.error || 'The purchase process could not be completed.', 'destructive');
+      setErrorMessage(result.error || 'The purchase process could not be completed.');
     } else {
       trackEvent('purchase_cancelled', { tier: selectedTier });
     }
@@ -322,6 +351,39 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
             {/* Action Buttons */}
             {!settings.isAdFree ? (
               <View className="gap-3 pt-2">
+                {Platform.OS === 'web' && (
+                  <View className="border-border bg-popover/40 gap-1.5 rounded-2xl border p-3">
+                    <View className="flex-row items-center gap-1.5">
+                      <Mail size={13} color={PALETTE.chip.mustard} />
+                      <Text className="text-foreground text-xs font-bold">Billing & Receipt Email *</Text>
+                    </View>
+                    <Input
+                      placeholder="your.email@example.com"
+                      value={email}
+                      onChangeText={(text) => {
+                        setEmail(text);
+                        if (errorMessage) {
+                          setErrorMessage('');
+                        }
+                      }}
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      className="bg-background border-border text-foreground h-10 text-xs"
+                    />
+                    <Text className="text-muted-foreground text-[10px] leading-tight font-medium">
+                      Required for Stripe receipt and cross-device restore across any browser or device.
+                    </Text>
+                  </View>
+                )}
+
+                {errorMessage ? (
+                  <View className="border-status-error-border bg-status-error-bg flex-row items-center gap-2.5 rounded-xl border p-3">
+                    <AlertCircle size={16} color={PALETTE.status.errorText} />
+                    <Text className="text-status-error-text flex-1 text-xs font-semibold">{errorMessage}</Text>
+                  </View>
+                ) : null}
+
                 <Button
                   onPress={handlePurchase}
                   disabled={isProcessing}

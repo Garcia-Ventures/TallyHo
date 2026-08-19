@@ -140,6 +140,35 @@ describe('purchases.web service', () => {
     expect(result.isPro).toBe(true);
   });
 
+  it('links customer email and passes customerEmail to purchase when provided', async () => {
+    const mockOfferings = {
+      current: {
+        identifier: 'default',
+        availablePackages: [
+          {
+            identifier: '$rc_lifetime',
+            packageType: '$rc_lifetime',
+            rcBillingProduct: { currentPrice: { formattedPrice: '$4.99' } },
+          },
+        ],
+      },
+    };
+    mockPurchases.getOfferings.mockResolvedValueOnce(mockOfferings);
+    mockPurchases.purchase.mockResolvedValueOnce({
+      customerInfo: { entitlements: { active: { 'TallyHo Pro': {} } } },
+    });
+
+    const result = await purchasePackageByIdentifier('lifetime', 'buyer@example.com');
+    expect(mockPurchases.changeUser).toHaveBeenCalledWith('buyer@example.com');
+    expect(mockPurchases.setAttributes).toHaveBeenCalledWith({ $email: 'buyer@example.com' });
+    expect(mockPurchases.purchase).toHaveBeenCalledWith({
+      rcPackage: expect.anything(),
+      customerEmail: 'buyer@example.com',
+    });
+    expect(result.success).toBe(true);
+    expect(result.isPro).toBe(true);
+  });
+
   it('handles user cancellation during web checkout gracefully', async () => {
     const mockOfferings = {
       current: {

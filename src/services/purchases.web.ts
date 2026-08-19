@@ -3,6 +3,7 @@ import { trackEvent } from './analytics';
 import type { PurchaseResult, PurchasesOffering, PurchasesOfferings, PurchasesPackage } from './purchases';
 
 const API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY_WEB || 'rcb_sb_PRFcNQAFMCRmvpqxBAZZtuxvG';
+export const ANONYMOUS_USER_STORAGE_KEY = 'tallyho_web_app_user_id';
 
 let purchasesInstance: Purchases | null = null;
 
@@ -10,12 +11,12 @@ export function getAnonymousUserId(): string {
   if (typeof window === 'undefined') {
     return 'tallyho_web_anon';
   }
-  const stored = localStorage.getItem('tallyho_web_app_user_id');
+  const stored = localStorage.getItem(ANONYMOUS_USER_STORAGE_KEY);
   if (stored) {
     return stored;
   }
   const newId = `web_${Math.random().toString(36).substring(2, 11)}_${Date.now()}`;
-  localStorage.setItem('tallyho_web_app_user_id', newId);
+  localStorage.setItem(ANONYMOUS_USER_STORAGE_KEY, newId);
   return newId;
 }
 
@@ -111,13 +112,25 @@ export async function getOfferings(): Promise<PurchasesOfferings | null> {
   }
 }
 
-export async function purchasePackageByIdentifier(tier: 'lifetime' | 'yearly' | 'monthly'): Promise<PurchaseResult> {
+export async function purchasePackageByIdentifier(
+  tier: 'lifetime' | 'yearly' | 'monthly',
+  email?: string,
+): Promise<PurchaseResult> {
   const p = await initPurchases();
   if (!p) {
-    return { success: false, isPro: false, error: 'Purchases could not be initialized.' };
+    return { success: false, isPro: false, error: 'Purchases could not be initialized' };
   }
 
   try {
+    const cleanEmail = email?.trim().toLowerCase();
+    if (cleanEmail) {
+      await p.changeUser(cleanEmail);
+      await p.setAttributes({ $email: cleanEmail });
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(ANONYMOUS_USER_STORAGE_KEY, cleanEmail);
+      }
+    }
+
     const rawOfferings = await p.getOfferings();
     const current = rawOfferings?.current;
     if (!current) {
@@ -145,10 +158,11 @@ export async function purchasePackageByIdentifier(tier: 'lifetime' | 'yearly' | 
       return { success: false, isPro: false, error: `Package not found for tier: ${tier}` };
     }
 
-    trackEvent('web_checkout_started', { tier, package: targetPkg.identifier });
+    trackEvent('web_checkout_started', { tier, package: targetPkg.identifier, email: cleanEmail });
 
     const result = await p.purchase({
       rcPackage: targetPkg,
+      ...(cleanEmail ? { customerEmail: cleanEmail } : {}),
     });
 
     const isPro = Boolean(
@@ -224,10 +238,10 @@ export async function presentPaywall(): Promise<PurchaseResult> {
   return purchasePackageByIdentifier('lifetime');
 }
 
-export async function presentCustomerCenter(): Promise<void> {
+export async function presentCustomerCenter(): Promise<boolean> {
   const p = await initPurchases();
   if (!p) {
-    return;
+    return false;
   }
 
   try {
@@ -235,14 +249,18 @@ export async function presentCustomerCenter(): Promise<void> {
     const managementUrl = customerInfo?.managementURL;
     if (managementUrl && typeof window !== 'undefined') {
       window.open(managementUrl, '_blank');
-      return;
+      return true;
     }
 
-    if (typeof window !== 'undefined') {
-      const fallbackUrl = process.env.EXPO_PUBLIC_STRIPE_PORTAL_URL || 'https://billing.stripe.com/p/login';
-      window.open(fallbackUrl, '_blank');
+    const portalUrl = process.env.EXPO_PUBLIC_STRIPE_PORTAL_URL;
+    if (portalUrl && typeof window !== 'undefined') {
+      window.open(portalUrl, '_blank');
+      return true;
     }
+
+    return false;
   } catch (err) {
     console.error('[Purchases Web] Failed to open customer center:', err);
+    return false;
   }
 }

@@ -120,7 +120,10 @@ export async function purchasePackage(pkg: PurchasesPackage): Promise<PurchaseRe
 /**
  * Purchases a package tier by identifier ('lifetime' | 'yearly' | 'monthly').
  */
-export async function purchasePackageByIdentifier(tier: 'lifetime' | 'yearly' | 'monthly'): Promise<PurchaseResult> {
+export async function purchasePackageByIdentifier(
+  tier: 'lifetime' | 'yearly' | 'monthly',
+  _email?: string,
+): Promise<PurchaseResult> {
   if (!isInitialized) {
     await initPurchases();
   }
@@ -243,7 +246,7 @@ export async function presentPaywall(): Promise<PurchaseResult> {
 /**
  * Presents RevenueCat Customer Center UI modal for subscription management & support.
  */
-export async function presentCustomerCenter(): Promise<void> {
+export async function presentCustomerCenter(): Promise<boolean> {
   if (!isInitialized) {
     await initPurchases();
   }
@@ -252,15 +255,19 @@ export async function presentCustomerCenter(): Promise<void> {
     const customerInfo = await Purchases.getCustomerInfo();
     if (customerInfo?.managementURL) {
       await Linking.openURL(customerInfo.managementURL);
-      return;
+      return true;
     }
     await RevenueCatUI.presentCustomerCenter();
+    return true;
   } catch (err) {
     console.warn('[RevenueCat] Customer Center presentation failed, falling back to store link:', err);
     if (Platform.OS === 'android') {
       await Linking.openURL('https://play.google.com/store/account/subscriptions?package=com.gventureshq.tallyho');
+      return true;
     } else if (Platform.OS === 'ios') {
       await Linking.openURL('https://apps.apple.com/account/subscriptions');
+      return true;
     }
+    return false;
   }
 }

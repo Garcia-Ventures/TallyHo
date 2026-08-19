@@ -52,7 +52,10 @@ export async function purchasePackage(): Promise<PurchaseResult> {
   return { success: true, isPro: true };
 }
 
-export async function purchasePackageByIdentifier(_tier: 'lifetime' | 'yearly' | 'monthly'): Promise<PurchaseResult> {
+export async function purchasePackageByIdentifier(
+  _tier: 'lifetime' | 'yearly' | 'monthly',
+  _email?: string,
+): Promise<PurchaseResult> {
   return { success: true, isPro: true };
 }
 
@@ -68,6 +71,6 @@ export async function presentPaywall(): Promise<PurchaseResult> {
   return { success: true, isPro: true };
 }
 
-export async function presentCustomerCenter(): Promise<void> {
-  // Test fallback
+export async function presentCustomerCenter(): Promise<boolean> {
+  return true;
 }

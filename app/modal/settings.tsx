@@ -27,7 +27,7 @@ import {
   Volume2,
 } from 'lucide-react-native';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, ScrollView, View } from 'react-native';
+import { ActivityIndicator, Alert, Platform, Pressable, ScrollView, View } from 'react-native';
 import { RemoveAdsModal } from '../../src/components/RemoveAdsModal';
 import { RestorePurchaseModal } from '../../src/components/RestorePurchaseModal';
 import { ScreenContainer } from '../../src/components/ScreenContainer';
@@ -212,13 +212,19 @@ export default function SettingsModal() {
                   <Button
                     onPress={() => {
                       resetAdFreeStatus();
-                      Alert.alert('Reset for Testing', 'Ad-Free status has been reset to test free mode.');
+                      if (Platform.OS === 'web' && typeof localStorage !== 'undefined') {
+                        localStorage.removeItem('tallyho_web_app_user_id');
+                      }
+                      Alert.alert(
+                        'Reset for Testing',
+                        'Ad-Free status and cached Web session have been reset to simulate a fresh device.',
+                      );
                     }}
                     variant="outline"
                     className="border-border bg-popover mt-2 flex-row items-center justify-center gap-2 rounded-xl border-dashed py-2.5"
                   >
                     <RotateCcw size={14} color={PALETTE.ink.muted} />
-                    <Text className="text-foreground text-xs font-bold">[Dev Test] Reset Purchase</Text>
+                    <Text className="text-foreground text-xs font-bold">[Dev Test] Reset Purchase & Web Session</Text>
                   </Button>
                 )}
               </View>

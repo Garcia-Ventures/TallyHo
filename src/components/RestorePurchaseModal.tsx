@@ -1,11 +1,11 @@
 import { Button, Input, Text } from '@gv-tech/ui-native';
-import { ExternalLink, KeyRound, Mail, ShieldCheck, Sparkles, X } from 'lucide-react-native';
+import { AlertCircle, Mail, Sparkles, X } from 'lucide-react-native';
 import { useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, View } from 'react-native';
 import { PALETTE } from '../constants/colors';
 import { trackEvent } from '../services/analytics';
 import { nativeSound } from '../services/audio';
-import { presentCustomerCenter, restoreAdFreePurchases } from '../services/purchases';
+import { restoreAdFreePurchases } from '../services/purchases';
 import { useSettingsStore } from '../stores/useSettingsStore';
 import { showToast } from '../utils/toast';
 
@@ -19,31 +19,22 @@ export function RestorePurchaseModal({ isOpen, onClose, onSuccess }: RestorePurc
   const { purchaseRemoveAds } = useSettingsStore();
   const [email, setEmail] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-
-  const handleOpenStripePortal = async () => {
-    trackEvent('stripe_portal_restore_opened');
-    onClose();
-    showToast(
-      'Stripe Verification Portal 🔗',
-      'Enter your email in the Stripe tab to receive a 1-time secure login link.',
-    );
-    await presentCustomerCenter();
-  };
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleDirectEmailRestore = async () => {
-    const cleanEmail = email.trim();
+    const cleanEmail = email.trim().toLowerCase();
     if (!cleanEmail) {
-      showToast('Email Required', 'Please enter your billing email address.', 'destructive');
+      setErrorMessage('Please enter your billing email address.');
       return;
     }
 
+    setErrorMessage('');
     setIsProcessing(true);
     trackEvent('restore_email_attempt', { email: cleanEmail });
 
     try {
       const result = await restoreAdFreePurchases(cleanEmail);
       setIsProcessing(false);
-      onClose();
 
       if (result.success && result.isPro) {
         purchaseRemoveAds();
@@ -51,42 +42,43 @@ export function RestorePurchaseModal({ isOpen, onClose, onSuccess }: RestorePurc
         trackEvent('purchases_restored', { success: true, method: 'email' });
         showToast('Purchases Restored! 🎉', 'TallyHo Pro is now active on this browser.');
         setEmail('');
+        onClose();
         if (onSuccess) {
           onSuccess();
         }
       } else {
         trackEvent('purchases_restored', { success: false, method: 'email' });
-        showToast(
-          'No Active Subscription',
-          `We could not find an active TallyHo Pro purchase for ${cleanEmail}. Use the Stripe Portal to verify.`,
-          'destructive',
-        );
+        setErrorMessage(`No active TallyHo Pro subscription found for "${cleanEmail}".`);
       }
     } catch {
       setIsProcessing(false);
-      onClose();
-      showToast('Restore Failed', 'Unable to verify subscription at this time.', 'destructive');
+      setErrorMessage('Unable to verify subscription at this time. Please check your connection.');
     }
   };
 
+  const handleModalClose = () => {
+    setErrorMessage('');
+    onClose();
+  };
+
   return (
-    <Modal visible={isOpen} animationType="fade" transparent onRequestClose={onClose}>
+    <Modal visible={isOpen} animationType="fade" transparent onRequestClose={handleModalClose}>
       <View className="flex-1 items-center justify-center bg-black/75 p-4">
         <View className="border-border bg-card w-full max-w-md gap-4 rounded-3xl border p-6 shadow-2xl">
           {/* Header */}
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-3">
               <View className="bg-chip-mustard/20 h-10 w-10 items-center justify-center rounded-2xl">
-                <ShieldCheck size={22} color={PALETTE.chip.mustard} />
+                <Mail size={20} color={PALETTE.chip.mustard} />
               </View>
               <View>
                 <Text className="text-foreground text-base font-black">Restore Pro Access</Text>
-                <Text className="text-muted-foreground text-xs font-semibold">Secure Subscription Verification</Text>
+                <Text className="text-muted-foreground text-xs font-semibold">Enter Billing Email</Text>
               </View>
             </View>
 
             <Pressable
-              onPress={onClose}
+              onPress={handleModalClose}
               hitSlop={8}
               className="border-border bg-popover h-8 w-8 items-center justify-center rounded-full border"
             >
@@ -94,34 +86,32 @@ export function RestorePurchaseModal({ isOpen, onClose, onSuccess }: RestorePurc
             </Pressable>
           </View>
 
-          {/* Primary Recommended: Stripe Customer Portal */}
-          <View className="border-chip-sage/40 bg-chip-sage/10 gap-2.5 rounded-2xl border p-4">
-            <View className="flex-row items-center gap-2">
-              <KeyRound size={16} color={PALETTE.chip.sage} />
-              <Text className="text-foreground text-xs font-black">Secure Stripe Login (Recommended)</Text>
-            </View>
-            <Text className="text-muted-foreground text-[11px] leading-relaxed">
-              Stripe will email you a secure 1-time magic login link to verify ownership of your subscription.
-            </Text>
-            <Button
-              onPress={handleOpenStripePortal}
-              className="bg-chip-sage h-10 flex-row items-center justify-center gap-2 rounded-xl"
-            >
-              <Text className="text-xs font-black text-black">Open Stripe Verification Portal</Text>
-              <ExternalLink size={14} color="#000" />
-            </Button>
-          </View>
+          {/* Description */}
+          <Text className="text-muted-foreground text-xs leading-relaxed font-medium">
+            Enter the email address you used at checkout. We will connect your purchase and activate your Ad-Free Pro
+            entitlement.
+          </Text>
 
-          {/* Alternative: Direct Email Lookup */}
-          <View className="gap-2 pt-1">
-            <View className="flex-row items-center gap-1.5">
-              <Mail size={14} color={PALETTE.ink.muted} />
-              <Text className="text-muted-foreground text-xs font-bold">Or enter billing email directly:</Text>
+          {/* Inline Error Box */}
+          {errorMessage ? (
+            <View className="border-status-error-border bg-status-error-bg flex-row items-center gap-2.5 rounded-xl border p-3">
+              <AlertCircle size={16} color={PALETTE.status.errorText} />
+              <Text className="text-status-error-text flex-1 text-xs font-semibold">{errorMessage}</Text>
             </View>
+          ) : null}
+
+          {/* Email Input */}
+          <View className="gap-1.5">
+            <Text className="text-foreground text-xs font-bold">Billing Email</Text>
             <Input
               placeholder="your.email@example.com"
               value={email}
-              onChangeText={setEmail}
+              onChangeText={(text) => {
+                setEmail(text);
+                if (errorMessage) {
+                  setErrorMessage('');
+                }
+              }}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
@@ -129,35 +119,37 @@ export function RestorePurchaseModal({ isOpen, onClose, onSuccess }: RestorePurc
               onSubmitEditing={handleDirectEmailRestore}
               className="bg-background border-border text-foreground h-11 text-xs"
             />
+          </View>
+
+          {/* Action Buttons */}
+          <View className="gap-2 pt-1">
             <Button
               onPress={handleDirectEmailRestore}
               disabled={isProcessing}
-              variant="outline"
-              className="border-border bg-popover h-10 flex-row items-center justify-center rounded-xl"
+              className="bg-chip-mustard h-11 flex-row items-center justify-center rounded-xl shadow-sm"
             >
               {isProcessing ? (
                 <View className="flex-row items-center gap-2">
-                  <ActivityIndicator size="small" color={PALETTE.chip.mustard} />
-                  <Text className="text-foreground text-xs font-bold">Searching Subscriptions...</Text>
+                  <ActivityIndicator size="small" color="#000" />
+                  <Text className="text-xs font-black text-black">Verifying Subscription...</Text>
                 </View>
               ) : (
                 <View className="flex-row items-center gap-1.5">
-                  <Sparkles size={14} color={PALETTE.chip.mustard} />
-                  <Text className="text-foreground text-xs font-bold">Check Direct Email Subscription</Text>
+                  <Sparkles size={16} color="#000" />
+                  <Text className="text-xs font-black text-black">Restore TallyHo Pro</Text>
                 </View>
               )}
             </Button>
-          </View>
 
-          {/* Cancel */}
-          <Button
-            onPress={onClose}
-            disabled={isProcessing}
-            variant="ghost"
-            className="h-9 items-center justify-center rounded-xl"
-          >
-            <Text className="text-muted-foreground text-xs font-bold">Cancel</Text>
-          </Button>
+            <Button
+              onPress={handleModalClose}
+              disabled={isProcessing}
+              variant="ghost"
+              className="h-10 items-center justify-center rounded-xl"
+            >
+              <Text className="text-muted-foreground text-xs font-bold">Cancel</Text>
+            </Button>
+          </View>
         </View>
       </View>
     </Modal>
