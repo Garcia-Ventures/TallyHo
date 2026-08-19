@@ -114,3 +114,4 @@ revenucat-key.json
 
 # Code Quality
 .codacy/
+build/
