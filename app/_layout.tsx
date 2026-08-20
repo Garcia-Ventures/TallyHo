@@ -1,4 +1,5 @@
 import '../src/global.css';
+import '../src/shim-require';
 
 import { ThemeProvider } from '@gv-tech/ui-native';
 import { Stack } from 'expo-router';
@@ -33,6 +34,9 @@ Sentry.init({
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1,
   integrations: [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
+
+  // Filter known non-fatal native environment quirks & handled edge cases
+  ignoreErrors: ['General error retrieving the install referrer', 'findNodeHandle is not supported on web'],
 
   // uncomment the line below to enable Spotlight (https://spotlightjs.com)
   // spotlight: __DEV__,
