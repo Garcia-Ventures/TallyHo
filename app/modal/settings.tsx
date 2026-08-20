@@ -27,7 +27,19 @@ import {
   Volume2,
 } from 'lucide-react-native';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, Platform, Pressable, ScrollView, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  ImageSourcePropType,
+  Platform,
+  Pressable,
+  ScrollView,
+  useColorScheme,
+  View,
+} from 'react-native';
+import logoHorizontalDark from '../../assets/logo-horizontal-dark.png';
+import logoHorizontal from '../../assets/logo-horizontal.png';
 import { RemoveAdsModal } from '../../src/components/RemoveAdsModal';
 import { RestorePurchaseModal } from '../../src/components/RestorePurchaseModal';
 import { ScreenContainer } from '../../src/components/ScreenContainer';
@@ -42,6 +54,10 @@ export default function SettingsModal() {
   const router = useSafeRouter();
   const { settings, updateSettings, resetSettings, purchaseRemoveAds, resetAdFreeStatus, setAdBlockedState } =
     useSettingsStore();
+
+  const themeMode = settings.themeMode;
+  const systemScheme = useColorScheme();
+  const isDark = themeMode === 'dark' || (themeMode === 'system' && systemScheme === 'dark');
 
   const [category, setCategory] = useState<'General' | 'Bug' | 'Feature'>('General');
   const [email, setEmail] = useState('');
@@ -500,9 +516,17 @@ export default function SettingsModal() {
           </CardContent>
         </Card>
 
-        <Text className="text-muted-foreground mb-4 text-center text-xs font-semibold">
-          Formspree Active • TallyHo v1.0.0 (Build 42) • GV Tech UI Native
-        </Text>
+        <View className="items-center justify-center gap-2 pt-2 pb-6">
+          <Image
+            source={(isDark ? logoHorizontalDark : logoHorizontal) as ImageSourcePropType}
+            style={{ width: 130, height: 36 }}
+            resizeMode="contain"
+            accessibilityLabel="TallyHo Logo"
+          />
+          <Text className="text-muted-foreground text-center text-xs font-semibold">
+            TallyHo v1.0.0 (Build 42) • Crafted by Garcia Ventures
+          </Text>
+        </View>
       </ScrollView>
 
       <RemoveAdsModal isOpen={isRemoveAdsModalOpen} onClose={() => setIsRemoveAdsModalOpen(false)} />

@@ -3,9 +3,11 @@ import '../src/global.css';
 import { ThemeProvider } from '@gv-tech/ui-native';
 import { Stack } from 'expo-router';
 import { useEffect } from 'react';
-import { Platform, useColorScheme } from 'react-native';
+import { Image, ImageSourcePropType, Platform, useColorScheme } from 'react-native';
 
 import * as Sentry from '@sentry/react-native';
+import logoHorizontalDark from '../assets/logo-horizontal-dark.png';
+import logoHorizontal from '../assets/logo-horizontal.png';
 import { CustomHeader } from '../src/components/CustomHeader';
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
 import { HeaderBackButton } from '../src/components/HeaderBackButton';
@@ -69,7 +71,14 @@ export default Sentry.wrap(function RootLayout() {
           <Stack.Screen
             name="index"
             options={{
-              title: 'Tally Ho',
+              headerTitle: () => (
+                <Image
+                  source={(isDark ? logoHorizontalDark : logoHorizontal) as ImageSourcePropType}
+                  style={{ width: 135, height: 36 }}
+                  resizeMode="contain"
+                  accessibilityLabel="TallyHo Logo"
+                />
+              ),
               headerTitleAlign: 'center',
             }}
           />

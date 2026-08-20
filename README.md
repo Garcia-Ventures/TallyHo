@@ -1,8 +1,14 @@
-# Tally Ho
+<p align="center">
+  <img src="./assets/logo.png" alt="TallyHo Logo" width="480" />
+</p>
 
-> _Your digital pencil & paper for game night._
+<p align="center">
+  <em>Your digital pencil & paper for game night.</em>
+</p>
 
-[![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/eng618)
+<p align="center">
+  <a href="https://www.buymeacoffee.com/eng618"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="42" /></a>
+</p>
 
 **Tally Ho** is a versatile, multiplayer scorekeeping application for mobile and web devices. Designed as a universal table utility, it replaces physical paper score pads with an elegant, paper-inspired digital surface. Players create a game, add participants, set target scores or winning conditions, and record points round by round—eliminating late-night arithmetic and missing pens so everyone can focus on the fun.
 
