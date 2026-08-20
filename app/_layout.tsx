@@ -74,7 +74,7 @@ export default Sentry.wrap(function RootLayout() {
               headerTitle: () => (
                 <Image
                   source={(isDark ? logoHorizontalDark : logoHorizontal) as ImageSourcePropType}
-                  style={{ width: 150, height: 46 }}
+                  style={{ width: 140, height: 40 }}
                   resizeMode="contain"
                   accessibilityLabel="TallyHo Logo"
                 />

@@ -60,7 +60,7 @@ export function CustomHeader({ options, route, back }: CustomHeaderProps) {
           <View className="items-center justify-center">
             <Image
               source={logoSource as ImageSourcePropType}
-              style={{ width: 170, height: 52 }}
+              style={{ width: 165, height: 48 }}
               resizeMode="contain"
               accessibilityLabel="TallyHo Logo"
             />

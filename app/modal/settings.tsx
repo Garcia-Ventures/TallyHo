@@ -519,7 +519,7 @@ export default function SettingsModal() {
         <View className="items-center justify-center gap-2 pt-2 pb-6">
           <Image
             source={(isDark ? logoHorizontalDark : logoHorizontal) as ImageSourcePropType}
-            style={{ width: 130, height: 36 }}
+            style={{ width: 140, height: 40 }}
             resizeMode="contain"
             accessibilityLabel="TallyHo Logo"
           />
