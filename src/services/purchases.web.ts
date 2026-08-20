@@ -2,7 +2,7 @@ import { PackageType, Purchases } from '@revenuecat/purchases-js';
 import { trackEvent } from './analytics';
 import type { PurchaseResult, PurchasesOffering, PurchasesOfferings, PurchasesPackage } from './purchases';
 
-const API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY_WEB || 'rcb_sb_PRFcNQAFMCRmvpqxBAZZtuxvG';
+const API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY_WEB || 'rcb_sb_iVWzeNXHfGDfIlKMfeZSWDvZN';
 export const ANONYMOUS_USER_STORAGE_KEY = 'tallyho_web_app_user_id';
 
 let purchasesInstance: Purchases | null = null;
@@ -26,6 +26,11 @@ export async function initPurchases(): Promise<Purchases | null> {
   }
 
   if (typeof window === 'undefined') {
+    return null;
+  }
+
+  if (!API_KEY) {
+    console.warn('[Purchases Web] EXPO_PUBLIC_REVENUECAT_API_KEY_WEB is not set.');
     return null;
   }
 
