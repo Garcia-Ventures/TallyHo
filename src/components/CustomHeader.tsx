@@ -51,7 +51,7 @@ export function CustomHeader({ options, route, back }: CustomHeaderProps) {
 
   return (
     <View className="border-border w-full border-b" style={{ backgroundColor }}>
-      <View className={`mx-auto h-16 w-full flex-row items-center justify-between px-5 sm:px-8 ${maxWidthClass}`}>
+      <View className={`mx-auto h-20 w-full flex-row items-center justify-between px-5 sm:px-8 ${maxWidthClass}`}>
         <View className="min-w-[40px] items-start justify-center">
           {options.headerLeft ? options.headerLeft({ canGoBack: !!back }) : null}
         </View>
@@ -60,7 +60,7 @@ export function CustomHeader({ options, route, back }: CustomHeaderProps) {
           <View className="items-center justify-center">
             <Image
               source={logoSource as ImageSourcePropType}
-              style={{ width: 140, height: 38 }}
+              style={{ width: 170, height: 52 }}
               resizeMode="contain"
               accessibilityLabel="TallyHo Logo"
             />
