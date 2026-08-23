@@ -108,10 +108,10 @@ export const storage = {
 
       // Default starter player library
       const defaultLibrary: Player[] = [
-        { id: 'p1', name: 'Eric', initials: 'E', color: '#E5A93C' },
-        { id: 'p2', name: 'Noah', initials: 'N', color: '#6A9C78' },
-        { id: 'p3', name: 'Sophia', initials: 'S', color: '#D96B43' },
-        { id: 'p4', name: 'Lucas', initials: 'L', color: '#3B5998' },
+        { id: 'p1', name: 'Player 1', initials: 'P1', color: '#E5A93C' },
+        { id: 'p2', name: 'Player 2', initials: 'P2', color: '#6A9C78' },
+        { id: 'p3', name: 'Player 3', initials: 'P3', color: '#D96B43' },
+        { id: 'p4', name: 'Player 4', initials: 'P4', color: '#3B5998' },
       ];
       setStorageItem(PLAYER_LIBRARY_KEY, JSON.stringify(defaultLibrary));
       return defaultLibrary;

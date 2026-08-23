@@ -39,8 +39,8 @@ describe('useGameStore', () => {
       roundScoringType: 'SINGLE_WINNER',
       targetScore: 500,
       players: [
-        { id: 'p1', name: 'Eric', initials: 'E', color: '#E5A93C' },
-        { id: 'p2', name: 'Noah', initials: 'N', color: '#6A9C78' },
+        { id: 'p1', name: 'Player 1', initials: 'P1', color: '#E5A93C' },
+        { id: 'p2', name: 'Player 2', initials: 'P2', color: '#6A9C78' },
       ],
     });
 
@@ -59,8 +59,8 @@ describe('useGameStore', () => {
       roundScoringType: 'SINGLE_WINNER',
       targetScore: 50,
       players: [
-        { id: 'p1', name: 'Eric', initials: 'E', color: '#E5A93C' },
-        { id: 'p2', name: 'Noah', initials: 'N', color: '#6A9C78' },
+        { id: 'p1', name: 'Player 1', initials: 'P1', color: '#E5A93C' },
+        { id: 'p2', name: 'Player 2', initials: 'P2', color: '#6A9C78' },
       ],
     });
 

@@ -39,8 +39,8 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
     preset?.defaultTargetScore ? String(preset.defaultTargetScore) : '100',
   );
   const [players, setPlayers] = useState<Player[]>([
-    { id: 'p1', name: 'Eric', initials: 'E', color: PLAYER_COLORS[0].hex },
-    { id: 'p2', name: 'Noah', initials: 'N', color: PLAYER_COLORS[1].hex },
+    { id: 'p1', name: 'Player 1', initials: 'P1', color: PLAYER_COLORS[0].hex },
+    { id: 'p2', name: 'Player 2', initials: 'P2', color: PLAYER_COLORS[1].hex },
   ]);
   const [newPlayerName, setNewPlayerName] = useState('');
 
