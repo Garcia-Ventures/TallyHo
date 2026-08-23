@@ -5,6 +5,23 @@ All notable changes to the TallyHo project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.1.0...tally-ho-v1.2.0) (2026-08-23)
+
+
+### Features
+
+* add dark mode support for app assets and integrate custom branding across UI components ([957b384](https://github.com/Garcia-Ventures/TallyHo/commit/957b38463a55bf1b225a6b7849a43afde1e5f16d))
+* add horizontal, stacked, and primary logo assets ([1bdf9b9](https://github.com/Garcia-Ventures/TallyHo/commit/1bdf9b96d13af48ae438da17b37a11a4c21eeedd))
+* add local EAS build scripts and update documentation while removing redundant version tracking from app config ([7b91e2c](https://github.com/Garcia-Ventures/TallyHo/commit/7b91e2c3d47ab39240b413af6ea45f4dc62ef480))
+* polyfill Array and String at methods and configure Sentry error ignore filters ([ed5e634](https://github.com/Garcia-Ventures/TallyHo/commit/ed5e63406bd53f39cc5a7c86f1fafb7aeca5cdeb))
+
+
+### Bug Fixes
+
+* local builds ([f28bf0a](https://github.com/Garcia-Ventures/TallyHo/commit/f28bf0a6cc831a88ea298f1c99e6a917c3237967))
+* **styles:** correct button size rendering and ux ([9016079](https://github.com/Garcia-Ventures/TallyHo/commit/901607975485dcb85591a0b6113dd1c9ec4add19))
+* update RevenueCat API key and add validation check for initialization ([40673db](https://github.com/Garcia-Ventures/TallyHo/commit/40673dbb32f930f80d4ba468b6db6e801d0e7ad7))
+
 ## [1.1.0](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.0.3...tally-ho-v1.1.0) (2026-08-19)
 
 
