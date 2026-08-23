@@ -18,7 +18,7 @@ export function initAnalytics(): void {
   const apiUrl = process.env.EXPO_PUBLIC_OPENPANEL_API_URL || DEFAULT_API_URL;
 
   if (!clientId) {
-    if (__DEV__) {
+    if (typeof __DEV__ !== 'undefined' && __DEV__) {
       console.log('[Analytics] No EXPO_PUBLIC_OPENPANEL_CLIENT_ID configured. OpenPanel Native disabled.');
     }
     return;
@@ -38,11 +38,11 @@ export function initAnalytics(): void {
       appVersion: Constants?.expoConfig?.version || '1.0.0',
     });
 
-    if (__DEV__) {
+    if (typeof __DEV__ !== 'undefined' && __DEV__) {
       console.log(`[Analytics] Initialized OpenPanel Native SDK (${Platform.OS}) successfully.`);
     }
   } catch (err) {
-    if (__DEV__) {
+    if (typeof __DEV__ !== 'undefined' && __DEV__) {
       console.log('[Analytics] Failed to initialize OpenPanel Native SDK:', err);
     }
   }
@@ -58,7 +58,7 @@ export function trackEvent(name: string, payload?: Record<string, unknown>): voi
   try {
     opInstance.track(name, payload);
   } catch (err) {
-    if (__DEV__) {
+    if (typeof __DEV__ !== 'undefined' && __DEV__) {
       console.log(`[Analytics] Error tracking event "${name}":`, err);
     }
   }

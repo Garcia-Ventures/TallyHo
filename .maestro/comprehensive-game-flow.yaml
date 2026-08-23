@@ -1,0 +1,49 @@
+appId: com.gventureshq.tallyho
+---
+- launchApp
+- assertVisible: "Tally Ho"
+
+# 1. Launch Preset Game Setup (Uno)
+- tapOn: "Uno"
+- assertVisible: "New Game Setup"
+- assertVisible: "Single Round Winner"
+
+# 2. Start Match
+- tapOn: "🚀 Start Match"
+
+# 3. Verify Match Scoreboard
+- assertVisible: "Round 1 in progress"
+- assertVisible: "+ Score"
+
+# 4. Open Score Keypad Modal & Test Keypad Actions
+- tapOn: "+ Score"
+- assertVisible: "SCORE"
+- tapOn: "1"
+- tapOn: "2"
+- tapOn: "5"
+- tapOn: "⌫"
+- tapOn: "0"
+- tapOn: "Save Round Score"
+
+# 5. Flip to Play Mode & Score Round 2
+- tapOn: "🎮 Enter Play Mode →"
+- assertVisible: "Turn"
+- tapOn: "5"
+- tapOn: "0"
+- tapOn: "0"
+- tapOn: "Log Points"
+
+# 6. View Match History Log
+- tapOn: "📋 Scoreboard"
+- tapOn: "📜 Log"
+- assertVisible: "Round 1"
+- tapOn: "✕"
+
+# 7. Complete Match & Verify Game Night Champion
+- tapOn: "🏆 End"
+- assertVisible: "Game Night Champion"
+- assertVisible: "🔄 Rematch"
+
+# 8. Trigger Rematch
+- tapOn: "🔄 Rematch"
+- assertVisible: "Round 1 in progress"

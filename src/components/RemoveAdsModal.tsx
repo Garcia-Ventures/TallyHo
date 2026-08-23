@@ -424,7 +424,7 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
                 </Button>
 
                 {/* Dev Testing Reset Button */}
-                {__DEV__ && (
+                {typeof __DEV__ !== 'undefined' && __DEV__ && (
                   <Button
                     onPress={() => {
                       resetAdFreeStatus();

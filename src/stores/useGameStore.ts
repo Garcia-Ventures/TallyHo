@@ -223,7 +223,13 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   clearHistory: () => {
-    localStorage.removeItem('tallyho_match_history');
+    if (typeof window !== 'undefined' && window.localStorage) {
+      window.localStorage.removeItem('tallyho_match_history');
+    } else if (typeof localStorage !== 'undefined') {
+      try {
+        localStorage.removeItem('tallyho_match_history');
+      } catch {}
+    }
     set({ matchHistory: [] });
   },
 

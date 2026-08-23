@@ -13,7 +13,7 @@ export function initAnalytics(): void {
   const apiUrl = process.env.EXPO_PUBLIC_OPENPANEL_API_URL || DEFAULT_API_URL;
 
   if (!clientId) {
-    if (__DEV__) {
+    if (typeof __DEV__ !== 'undefined' && __DEV__) {
       console.log('[Analytics] No EXPO_PUBLIC_OPENPANEL_CLIENT_ID configured. OpenPanel Web disabled.');
     }
     return;
@@ -32,11 +32,11 @@ export function initAnalytics(): void {
       platform: 'web',
     });
 
-    if (__DEV__) {
+    if (typeof __DEV__ !== 'undefined' && __DEV__) {
       console.log('[Analytics] Initialized OpenPanel Web SDK successfully:', clientId);
     }
   } catch (err) {
-    if (__DEV__) {
+    if (typeof __DEV__ !== 'undefined' && __DEV__) {
       console.log('[Analytics] Failed to initialize OpenPanel Web SDK:', err);
     }
   }
@@ -52,7 +52,7 @@ export function trackEvent(name: string, payload?: Record<string, unknown>): voi
   try {
     opInstance.track(name, payload);
   } catch (err) {
-    if (__DEV__) {
+    if (typeof __DEV__ !== 'undefined' && __DEV__) {
       console.log(`[Analytics] Error tracking event "${name}":`, err);
     }
   }

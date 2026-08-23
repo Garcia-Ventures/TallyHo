@@ -1,53 +1,42 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { renderToString } from 'react-dom/server';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('react-native', () => ({
-  Platform: { OS: 'web' },
   StyleSheet: { create: (styles: unknown) => styles },
-  View: 'View',
-  Text: 'Text',
-  Pressable: 'Pressable',
-  Animated: {
-    Value: vi.fn(() => ({})),
-    timing: vi.fn(() => ({ start: vi.fn() })),
-    parallel: vi.fn(() => ({ start: vi.fn() })),
-    View: 'Animated.View',
-  },
+  Platform: { OS: 'web' },
+  View: ({ children, ...props }: React.ComponentProps<'div'>) => <div {...props}>{children}</div>,
+  Text: ({ children, ...props }: React.ComponentProps<'span'>) => <span {...props}>{children}</span>,
+  Pressable: ({ children, onPress, ...props }: React.ComponentProps<'button'> & { onPress?: () => void }) => (
+    <button onClick={onPress} {...props}>
+      {children}
+    </button>
+  ),
+  useWindowDimensions: () => ({ width: 400 }),
 }));
 
 vi.mock('lucide-react-native', () => ({
-  AlertCircle: 'AlertCircle',
-  CheckCircle2: 'CheckCircle2',
-  Info: 'Info',
-  X: 'X',
+  CheckCircle2: () => <svg />,
+  AlertCircle: () => <svg />,
+  Info: () => <svg />,
+  X: () => <svg />,
 }));
 
-import { dismissToast, showToast } from './toast';
+import { AppToaster, dismissToast, showToast } from './toast';
 
-describe('AppToaster / showToast utility', () => {
+describe('toast utility & AppToaster', () => {
   beforeEach(() => {
     vi.useFakeTimers();
   });
 
-  afterEach(() => {
-    vi.useRealTimers();
+  it('renders AppToaster container without throwing', () => {
+    const html = renderToString(<AppToaster />);
+    expect(html).toBeDefined();
   });
 
-  it('triggers a toast notification with default variant and dismisses on timeout', () => {
-    showToast('Test Toast', 'This is a test description', 'default', 3000);
-
-    vi.advanceTimersByTime(3000);
-    expect(true).toBe(true);
-  });
-
-  it('triggers a destructive error toast notification', () => {
-    showToast('Error', 'An error occurred', 'destructive', 2000);
-
-    vi.advanceTimersByTime(2000);
-    expect(true).toBe(true);
-  });
-
-  it('manually dismisses a toast by id', () => {
-    dismissToast('some_nonexistent_id');
-    expect(true).toBe(true);
+  it('dispatches show and dismiss toast events', () => {
+    expect(() => {
+      showToast('Match saved successfully!', 'Saved to history', 'success', 3000);
+      dismissToast('toast_test');
+    }).not.toThrow();
   });
 });
