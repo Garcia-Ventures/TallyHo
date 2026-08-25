@@ -5,6 +5,25 @@ All notable changes to the TallyHo project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.2.0...tally-ho-v1.3.0) (2026-08-25)
+
+
+### Features
+
+* add eas-build-safe wrapper to handle and report Expo build quota limits gracefully in CI ([f5d48e3](https://github.com/Garcia-Ventures/TallyHo/commit/f5d48e3eb7f5c63abfe3715252149873fef8a986))
+* enhance validation script with Maestro syntax checks, build steps, and comprehensive CLI flags for CI/CD workflows ([3d852a5](https://github.com/Garcia-Ventures/TallyHo/commit/3d852a507611588d9658162c2858a031ad916428))
+
+
+### Bug Fixes
+
+* remove hardcoded default API key for RevenueCat on Android ([#21](https://github.com/Garcia-Ventures/TallyHo/issues/21)) ([0e016b3](https://github.com/Garcia-Ventures/TallyHo/commit/0e016b3be6e5b72ac22970f58d663f74229f0784))
+* update hook permisions ([1780d73](https://github.com/Garcia-Ventures/TallyHo/commit/1780d735180060532a5009f0c9c85f7c2f30a128))
+
+
+### Performance Improvements
+
+* **playmodeview:** memoize calculatePlayerTotals ([#20](https://github.com/Garcia-Ventures/TallyHo/issues/20)) ([b43fd67](https://github.com/Garcia-Ventures/TallyHo/commit/b43fd675138a5bfe217585e8ec12502697cc0aca))
+
 ## [1.2.0](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.1.0...tally-ho-v1.2.0) (2026-08-23)
 
 
