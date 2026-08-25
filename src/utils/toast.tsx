@@ -15,6 +15,7 @@ type ToastListener = (toasts: ToastMessage[]) => void;
 
 let activeToasts: ToastMessage[] = [];
 const listeners = new Set<ToastListener>();
+let nextToastId = 0;
 
 function notify() {
   listeners.forEach((fn) => fn([...activeToasts]));
@@ -26,7 +27,7 @@ export function showToast(
   variant: 'default' | 'destructive' | 'success' = 'default',
   duration = 4000,
 ) {
-  const id = `toast_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+  const id = `toast_${Date.now()}_${++nextToastId}`;
   const newToast: ToastMessage = { id, title, description, variant, duration };
   activeToasts = [...activeToasts.slice(-2), newToast];
   notify();

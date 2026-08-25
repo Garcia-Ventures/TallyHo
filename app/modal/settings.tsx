@@ -9,7 +9,6 @@ import {
   Switch,
   Text,
 } from '@gv-tech/ui-native';
-import { useRouter } from 'expo-router';
 import {
   AlertCircle,
   CheckCircle2,
@@ -44,6 +43,7 @@ import { RemoveAdsModal } from '../../src/components/RemoveAdsModal';
 import { RestorePurchaseModal } from '../../src/components/RestorePurchaseModal';
 import { ScreenContainer } from '../../src/components/ScreenContainer';
 import { PALETTE } from '../../src/constants/colors';
+import { useSafeRouter } from '../../src/hooks/useSafeRouter';
 import { nativeSound } from '../../src/services/audio';
 import { restoreAdFreePurchases } from '../../src/services/purchases';
 import { storage } from '../../src/services/storage';
@@ -68,14 +68,6 @@ export default function SettingsModal() {
   const [isRemoveAdsModalOpen, setIsRemoveAdsModalOpen] = useState(false);
   const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
-
-  function useSafeRouter() {
-    try {
-      return useRouter();
-    } catch {
-      return { back: () => {}, push: (_path: string) => {} };
-    }
-  }
 
   const handleThemeChange = (mode: 'system' | 'light' | 'dark') => {
     nativeSound.playPresetSelect();
