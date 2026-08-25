@@ -2,6 +2,7 @@ import { PackageType, Purchases } from '@revenuecat/purchases-js';
 import { trackEvent } from './analytics';
 import type { PurchaseResult, PurchasesOffering, PurchasesOfferings, PurchasesPackage } from './purchases';
 
+const API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY_WEB || 'rcb_sb_iVWzeNXHfGDfIlKMfeZSWDvZN';
 export const ANONYMOUS_USER_STORAGE_KEY = 'tallyho_web_app_user_id';
 
 let purchasesInstance: Purchases | null = null;
@@ -14,7 +15,7 @@ export function getAnonymousUserId(): string {
   if (stored) {
     return stored;
   }
-  const newId = `web_${crypto.randomUUID()}`;
+  const newId = `web_${Math.random().toString(36).substring(2, 11)}_${Date.now()}`;
   localStorage.setItem(ANONYMOUS_USER_STORAGE_KEY, newId);
   return newId;
 }
@@ -28,15 +29,14 @@ export async function initPurchases(): Promise<Purchases | null> {
     return null;
   }
 
-  const apiKey = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY_WEB;
-  if (!apiKey) {
+  if (!API_KEY) {
     console.warn('[Purchases Web] EXPO_PUBLIC_REVENUECAT_API_KEY_WEB is not set.');
     return null;
   }
 
   try {
     const userId = getAnonymousUserId();
-    purchasesInstance = Purchases.configure(apiKey, userId);
+    purchasesInstance = Purchases.configure(API_KEY, userId);
     return purchasesInstance;
   } catch (err) {
     console.error('[Purchases Web] Failed to configure RevenueCat Purchases JS:', err);

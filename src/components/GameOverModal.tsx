@@ -207,3 +207,5 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
     </Modal>
   );
 };
+
+export const GameOverModalNative = GameOverModal;

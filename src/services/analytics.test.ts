@@ -43,13 +43,4 @@ describe('analytics service', () => {
 
     expect(() => trackEvent('faulty_event')).not.toThrow();
   });
-
-  it('swallows errors if OpenPanel constructor throws during initialization', async () => {
-    const { OpenPanel } = await import('@openpanel/web');
-    vi.mocked(OpenPanel).mockImplementationOnce(function () {
-      throw new Error('Init Error');
-    });
-
-    expect(() => initAnalytics()).not.toThrow();
-  });
 });

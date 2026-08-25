@@ -46,8 +46,6 @@ describe('purchases.web service', () => {
       delete mockLocalStorage[key];
     }
 
-    vi.stubEnv('EXPO_PUBLIC_REVENUECAT_API_KEY_WEB', 'test_api_key');
-
     vi.stubGlobal('window', {
       open: vi.fn(),
     });
