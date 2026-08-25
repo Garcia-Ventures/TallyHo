@@ -262,15 +262,14 @@ describe('useGameStore', () => {
     expect(useGameStore.getState().matchHistory.length).toBe(1);
 
     // Mock the global localStorage since vitest might be running in an environment without standard Storage prototype
-    const originalLocalStorage = global.localStorage;
     let removeCalled = false;
-    global.localStorage = {
-      ...originalLocalStorage,
+
+    vi.stubGlobal('localStorage', {
       removeItem: vi.fn(() => {
         removeCalled = true;
         throw new Error('Simulated localStorage error');
       }),
-    } as any;
+    });
 
     try {
       expect(() => store.clearHistory()).not.toThrow();
@@ -278,7 +277,7 @@ describe('useGameStore', () => {
       expect(useGameStore.getState().matchHistory.length).toBe(0);
     } finally {
       // Restore global localStorage
-      global.localStorage = originalLocalStorage;
+      vi.unstubAllGlobals();
     }
   });
 });
