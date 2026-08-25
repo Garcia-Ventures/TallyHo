@@ -9,7 +9,6 @@ import {
   Switch,
   Text,
 } from '@gv-tech/ui-native';
-import { useRouter } from 'expo-router';
 import {
   AlertCircle,
   CheckCircle2,
@@ -44,6 +43,7 @@ import { RemoveAdsModal } from '../../src/components/RemoveAdsModal';
 import { RestorePurchaseModal } from '../../src/components/RestorePurchaseModal';
 import { ScreenContainer } from '../../src/components/ScreenContainer';
 import { PALETTE } from '../../src/constants/colors';
+import { useSafeRouter } from '../../src/hooks/useSafeRouter';
 import { nativeSound } from '../../src/services/audio';
 import { restoreAdFreePurchases } from '../../src/services/purchases';
 import { storage } from '../../src/services/storage';

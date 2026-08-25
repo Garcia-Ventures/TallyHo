@@ -56,7 +56,7 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
     const name = newPlayerName.trim();
     const initials = name.slice(0, 2).toUpperCase();
     const color = PLAYER_COLORS[players.length % PLAYER_COLORS.length].hex;
-    setPlayers((prev) => [...prev, { id: `p_${Date.now()}_${Math.random()}`, name, initials, color }]);
+    setPlayers((prev) => [...prev, { id: `p_${crypto.randomUUID()}`, name, initials, color }]);
     setNewPlayerName('');
   };
 
