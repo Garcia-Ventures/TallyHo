@@ -15,7 +15,7 @@ export function getAnonymousUserId(): string {
   if (stored) {
     return stored;
   }
-  const newId = `web_${Math.random().toString(36).substring(2, 11)}_${Date.now()}`;
+  const newId = `web_${crypto.randomUUID()}`;
   localStorage.setItem(ANONYMOUS_USER_STORAGE_KEY, newId);
   return newId;
 }
