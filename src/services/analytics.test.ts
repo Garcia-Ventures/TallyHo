@@ -46,7 +46,7 @@ describe('analytics service', () => {
 
   it('swallows errors if OpenPanel constructor throws during initialization', async () => {
     const { OpenPanel } = await import('@openpanel/web');
-    (OpenPanel as any).mockImplementationOnce(function () {
+    vi.mocked(OpenPanel).mockImplementationOnce(function () {
       throw new Error('Init Error');
     });
 
