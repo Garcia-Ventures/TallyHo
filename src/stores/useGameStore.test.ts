@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { storage } from '../services/storage';
 import { useGameStore } from './useGameStore';
 
@@ -248,5 +248,36 @@ describe('useGameStore', () => {
 
     store.setIsPlayMode(false);
     expect(useGameStore.getState().isPlayMode).toBe(false);
+  });
+
+  it('handles localStorage errors gracefully during clearHistory', () => {
+    const store = useGameStore.getState();
+    store.createGame({
+      name: 'Error Handling Match',
+      scoringMode: 'RACE_HIGH',
+      roundScoringType: 'EVERY_PLAYER',
+      players: [{ id: 'p1', name: 'Eric', initials: 'E', color: '#E5A93C' }],
+    });
+    store.endMatchManually();
+    expect(useGameStore.getState().matchHistory.length).toBe(1);
+
+    // Mock the global localStorage since vitest might be running in an environment without standard Storage prototype
+    let removeCalled = false;
+
+    vi.stubGlobal('localStorage', {
+      removeItem: vi.fn(() => {
+        removeCalled = true;
+        throw new Error('Simulated localStorage error');
+      }),
+    });
+
+    try {
+      expect(() => store.clearHistory()).not.toThrow();
+      expect(removeCalled).toBe(true);
+      expect(useGameStore.getState().matchHistory.length).toBe(0);
+    } finally {
+      // Restore global localStorage
+      vi.unstubAllGlobals();
+    }
   });
 });

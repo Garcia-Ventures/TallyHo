@@ -1,5 +1,5 @@
 import { Button, Card, CardContent, Text } from '@gv-tech/ui-native';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { nativeSound } from '../services/audio';
 import { GameSession, Player, RoundScore } from '../types/game';
@@ -25,7 +25,7 @@ export const PlayModeView: React.FC<PlayModeViewProps> = ({
   const [penaltyInput, setPenaltyInput] = useState('');
 
   const activePlayer: Player | undefined = game.players[selectedPlayerIndex];
-  const totals = calculatePlayerTotals(game);
+  const totals = useMemo(() => calculatePlayerTotals(game), [game]);
   const currentRoundNumber = game.rounds.length > 0 ? game.rounds.length : 1;
 
   const handleKeyTap = (key: string) => {
