@@ -51,7 +51,7 @@ import { useSettingsStore } from '../../src/stores/useSettingsStore';
 import { showToast } from '../../src/utils/toast';
 
 export default function SettingsModal() {
-  const router = useSafeRouter();
+  const router = useRouter();
   const { settings, updateSettings, resetSettings, purchaseRemoveAds, resetAdFreeStatus, setAdBlockedState } =
     useSettingsStore();
 
@@ -68,14 +68,6 @@ export default function SettingsModal() {
   const [isRemoveAdsModalOpen, setIsRemoveAdsModalOpen] = useState(false);
   const [isRestoreModalOpen, setIsRestoreModalOpen] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
-
-  function useSafeRouter() {
-    try {
-      return useRouter();
-    } catch {
-      return { back: () => {}, push: (_path: string) => {} };
-    }
-  }
 
   const handleThemeChange = (mode: 'system' | 'light' | 'dark') => {
     nativeSound.playPresetSelect();
