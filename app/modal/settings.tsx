@@ -51,7 +51,7 @@ import { useSettingsStore } from '../../src/stores/useSettingsStore';
 import { showToast } from '../../src/utils/toast';
 
 export default function SettingsModal() {
-  const router = useRouter();
+  const router = useSafeRouter();
   const { settings, updateSettings, resetSettings, purchaseRemoveAds, resetAdFreeStatus, setAdBlockedState } =
     useSettingsStore();
 
