@@ -7,18 +7,22 @@ import { GameHighlight, GameSession, Player, RoundScore } from '../types/game';
 export function calculatePlayerTotals(game: GameSession): Record<string, number> {
   const totals: Record<string, number> = {};
 
-  game.players.forEach((player) => {
-    totals[player.id] = 0;
-  });
+  const playersLength = game.players.length;
+  for (let i = 0; i < playersLength; i++) {
+    totals[game.players[i].id] = 0;
+  }
 
-  game.rounds.forEach((round) => {
-    Object.values(round.scores).forEach((score) => {
+  const roundsLength = game.rounds.length;
+  for (let i = 0; i < roundsLength; i++) {
+    const scores = game.rounds[i].scores;
+    for (const key in scores) {
+      const score = scores[key];
       if (score && totals[score.playerId] !== undefined) {
         const net = (score.points || 0) + (score.bonusPoints || 0) - (score.penaltyPoints || 0);
         totals[score.playerId] += net;
       }
-    });
-  });
+    }
+  }
 
   return totals;
 }
