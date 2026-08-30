@@ -1,5 +1,5 @@
 import { Button, Card, CardContent, Text } from '@gv-tech/ui-native';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { GameSession, Player } from '../types/game';
 import { calculatePlayerTotals, getSortedPlayers } from '../utils/scoring';
@@ -22,8 +22,8 @@ export const ScoreboardView: React.FC<ScoreboardViewProps> = ({
   onEndMatch,
   onReorderPlayers,
 }) => {
-  const totals = calculatePlayerTotals(game);
-  const sortedPlayers = getSortedPlayers(game, totals);
+  const totals = useMemo(() => calculatePlayerTotals(game), [game]);
+  const sortedPlayers = useMemo(() => getSortedPlayers(game, totals), [game, totals]);
   const leaderScore = totals[sortedPlayers[0]?.id] || 0;
 
   const currentRounds = game.rounds || [];
