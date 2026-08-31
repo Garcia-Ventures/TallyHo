@@ -248,6 +248,8 @@ describe('scoring utility', () => {
         p2: { playerId: 'p2', points: 5 },
       };
       expect(shouldAdvanceRound(mockGame, completeScores)).toBe(true);
+
+      expect(shouldAdvanceRound(mockGame, {})).toBe(false);
     });
 
     it('always advances round for SINGLE_WINNER mode', () => {
@@ -256,6 +258,20 @@ describe('scoring utility', () => {
         p1: { playerId: 'p1', points: 50 },
       };
       expect(shouldAdvanceRound(singleWinnerGame, incompleteScores)).toBe(true);
+    });
+
+    it('advances round for SINGLE_WINNER mode even with empty scores', () => {
+      const singleWinnerGame: GameSession = { ...mockGame, roundScoringType: 'SINGLE_WINNER' };
+      expect(shouldAdvanceRound(singleWinnerGame, {})).toBe(true);
+    });
+
+    it('advances round for SINGLE_WINNER mode with complete scores', () => {
+      const singleWinnerGame: GameSession = { ...mockGame, roundScoringType: 'SINGLE_WINNER' };
+      const completeScores = {
+        p1: { playerId: 'p1', points: 50 },
+        p2: { playerId: 'p2', points: 20 },
+      };
+      expect(shouldAdvanceRound(singleWinnerGame, completeScores)).toBe(true);
     });
   });
 
