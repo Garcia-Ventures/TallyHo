@@ -205,6 +205,35 @@ describe('scoring utility', () => {
       expect(winResult.winnerId).toBe('');
     });
 
+    it('returns no winner when game state is far from the target score', () => {
+      const farGame: GameSession = {
+        ...mockGame,
+        targetScore: 10000,
+        rounds: [
+          { roundNumber: 1, timestamp: new Date().toISOString(), scores: { p1: { playerId: 'p1', points: 1 } } },
+        ],
+      };
+      const winResult = checkWinCondition(farGame);
+      expect(winResult.hasWinner).toBe(false);
+      expect(winResult.winnerId).toBe('');
+    });
+
+    it('returns no winner when targetScore is set but scoringMode is FIXED_ROUNDS (fallthrough)', () => {
+      // Tests the fallthrough branch where targetScore is truthy but scoringMode is not RACE_HIGH or RACE_LOW.
+      const invalidStateGame: GameSession = {
+        ...mockGame,
+        targetScore: 100,
+        scoringMode: 'FIXED_ROUNDS',
+        targetRounds: 1, // Even though targetRounds is met, it should fall through due to targetScore
+        rounds: [
+          { roundNumber: 1, timestamp: new Date().toISOString(), scores: { p1: { playerId: 'p1', points: 100 } } },
+        ],
+      };
+      const winResult = checkWinCondition(invalidStateGame);
+      expect(winResult.hasWinner).toBe(false);
+      expect(winResult.winnerId).toBe('');
+    });
+
     it('detects win condition in RACE_LOW mode when any player reaches or exceeds targetScore', () => {
       // In RACE_LOW (e.g. Hearts), when any player hits 100+, the player with LOWEST score wins!
       const heartsGame: GameSession = {
