@@ -367,5 +367,48 @@ describe('scoring utility', () => {
       expect(highlights.maxSingleRoundScore).toBe(42);
       expect(highlights.maxSingleRoundPlayer?.name).toBe('Alice');
     });
+
+    it('handles games with undefined or missing score objects', () => {
+      const missingScoresGame: GameSession = {
+        ...mockGame,
+        rounds: [
+          {
+            roundNumber: 1,
+            timestamp: new Date().toISOString(),
+            scores: {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              p1: undefined as any,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              p2: null as any,
+            },
+          },
+        ],
+      };
+      const highlights = calculateGameHighlights(missingScoresGame);
+      expect(highlights.maxSingleRoundScore).toBe(0);
+      expect(highlights.winningMargin).toBe(0);
+      expect(highlights.highlights.some((h) => h.title === 'Highest Single Round')).toBe(false);
+    });
+
+    it('handles games with missing or zero points gracefully', () => {
+      const zeroPointsGame: GameSession = {
+        ...mockGame,
+        rounds: [
+          {
+            roundNumber: 1,
+            timestamp: new Date().toISOString(),
+            scores: {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              p1: { playerId: 'p1' } as any, // Missing points field entirely
+              p2: { playerId: 'p2', points: 0, bonusPoints: 0, penaltyPoints: 0 },
+            },
+          },
+        ],
+      };
+      const highlights = calculateGameHighlights(zeroPointsGame);
+      expect(highlights.maxSingleRoundScore).toBe(0);
+      expect(highlights.winningMargin).toBe(0);
+      expect(highlights.highlights.some((h) => h.title === 'Highest Single Round')).toBe(false);
+    });
   });
 });
