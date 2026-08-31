@@ -133,6 +133,49 @@ describe('scoring utility', () => {
       expect(sortedHigh.length).toBe(2);
       expect(sortedHigh.map((p) => p.id)).toEqual(['p1', 'p2']);
     });
+
+    it('uses provided totals object for sorting in RACE_LOW', () => {
+      const lowGame: GameSession = { ...mockGame, scoringMode: 'RACE_LOW' };
+      const explicitTotals = {
+        p1: 15,
+        p2: 5,
+      };
+      const sorted = getSortedPlayers(lowGame, explicitTotals);
+      expect(sorted[0].id).toBe('p2');
+      expect(sorted[1].id).toBe('p1');
+    });
+
+    it('handles ties gracefully by maintaining player order in RACE_LOW mode', () => {
+      const tiedGame: GameSession = {
+        ...mockGame,
+        scoringMode: 'RACE_LOW',
+        rounds: [
+          {
+            roundNumber: 1,
+            timestamp: new Date().toISOString(),
+            scores: {
+              p1: { playerId: 'p1', points: 20 },
+              p2: { playerId: 'p2', points: 20 },
+            },
+          },
+        ],
+      };
+      const sortedLow = getSortedPlayers(tiedGame);
+      expect(sortedLow.length).toBe(2);
+      expect(sortedLow.map((p) => p.id)).toEqual(['p1', 'p2']);
+    });
+
+    it('sorts correctly in RACE_LOW mode with negative scores and missing player totals', () => {
+      const lowGame: GameSession = { ...mockGame, scoringMode: 'RACE_LOW' };
+      // p1 is missing (defaults to 0), p2 has a negative score
+      const explicitTotals = {
+        p2: -10,
+      };
+      const sorted = getSortedPlayers(lowGame, explicitTotals);
+      // p2 (-10) should come before p1 (0) in RACE_LOW (ascending order)
+      expect(sorted[0].id).toBe('p2');
+      expect(sorted[1].id).toBe('p1');
+    });
   });
 
   describe('checkWinCondition', () => {
