@@ -99,6 +99,16 @@ describe('scoring utility', () => {
       expect(totals['p2']).toBe(0);
       expect(totals['unknown_player']).toBeUndefined();
     });
+
+    it('returns an empty object when game state has no players and no rounds', () => {
+      const emptyGameState: GameSession = {
+        ...mockGame,
+        players: [],
+        rounds: [],
+      };
+      const totals = calculatePlayerTotals(emptyGameState);
+      expect(totals).toEqual({});
+    });
   });
 
   describe('getSortedPlayers', () => {
