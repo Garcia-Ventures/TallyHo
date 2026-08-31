@@ -306,10 +306,11 @@ describe('scoring utility', () => {
           {
             roundNumber: 1,
             timestamp: new Date().toISOString(),
-            // @ts-expect-error Testing undefined score object at runtime
             scores: {
-              p1: undefined,
-              p2: null,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              p1: undefined as any,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              p2: null as any,
             },
           },
         ],
@@ -328,7 +329,8 @@ describe('scoring utility', () => {
             roundNumber: 1,
             timestamp: new Date().toISOString(),
             scores: {
-              p1: { playerId: 'p1' }, // Missing points field entirely
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              p1: { playerId: 'p1' } as any, // Missing points field entirely
               p2: { playerId: 'p2', points: 0, bonusPoints: 0, penaltyPoints: 0 },
             },
           },
