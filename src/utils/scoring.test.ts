@@ -143,6 +143,49 @@ describe('scoring utility', () => {
       expect(sortedHigh.length).toBe(2);
       expect(sortedHigh.map((p) => p.id)).toEqual(['p1', 'p2']);
     });
+
+    it('uses provided totals object for sorting in RACE_LOW', () => {
+      const lowGame: GameSession = { ...mockGame, scoringMode: 'RACE_LOW' };
+      const explicitTotals = {
+        p1: 15,
+        p2: 5,
+      };
+      const sorted = getSortedPlayers(lowGame, explicitTotals);
+      expect(sorted[0].id).toBe('p2');
+      expect(sorted[1].id).toBe('p1');
+    });
+
+    it('handles ties gracefully by maintaining player order in RACE_LOW mode', () => {
+      const tiedGame: GameSession = {
+        ...mockGame,
+        scoringMode: 'RACE_LOW',
+        rounds: [
+          {
+            roundNumber: 1,
+            timestamp: new Date().toISOString(),
+            scores: {
+              p1: { playerId: 'p1', points: 20 },
+              p2: { playerId: 'p2', points: 20 },
+            },
+          },
+        ],
+      };
+      const sortedLow = getSortedPlayers(tiedGame);
+      expect(sortedLow.length).toBe(2);
+      expect(sortedLow.map((p) => p.id)).toEqual(['p1', 'p2']);
+    });
+
+    it('sorts correctly in RACE_LOW mode with negative scores and missing player totals', () => {
+      const lowGame: GameSession = { ...mockGame, scoringMode: 'RACE_LOW' };
+      // p1 is missing (defaults to 0), p2 has a negative score
+      const explicitTotals = {
+        p2: -10,
+      };
+      const sorted = getSortedPlayers(lowGame, explicitTotals);
+      // p2 (-10) should come before p1 (0) in RACE_LOW (ascending order)
+      expect(sorted[0].id).toBe('p2');
+      expect(sorted[1].id).toBe('p1');
+    });
   });
 
   describe('checkWinCondition', () => {
@@ -158,6 +201,35 @@ describe('scoring utility', () => {
         targetScore: 500,
       };
       const winResult = checkWinCondition(ongoingGame);
+      expect(winResult.hasWinner).toBe(false);
+      expect(winResult.winnerId).toBe('');
+    });
+
+    it('returns no winner when game state is far from the target score', () => {
+      const farGame: GameSession = {
+        ...mockGame,
+        targetScore: 10000,
+        rounds: [
+          { roundNumber: 1, timestamp: new Date().toISOString(), scores: { p1: { playerId: 'p1', points: 1 } } },
+        ],
+      };
+      const winResult = checkWinCondition(farGame);
+      expect(winResult.hasWinner).toBe(false);
+      expect(winResult.winnerId).toBe('');
+    });
+
+    it('returns no winner when targetScore is set but scoringMode is FIXED_ROUNDS (fallthrough)', () => {
+      // Tests the fallthrough branch where targetScore is truthy but scoringMode is not RACE_HIGH or RACE_LOW.
+      const invalidStateGame: GameSession = {
+        ...mockGame,
+        targetScore: 100,
+        scoringMode: 'FIXED_ROUNDS',
+        targetRounds: 1, // Even though targetRounds is met, it should fall through due to targetScore
+        rounds: [
+          { roundNumber: 1, timestamp: new Date().toISOString(), scores: { p1: { playerId: 'p1', points: 100 } } },
+        ],
+      };
+      const winResult = checkWinCondition(invalidStateGame);
       expect(winResult.hasWinner).toBe(false);
       expect(winResult.winnerId).toBe('');
     });
@@ -248,6 +320,8 @@ describe('scoring utility', () => {
         p2: { playerId: 'p2', points: 5 },
       };
       expect(shouldAdvanceRound(mockGame, completeScores)).toBe(true);
+
+      expect(shouldAdvanceRound(mockGame, {})).toBe(false);
     });
 
     it('always advances round for SINGLE_WINNER mode', () => {
@@ -256,6 +330,20 @@ describe('scoring utility', () => {
         p1: { playerId: 'p1', points: 50 },
       };
       expect(shouldAdvanceRound(singleWinnerGame, incompleteScores)).toBe(true);
+    });
+
+    it('advances round for SINGLE_WINNER mode even with empty scores', () => {
+      const singleWinnerGame: GameSession = { ...mockGame, roundScoringType: 'SINGLE_WINNER' };
+      expect(shouldAdvanceRound(singleWinnerGame, {})).toBe(true);
+    });
+
+    it('advances round for SINGLE_WINNER mode with complete scores', () => {
+      const singleWinnerGame: GameSession = { ...mockGame, roundScoringType: 'SINGLE_WINNER' };
+      const completeScores = {
+        p1: { playerId: 'p1', points: 50 },
+        p2: { playerId: 'p2', points: 20 },
+      };
+      expect(shouldAdvanceRound(singleWinnerGame, completeScores)).toBe(true);
     });
   });
 
@@ -307,6 +395,49 @@ describe('scoring utility', () => {
       expect(highlights.winningMargin).toBe(0);
       expect(highlights.maxSingleRoundScore).toBe(42);
       expect(highlights.maxSingleRoundPlayer?.name).toBe('Alice');
+    });
+
+    it('handles games with undefined or missing score objects', () => {
+      const missingScoresGame: GameSession = {
+        ...mockGame,
+        rounds: [
+          {
+            roundNumber: 1,
+            timestamp: new Date().toISOString(),
+            scores: {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              p1: undefined as any,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              p2: null as any,
+            },
+          },
+        ],
+      };
+      const highlights = calculateGameHighlights(missingScoresGame);
+      expect(highlights.maxSingleRoundScore).toBe(0);
+      expect(highlights.winningMargin).toBe(0);
+      expect(highlights.highlights.some((h) => h.title === 'Highest Single Round')).toBe(false);
+    });
+
+    it('handles games with missing or zero points gracefully', () => {
+      const zeroPointsGame: GameSession = {
+        ...mockGame,
+        rounds: [
+          {
+            roundNumber: 1,
+            timestamp: new Date().toISOString(),
+            scores: {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              p1: { playerId: 'p1' } as any, // Missing points field entirely
+              p2: { playerId: 'p2', points: 0, bonusPoints: 0, penaltyPoints: 0 },
+            },
+          },
+        ],
+      };
+      const highlights = calculateGameHighlights(zeroPointsGame);
+      expect(highlights.maxSingleRoundScore).toBe(0);
+      expect(highlights.winningMargin).toBe(0);
+      expect(highlights.highlights.some((h) => h.title === 'Highest Single Round')).toBe(false);
     });
   });
 });
