@@ -101,8 +101,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Point to weekly train
+        env:
+          TAG_NAME: ${{ needs.release-please.outputs.tag_name }}
         run: |
-          echo "Release ${{ needs.release-please.outputs.tag_name }} versioned without a cloud build (quota guard)."
+          echo "Release $TAG_NAME versioned without a cloud build (quota guard)."
           echo "Cloud builds batch in the weekly train: .github/workflows/release-train.yml"
           echo "JS-only fix? Run: bun run update:production -- --message '<tag> <notes>'"
           echo "Need a binary now? Re-run this workflow manually with enable_cloud_build=true, or dispatch the train with platform=android."

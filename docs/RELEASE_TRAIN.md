@@ -7,7 +7,9 @@ Goal: **~4-5 cloud builds/mo** with buffer for hotfixes.
 
 1. **JS-only change?** (`src/`, `app/`, assets, styles)
    → OTA only, 0 builds: `bun run update:production -- --message "fix: <notes>"`
-2. **Native change?** (`android/`, `ios/`, `app.json`, `eas.json`, `package.json`, `bun.lock`, native plugins)
+2. **Native change?** (detected by `scripts/fingerprint-diff.mjs`: Expo fingerprint
+   hash of HEAD vs last tag — catches config/plugin/dep changes the path filter
+   would miss; `package.json`/`bun.lock` changes short-circuit to rebuild)
    → waits for Tuesday 14:00 UTC train (`release-train.yml`), max 1 gated build.
 3. **Need store submission without rebuild?**
    → `bun run submit:android:latest` (`eas submit --latest`, 0 builds).
@@ -29,6 +31,7 @@ OTA channels map to build profiles via `eas.json: channel` (`development`/`previ
 
 ```bash
 bun run quota:check
+bun run fingerprint:check # fingerprint HEAD vs last tag (JSON, no side effects)
 bun run update:preview -- --message "preview <notes>"
 bun run update:production -- --message "v1.3.2 hotfix"
 bun run build:android:local:apk    # preview APK, no quota

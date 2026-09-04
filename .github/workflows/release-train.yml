@@ -60,12 +60,15 @@ jobs:
         run: bun run validate
 
   detect-native-changes:
-    name: Detect Native Changes
+    name: Detect Native Changes (Fingerprint)
     needs: validate
     runs-on: ubuntu-latest
     outputs:
       native_changed: ${{ steps.native.outputs.changed }}
       changed_files: ${{ steps.native.outputs.files }}
+      method: ${{ steps.native.outputs.method }}
+      base_hash: ${{ steps.native.outputs.base_hash }}
+      head_hash: ${{ steps.native.outputs.head_hash }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -78,33 +81,16 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Install Dependencies (for helper script)
+      - name: Install Dependencies (for fingerprint compare)
         run: bun install --frozen-lockfile
 
-      - name: Detect native-affecting changes since last tag
+      - name: "Compare fingerprint against last tag (fallback: path filter)"
         id: native
+        env:
+          TRAIN_PLATFORM: ${{ github.event.inputs.platform || 'android' }}
         run: |
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          if [ -z "$LAST_TAG" ]; then
-            RANGE="HEAD"
-          else
-            RANGE="$LAST_TAG..HEAD"
-          fi
-          echo "Diff range: $RANGE"
-          FILES=$(git diff --name-only "$RANGE" 2>/dev/null || git diff --name-only HEAD~1 HEAD 2>/dev/null || echo "")
-          echo "Changed files:"
-          echo "$FILES"
-          RESULT=$(echo "$FILES" | bun -e "
-            import { readFileSync } from 'fs';
-            let files = '';
-            process.stdin.on('data', d => files += d);
-            process.stdin.on('end', async () => {
-              const { hasNativeChanges } = await import('./scripts/eas-build-safe.mjs');
-              const list = files.split('\n').map(s => s.trim()).filter(Boolean);
-              console.log(hasNativeChanges(list) ? 'true' : 'false');
-            });
-          ")
-          echo "changed=$RESULT" >> "$GITHUB_OUTPUT"
+          node ./scripts/fingerprint-diff.mjs --platform "$TRAIN_PLATFORM" --github-output
+          FILES=$(git diff --name-only "$(git describe --tags --abbrev=0 2>/dev/null || echo HEAD~1)"...HEAD 2>/dev/null || git diff --name-only HEAD~1 HEAD 2>/dev/null || echo "")
           {
             echo "files<<EOF"
             echo "$FILES"
@@ -141,9 +127,10 @@ jobs:
 
       - name: Publish OTA to production channel
         run: |
-          bun run update:production -- --message "train $(date -u +%Y-%m-%d) ${GITHUB_SHA:0:7} native_changed=${{ needs.detect-native-changes.outputs.native_changed }}"
+          bun run update:production -- --message "train $(date -u +%Y-%m-%d) ${GITHUB_SHA:0:7} native_changed=$NATIVE_CHANGED"
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          NATIVE_CHANGED: ${{ needs.detect-native-changes.outputs.native_changed }}
 
   cloud-build:
     name: Gated Cloud Build (Native Changes Only)
@@ -178,9 +165,10 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Quota preflight reminder
-        run: node ./scripts/eas-build-safe.mjs --check-quota --platform "${{ github.event.inputs.platform || 'android' }}"
+        run: node ./scripts/eas-build-safe.mjs --check-quota --platform "$TRAIN_PLATFORM"
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          TRAIN_PLATFORM: ${{ github.event.inputs.platform || 'android' }}
 
       - name: Build & Submit Android (Production)
         if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'android' || github.event.inputs.platform == '' || github.event_name == 'schedule' }}
@@ -201,10 +189,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Report decision
+        env:
+          NATIVE_CHANGED: ${{ needs.detect-native-changes.outputs.native_changed }}
+          DETECT_METHOD: ${{ needs.detect-native-changes.outputs.method }}
+          BASE_HASH: ${{ needs.detect-native-changes.outputs.base_hash }}
+          HEAD_HASH: ${{ needs.detect-native-changes.outputs.head_hash }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
           echo "## 🚂 Weekly Train Decision" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "- native_changed: ${{ needs.detect-native-changes.outputs.native_changed }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "- dry_run: ${{ github.event.inputs.dry_run }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- native_changed: $NATIVE_CHANGED" >> "$GITHUB_STEP_SUMMARY"
+          echo "- method: $DETECT_METHOD (fingerprint authoritative, path-filter fallback)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- base_hash: \`$BASE_HASH\` head_hash: \`$HEAD_HASH\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- dry_run: $DRY_RUN" >> "$GITHUB_STEP_SUMMARY"
           echo "- JS-only path: OTA update only (0 builds). Native path: 1 gated build max." >> "$GITHUB_STEP_SUMMARY"
           echo "- Quota-free fallback: \`bun run build:android:local:submit\` or \`eas submit --latest --platform android\`" >> "$GITHUB_STEP_SUMMARY"
