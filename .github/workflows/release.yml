@@ -1,4 +1,10 @@
-name: Release & EAS Auto-Publish
+name: Release & EAS Auto-Publish (Opt-In Cloud Builds)
+
+# Quota guard: push to main only versions + changelog via release-please.
+# Cloud EAS builds run via the weekly release train (release-train.yml)
+# or manual workflow_dispatch with enable_cloud_build=true.
+# Prefer OTA updates (eas update) and local builds (bun run build:android:local:*)
+# to stay inside the Free plan (15 Android + 15 iOS builds/mo).
 
 on:
   push:
@@ -13,7 +19,13 @@ on:
         type: choice
         options:
           - android
+          - ios
           - all
+      enable_cloud_build:
+        description: "Run quota-consuming EAS cloud build (otherwise version-only)"
+        required: true
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -36,10 +48,12 @@ jobs:
           manifest-file: .release-please-manifest.json
 
   publish-eas:
-    name: Build & Auto-Publish to Stores via EAS
+    name: Build & Auto-Publish to Stores via EAS (Manual Opt-In Only)
     needs: release-please
-    if: ${{ needs.release-please.outputs.release_created == 'true' || github.event_name == 'workflow_dispatch' }}
+    # Quota guard: never auto-build on push. Only manual dispatch with explicit opt-in.
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.enable_cloud_build == 'true' }}
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - name: Checkout Code
         uses: actions/checkout@v7
@@ -69,7 +83,7 @@ jobs:
         run: bun run validate
 
       - name: Build & Submit Android App Bundle (Production)
-        if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'android' || needs.release-please.outputs.release_created == 'true' }}
+        if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'android' }}
         run: node ./scripts/eas-build-safe.mjs build --platform android --profile production --auto-submit --non-interactive
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
@@ -79,3 +93,16 @@ jobs:
         run: node ./scripts/eas-build-safe.mjs build --platform ios --profile production --non-interactive
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+  version-only-notice:
+    name: Version-Only Notice (No Cloud Build)
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' && github.event_name != 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Point to weekly train
+        run: |
+          echo "Release ${{ needs.release-please.outputs.tag_name }} versioned without a cloud build (quota guard)."
+          echo "Cloud builds batch in the weekly train: .github/workflows/release-train.yml"
+          echo "JS-only fix? Run: bun run update:production -- --message '<tag> <notes>'"
+          echo "Need a binary now? Re-run this workflow manually with enable_cloud_build=true, or dispatch the train with platform=android."

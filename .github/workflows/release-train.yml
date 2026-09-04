@@ -1,0 +1,210 @@
+name: Weekly Release Train (Quota-Safe)
+
+# Batch all merged releases into ~1 cloud build/week (Tue 14:00 UTC, off-peak).
+# JS-only changes ship via EAS Update (no build quota). Native changes trigger
+# at most one gated cloud build. Free plan: 15 Android + 15 iOS builds/mo.
+# Manual hotfix: workflow_dispatch with platform + dry_run=false.
+
+on:
+  schedule:
+    - cron: "0 14 * * TUE"
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: "Platform for native rebuild (if needed)"
+        required: true
+        default: "android"
+        type: choice
+        options:
+          - android
+          - ios
+          - all
+      dry_run:
+        description: "Detect + report only (no update, no cloud build)"
+        required: true
+        default: false
+        type: boolean
+
+concurrency:
+  group: eas-train
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Setup Node.js 22 (LTS)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run Validation Suite
+        run: bun run validate
+
+  detect-native-changes:
+    name: Detect Native Changes
+    needs: validate
+    runs-on: ubuntu-latest
+    outputs:
+      native_changed: ${{ steps.native.outputs.changed }}
+      changed_files: ${{ steps.native.outputs.files }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies (for helper script)
+        run: bun install --frozen-lockfile
+
+      - name: Detect native-affecting changes since last tag
+        id: native
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$LAST_TAG" ]; then
+            RANGE="HEAD"
+          else
+            RANGE="$LAST_TAG..HEAD"
+          fi
+          echo "Diff range: $RANGE"
+          FILES=$(git diff --name-only "$RANGE" 2>/dev/null || git diff --name-only HEAD~1 HEAD 2>/dev/null || echo "")
+          echo "Changed files:"
+          echo "$FILES"
+          RESULT=$(echo "$FILES" | bun -e "
+            import { readFileSync } from 'fs';
+            let files = '';
+            process.stdin.on('data', d => files += d);
+            process.stdin.on('end', async () => {
+              const { hasNativeChanges } = await import('./scripts/eas-build-safe.mjs');
+              const list = files.split('\n').map(s => s.trim()).filter(Boolean);
+              console.log(hasNativeChanges(list) ? 'true' : 'false');
+            });
+          ")
+          echo "changed=$RESULT" >> "$GITHUB_OUTPUT"
+          {
+            echo "files<<EOF"
+            echo "$FILES"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+  ota-update:
+    name: OTA Update (No Build Quota)
+    needs: [validate, detect-native-changes]
+    if: ${{ github.event.inputs.dry_run != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22 (LTS)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Expo & EAS CLI
+        uses: expo/expo-github-action@v9
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Publish OTA to production channel
+        run: |
+          bun run update:production -- --message "train $(date -u +%Y-%m-%d) ${GITHUB_SHA:0:7} native_changed=${{ needs.detect-native-changes.outputs.native_changed }}"
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+  cloud-build:
+    name: Gated Cloud Build (Native Changes Only)
+    needs: [validate, detect-native-changes]
+    # Quota guard: only when native code actually changed and not a dry run.
+    if: ${{ needs.detect-native-changes.outputs.native_changed == 'true' && github.event.inputs.dry_run != 'true' }}
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 22 (LTS)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Expo & EAS CLI
+        uses: expo/expo-github-action@v9
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Quota preflight reminder
+        run: node ./scripts/eas-build-safe.mjs --check-quota --platform "${{ github.event.inputs.platform || 'android' }}"
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build & Submit Android (Production)
+        if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'android' || github.event.inputs.platform == '' || github.event_name == 'schedule' }}
+        run: node ./scripts/eas-build-safe.mjs build --platform android --profile production --auto-submit --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build iOS (Production)
+        if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'ios' }}
+        run: node ./scripts/eas-build-safe.mjs build --platform ios --profile production --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+  train-summary:
+    name: Train Summary
+    needs: [detect-native-changes]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report decision
+        run: |
+          echo "## 🚂 Weekly Train Decision" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- native_changed: ${{ needs.detect-native-changes.outputs.native_changed }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- dry_run: ${{ github.event.inputs.dry_run }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- JS-only path: OTA update only (0 builds). Native path: 1 gated build max." >> "$GITHUB_STEP_SUMMARY"
+          echo "- Quota-free fallback: \`bun run build:android:local:submit\` or \`eas submit --latest --platform android\`" >> "$GITHUB_STEP_SUMMARY"

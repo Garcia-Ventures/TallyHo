@@ -66,9 +66,13 @@
       }
     },
     "owner": "gvtech",
-    "runtimeVersion": "1.0.0",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "updates": {
-      "url": "https://u.expo.dev/ce9f1e2a-8d51-47e7-a6eb-4baf66646574"
+      "url": "https://u.expo.dev/ce9f1e2a-8d51-47e7-a6eb-4baf66646574",
+      "fallbackToCacheTimeout": 0,
+      "checkAutomatically": "ON_LOAD"
     }
   }
 }
