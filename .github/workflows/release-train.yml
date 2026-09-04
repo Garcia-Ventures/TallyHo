@@ -97,6 +97,33 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
+  quota-check:
+    name: Quota Check (Observability)
+    needs: validate
+    runs-on: ubuntu-latest
+    outputs:
+      quota_status: ${{ steps.quota.outputs.quota_status }}
+      request_ok: ${{ steps.quota.outputs.request_ok }}
+      android_remaining: ${{ steps.quota.outputs.android_remaining }}
+      ios_remaining: ${{ steps.quota.outputs.ios_remaining }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Expo & EAS CLI
+        uses: expo/expo-github-action@v9
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Report quota usage vs monthly budget
+        id: quota
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          REQUEST_PLATFORM: ${{ github.event.inputs.platform || 'android' }}
+        run: |
+          node ./scripts/eas-quota.mjs --platform all --request "$REQUEST_PLATFORM" --json --github-output --summary | tail -3
+
   ota-update:
     name: OTA Update (No Build Quota)
     needs: [validate, detect-native-changes]
@@ -134,9 +161,10 @@ jobs:
 
   cloud-build:
     name: Gated Cloud Build (Native Changes Only)
-    needs: [validate, detect-native-changes]
-    # Quota guard: only when native code actually changed and not a dry run.
-    if: ${{ needs.detect-native-changes.outputs.native_changed == 'true' && github.event.inputs.dry_run != 'true' }}
+    needs: [validate, detect-native-changes, quota-check]
+    # Quota guard: only when native code actually changed, requested platform
+    # still has budget, and not a dry run.
+    if: ${{ needs.detect-native-changes.outputs.native_changed == 'true' && needs.quota-check.outputs.request_ok == 'true' && github.event.inputs.dry_run != 'true' }}
     runs-on: ubuntu-latest
     environment: production
     steps:
@@ -164,8 +192,8 @@ jobs:
       - name: Install Dependencies
         run: bun install --frozen-lockfile
 
-      - name: Quota preflight reminder
-        run: node ./scripts/eas-build-safe.mjs --check-quota --platform "$TRAIN_PLATFORM"
+      - name: Quota gate (fail-closed at build time)
+        run: node ./scripts/eas-quota.mjs --platform all --request "$TRAIN_PLATFORM" --fail-on-exhausted
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           TRAIN_PLATFORM: ${{ github.event.inputs.platform || 'android' }}
@@ -184,7 +212,7 @@ jobs:
 
   train-summary:
     name: Train Summary
-    needs: [detect-native-changes]
+    needs: [detect-native-changes, quota-check]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -195,12 +223,16 @@ jobs:
           BASE_HASH: ${{ needs.detect-native-changes.outputs.base_hash }}
           HEAD_HASH: ${{ needs.detect-native-changes.outputs.head_hash }}
           DRY_RUN: ${{ github.event.inputs.dry_run }}
+          QUOTA_STATUS: ${{ needs.quota-check.outputs.quota_status }}
+          ANDROID_REMAINING: ${{ needs.quota-check.outputs.android_remaining }}
+          IOS_REMAINING: ${{ needs.quota-check.outputs.ios_remaining }}
         run: |
           echo "## 🚂 Weekly Train Decision" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "- native_changed: $NATIVE_CHANGED" >> "$GITHUB_STEP_SUMMARY"
           echo "- method: $DETECT_METHOD (fingerprint authoritative, path-filter fallback)" >> "$GITHUB_STEP_SUMMARY"
           echo "- base_hash: \`$BASE_HASH\` head_hash: \`$HEAD_HASH\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- quota: $QUOTA_STATUS (android left: $ANDROID_REMAINING, ios left: $IOS_REMAINING)" >> "$GITHUB_STEP_SUMMARY"
           echo "- dry_run: $DRY_RUN" >> "$GITHUB_STEP_SUMMARY"
           echo "- JS-only path: OTA update only (0 builds). Native path: 1 gated build max." >> "$GITHUB_STEP_SUMMARY"
           echo "- Quota-free fallback: \`bun run build:android:local:submit\` or \`eas submit --latest --platform android\`" >> "$GITHUB_STEP_SUMMARY"

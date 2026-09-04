@@ -27,10 +27,26 @@ Goal: **~4-5 cloud builds/mo** with buffer for hotfixes.
 
 OTA channels map to build profiles via `eas.json: channel` (`development`/`preview`/`production`) and `app.json: runtimeVersion.policy=appVersion` — OTA only applies to matching binaries.
 
+## Quota observability
+
+Every train runs a `quota-check` job (`scripts/eas-quota.mjs`) that counts this
+month's cloud builds via `eas build:list` and posts a badge to the run summary:
+
+- `ok` (>5 left per platform) → train proceeds normally.
+- `warning` (≤5 left) → prefer OTA and `--local` builds until the 1st.
+- `exhausted` (0 left) → `cloud-build` is skipped automatically; a fail-closed
+  `--fail-on-exhausted` re-check runs at build time in case usage changed mid-train.
+
+Telemetry is fail-open: if `eas build:list` is unreachable, the gate is skipped
+(`request_ok=true`, status `unknown`) so a monitoring outage never blocks a
+release — check Billing → Usage manually in that case. Override budgets for paid
+plans: `node ./scripts/eas-quota.mjs --budget-android 30 --budget-ios 30`.
+
 ## Manual commands
 
 ```bash
 bun run quota:check
+bun run quota:status      # live usage vs monthly budget (15/15 Free)
 bun run fingerprint:check # fingerprint HEAD vs last tag (JSON, no side effects)
 bun run update:preview -- --message "preview <notes>"
 bun run update:production -- --message "v1.3.2 hotfix"

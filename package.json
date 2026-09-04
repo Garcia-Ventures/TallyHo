@@ -30,6 +30,7 @@
     "fingerprint:diff": "node ./scripts/fingerprint-diff.mjs --json",
     "fingerprint:check": "node ./scripts/fingerprint-diff.mjs --platform android --json",
     "quota:check": "node ./scripts/eas-build-safe.mjs --check-quota --platform android",
+    "quota:status": "node ./scripts/eas-quota.mjs --platform all --summary",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
