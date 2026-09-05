@@ -5,6 +5,15 @@ All notable changes to the TallyHo project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.3.1...tally-ho-v1.4.0) (2026-09-05)
+
+
+### Features
+
+* add EAS build quota monitoring script and CI integration to release workflow ([e52b1e4](https://github.com/Garcia-Ventures/TallyHo/commit/e52b1e4f3a72a4a1d235e6b305205207f9a3076b))
+* implement fingerprint-based native change detection and integrate into CI workflows ([3b7e903](https://github.com/Garcia-Ventures/TallyHo/commit/3b7e903fc3ce795f7251bd426159d959c3a1e75e))
+* implement weekly release train workflow to optimize EAS build quota usage via native change detection and OTA updates ([cd1d856](https://github.com/Garcia-Ventures/TallyHo/commit/cd1d856b7d449846be4758465e58497ea720f236))
+
 ## [1.3.1](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.3.0...tally-ho-v1.3.1) (2026-08-31)
 
 
