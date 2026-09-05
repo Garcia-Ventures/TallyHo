@@ -32,6 +32,33 @@ export function isQuotaLimitError(output) {
   return QUOTA_ERROR_PATTERNS.some((pattern) => pattern.test(output));
 }
 
+// Path patterns that require a native rebuild (EAS Build). Everything else
+// can ship via EAS Update (OTA) without consuming build quota.
+// Keep in sync with release-train.yml detect-native-changes.
+export const NATIVE_CHANGE_PATTERNS = [
+  /^android\//,
+  /^ios\//,
+  /^app\.json$/,
+  /^eas\.json$/,
+  /^package\.json$/,
+  /^bun\.lock$/,
+  /^\.env.*/,
+  /^plugins\//,
+  /^credentials?\.(json|properties)$/,
+  /native/i,
+];
+
+/**
+ * Returns true if any changed file requires a native rebuild.
+ * @param {string[]} files git-changed file paths
+ */
+export function hasNativeChanges(files) {
+  if (!Array.isArray(files) || files.length === 0) {
+    return false;
+  }
+  return files.some((f) => NATIVE_CHANGE_PATTERNS.some((pattern) => pattern.test(f)));
+}
+
 /**
  * Generates the local fallback instructions markdown for GitHub Step Summary.
  */
@@ -77,6 +104,32 @@ ${localCommand}
  * Main execution handler.
  */
 async function main() {
+  // Quota preflight: `node ./scripts/eas-build-safe.mjs --check-quota --platform android`
+  // Prints a reminder + GitHub summary without consuming a build. Used by release-train.yml.
+  if (args.includes('--check-quota')) {
+    const platformArgIndex = args.indexOf('--platform');
+    const platform = platformArgIndex !== -1 && args[platformArgIndex + 1] ? args[platformArgIndex + 1] : 'android';
+    console.log('\n🔍 EAS quota preflight check');
+    console.log(`Platform: ${platform}`);
+    console.log('Free plan: 15 Android + 15 iOS builds/mo, resets on the 1st. Low-priority queue.');
+    console.log('Check usage: https://expo.dev/settings/billing (Usage section).');
+    console.log('Prefer OTA for JS-only: bun run update:production -- --message "<notes>"');
+    console.log('Quota-free fallback: bun run build:android:local:submit / eas submit --latest\n');
+    const summaryFile = process.env.GITHUB_STEP_SUMMARY;
+    if (summaryFile && existsSync(summaryFile)) {
+      try {
+        appendFileSync(
+          summaryFile,
+          `\n### 🔍 EAS Quota Preflight (${platform})\n\nFree: 15 Android + 15 iOS builds/mo. Prefer OTA / \`--local\` / \`submit --latest\`. Check Billing → Usage before proceeding.\n`,
+          'utf8',
+        );
+      } catch (err) {
+        console.warn('Could not write to GITHUB_STEP_SUMMARY:', err);
+      }
+    }
+    process.exit(0);
+  }
+
   const platformArgIndex = args.indexOf('--platform');
   const platform = platformArgIndex !== -1 && args[platformArgIndex + 1] ? args[platformArgIndex + 1] : 'android';
 
