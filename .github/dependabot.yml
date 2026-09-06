@@ -15,6 +15,12 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    ignore:
+      # Pinned for NativeWind v5 / react-native-css: >1.30.1 breaks native
+      # bundling with "failed to deserialize ... Specifier, found ()".
+      # See nativewind#1605, #1613, #1632. Unpin only after verifying
+      # `bun expo export:embed --eager --platform android --dev false`.
+      - dependency-name: "lightningcss"
 
   # Enable version updates for go
   # - package-ecosystem: gomod
