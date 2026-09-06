@@ -198,9 +198,15 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           TRAIN_PLATFORM: ${{ github.event.inputs.platform || 'android' }}
 
-      - name: Build & Submit Android (Production)
+      - name: Build Android (Production)
         if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'android' || github.event.inputs.platform == '' || github.event_name == 'schedule' }}
-        run: node ./scripts/eas-build-safe.mjs build --platform android --profile production --auto-submit --non-interactive
+        run: node ./scripts/eas-build-safe.mjs build --platform android --profile production --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Submit Android to Play Store (Production)
+        if: ${{ github.event.inputs.platform == 'all' || github.event.inputs.platform == 'android' || github.event.inputs.platform == '' || github.event_name == 'schedule' }}
+        run: node ./scripts/eas-build-safe.mjs submit --platform android --profile production --latest --non-interactive
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
