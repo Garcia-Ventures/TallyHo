@@ -4,6 +4,7 @@ import { Modal, Pressable, ScrollView, View } from 'react-native';
 import { PALETTE } from '../constants/colors';
 import { nativeSound } from '../services/audio';
 import { GAME_PRESETS, GamePreset, PLAYER_COLORS, Player, RoundScoringType, ScoringMode } from '../types/game';
+import { generateId } from '../utils/uuid';
 import { ScreenContainer } from './ScreenContainer';
 
 interface GameSetupModalProps {
@@ -56,7 +57,7 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
     const name = newPlayerName.trim();
     const initials = name.slice(0, 2).toUpperCase();
     const color = PLAYER_COLORS[players.length % PLAYER_COLORS.length].hex;
-    setPlayers((prev) => [...prev, { id: `p_${crypto.randomUUID()}`, name, initials, color }]);
+    setPlayers((prev) => [...prev, { id: generateId('p'), name, initials, color }]);
     setNewPlayerName('');
   };
 

@@ -1,3 +1,4 @@
+import { fireEvent, render, screen } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -10,7 +11,19 @@ vi.mock('@gv-tech/ui-native', () => ({
   Card: ({ children, ...props }: React.ComponentProps<'div'>) => <div {...props}>{children}</div>,
   CardContent: ({ children, ...props }: React.ComponentProps<'div'>) => <div {...props}>{children}</div>,
   Text: ({ children, ...props }: React.ComponentProps<'span'>) => <span {...props}>{children}</span>,
-  Input: ({ ...props }: React.ComponentProps<'input'>) => <input {...props} />,
+  Input: ({
+    onChangeText,
+    onChange,
+    ...props
+  }: React.ComponentProps<'input'> & { onChangeText?: (text: string) => void }) => (
+    <input
+      onChange={(e) => {
+        onChange?.(e);
+        onChangeText?.(e.target.value);
+      }}
+      {...props}
+    />
+  ),
 }));
 
 vi.mock('react-native', () => ({
@@ -69,5 +82,36 @@ describe('GameSetupModal Component', () => {
     const html = renderToString(<GameSetupModal isOpen={true} onClose={vi.fn()} preset={null} onStartGame={vi.fn()} />);
 
     expect(html).toContain('Start Match');
+  });
+
+  it('safely adds a new player when crypto is undefined (React Native Hermes regression test)', () => {
+    const originalCrypto = globalThis.crypto;
+    const onStartGame = vi.fn();
+    try {
+      // @ts-expect-error - simulating React Native environment where crypto is not defined
+      delete globalThis.crypto;
+
+      render(<GameSetupModal isOpen={true} onClose={vi.fn()} preset={GAME_PRESETS[0]} onStartGame={onStartGame} />);
+
+      const input = screen.getByPlaceholderText('Add player name...');
+      fireEvent.change(input, { target: { value: 'Charlie' } });
+
+      const addButton = screen.getByText('+ Add');
+      fireEvent.click(addButton);
+
+      expect(screen.getByText('Charlie')).toBeDefined();
+
+      const startButton = screen.getByText('🚀 Start Match');
+      fireEvent.click(startButton);
+
+      expect(onStartGame).toHaveBeenCalledTimes(1);
+      const passedPlayers = onStartGame.mock.calls[0][0].players;
+      expect(passedPlayers.length).toBe(3);
+      const newPlayer = passedPlayers.find((p: { name: string }) => p.name === 'Charlie');
+      expect(newPlayer).toBeDefined();
+      expect(newPlayer.id.startsWith('p_')).toBe(true);
+    } finally {
+      globalThis.crypto = originalCrypto;
+    }
   });
 });

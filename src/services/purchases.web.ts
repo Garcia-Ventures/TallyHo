@@ -1,4 +1,5 @@
 import { PackageType, Purchases } from '@revenuecat/purchases-js';
+import { generateId } from '../utils/uuid';
 import { trackEvent } from './analytics';
 import type { PurchaseResult, PurchasesOffering, PurchasesOfferings, PurchasesPackage } from './purchases';
 
@@ -14,7 +15,7 @@ export function getAnonymousUserId(): string {
   if (stored) {
     return stored;
   }
-  const newId = `web_${crypto.randomUUID()}`;
+  const newId = generateId('web');
   localStorage.setItem(ANONYMOUS_USER_STORAGE_KEY, newId);
   return newId;
 }
