@@ -64,11 +64,15 @@ export default Sentry.wrap(function RootLayout() {
       <ThemeProvider value={themeMode}>
         <Stack
           screenOptions={{
-            headerStyle: { backgroundColor: isDark ? PALETTE.dark.card : PALETTE.paper[100] },
+            headerStyle: {
+              backgroundColor: isDark ? PALETTE.dark.card : PALETTE.paper[100],
+            },
             headerTintColor: tintColor,
             headerTitleStyle: { fontWeight: '900' },
             headerTitleAlign: 'center',
-            contentStyle: { backgroundColor: isDark ? PALETTE.dark.background : PALETTE.paper[50] },
+            contentStyle: {
+              backgroundColor: isDark ? PALETTE.dark.background : PALETTE.paper[50],
+            },
             header: Platform.OS === 'web' ? (props) => <CustomHeader {...props} /> : undefined,
           }}
         >
