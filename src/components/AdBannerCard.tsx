@@ -24,9 +24,11 @@ export function AdBannerCard({ placement = 'home', className = '' }: AdBannerCar
       return;
     }
 
-    const selectedAd = settings.isAdBlocked
-      ? AD_CONFIG.adBlockerFallbackAd
-      : AD_CONFIG.houseAds[Math.floor(Math.random() * AD_CONFIG.houseAds.length)];
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    const randomIndex = array[0] % AD_CONFIG.houseAds.length;
+
+    const selectedAd = settings.isAdBlocked ? AD_CONFIG.adBlockerFallbackAd : AD_CONFIG.houseAds[randomIndex];
 
     setAdContent(selectedAd);
 
