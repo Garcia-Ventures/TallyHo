@@ -1,8 +1,9 @@
 import { Button, Card, CardContent, Text } from '@gv-tech/ui-native';
 import React, { useMemo, useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
+
 import { nativeSound } from '../services/audio';
-import { GameSession, Player, RoundScore } from '../types/game';
+import type { GameSession, Player, RoundScore } from '../types/game';
 import { calculatePlayerTotals } from '../utils/scoring';
 import { ScreenContainer } from './ScreenContainer';
 

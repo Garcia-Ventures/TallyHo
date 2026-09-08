@@ -1,8 +1,9 @@
 import { Badge, Button, Card, CardContent, Text } from '@gv-tech/ui-native';
 import React, { useEffect } from 'react';
 import { Modal, View } from 'react-native';
+
 import { nativeSound } from '../services/audio';
-import { GameSession } from '../types/game';
+import type { GameSession } from '../types/game';
 import { calculateGameHighlights, calculatePlayerTotals, getSortedPlayers } from '../utils/scoring';
 import { AdBannerCard } from './AdBannerCard';
 import { ScreenContainer } from './ScreenContainer';

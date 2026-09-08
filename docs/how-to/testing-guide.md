@@ -36,7 +36,7 @@ bun x vitest src/utils/scoring.test.ts
 
 ## 2. Full Codebase Validation
 
-To run formatting checks, ESLint linting, TypeScript compilation, and unit tests in one command:
+To run formatting checks, Oxlint linting, TypeScript compilation, and unit tests in one command:
 
 ```bash
 bun run validate

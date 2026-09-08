@@ -1,6 +1,7 @@
 import { AlertCircle, CheckCircle2, Info, X } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Animated, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+
 import { PALETTE } from '../constants/colors';
 
 export interface ToastMessage {

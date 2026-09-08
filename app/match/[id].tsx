@@ -1,12 +1,13 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
+
 import { FlipCardContainer } from '../../src/components/FlipCardContainer';
 import { PlayModeView } from '../../src/components/PlayModeView';
 import { ScoreboardView } from '../../src/components/ScoreboardView';
 import { nativeSound } from '../../src/services/audio';
 import { useGameStore } from '../../src/stores/useGameStore';
-import { Player, RoundScore } from '../../src/types/game';
+import type { Player, RoundScore } from '../../src/types/game';
 
 export default function MatchScreen() {
   const router = useRouter();

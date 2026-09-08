@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
+
 import { addBreadcrumb, captureException, setUserContext, trackMatchEvent } from './sentry';
 
 describe('sentry utility', () => {

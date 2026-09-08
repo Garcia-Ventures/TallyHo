@@ -1,8 +1,9 @@
 import { Button, Card, CardContent, Input, Text } from '@gv-tech/ui-native';
 import React, { useState } from 'react';
 import { Modal, ScrollView, View } from 'react-native';
+
 import { nativeSound } from '../services/audio';
-import { GameSession, Round } from '../types/game';
+import type { GameSession, Round } from '../types/game';
 import { ScreenContainer } from './ScreenContainer';
 
 interface RoundHistoryModalProps {

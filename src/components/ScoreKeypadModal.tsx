@@ -1,8 +1,9 @@
 import { Button, Card, CardContent, Text } from '@gv-tech/ui-native';
 import React, { useState } from 'react';
 import { Modal, View } from 'react-native';
+
 import { nativeSound } from '../services/audio';
-import { Player, RoundScore } from '../types/game';
+import type { Player, RoundScore } from '../types/game';
 
 interface ScoreKeypadModalProps {
   isOpen: boolean;

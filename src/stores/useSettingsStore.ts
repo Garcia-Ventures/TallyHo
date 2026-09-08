@@ -1,7 +1,8 @@
 import { create } from 'zustand';
+
 import { trackEvent } from '../services/analytics';
 import { storage } from '../services/storage';
-import { UserSettings } from '../types/game';
+import type { UserSettings } from '../types/game';
 
 interface SettingsState {
   settings: UserSettings;

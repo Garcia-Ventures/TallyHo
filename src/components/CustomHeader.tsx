@@ -1,15 +1,6 @@
 import React from 'react';
-import {
-  ColorValue,
-  Image,
-  ImageSourcePropType,
-  Platform,
-  StyleProp,
-  Text,
-  useColorScheme,
-  View,
-  ViewStyle,
-} from 'react-native';
+import type { ColorValue, ImageSourcePropType, StyleProp, ViewStyle } from 'react-native';
+import { Image, Platform, Text, useColorScheme, View } from 'react-native';
 
 import logoHorizontalDark from '../../assets/logo-horizontal-dark.png';
 import logoHorizontal from '../../assets/logo-horizontal.png';

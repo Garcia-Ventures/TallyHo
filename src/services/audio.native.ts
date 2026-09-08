@@ -5,9 +5,7 @@ interface ExpoAudioPlayer {
   play: () => void;
 }
 
-/**
- * Native Sound Service for Expo / React Native using expo-audio and haptics.
- */
+/** Native Sound Service for Expo / React Native using expo-audio and haptics. */
 class NativeSoundService {
   private playerCache: Record<string, ExpoAudioPlayer> = {};
   private isAudioAvailable = true;

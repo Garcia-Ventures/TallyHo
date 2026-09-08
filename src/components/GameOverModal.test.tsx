@@ -35,7 +35,7 @@ vi.mock('./ScreenContainer', () => ({
   ScreenContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
-import { GameSession } from '../types/game';
+import type { GameSession } from '../types/game';
 import { GameOverModal } from './GameOverModal';
 
 describe('GameOverModal Component', () => {

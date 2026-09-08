@@ -6,18 +6,18 @@ Complete reference of all development, build, validation, and release scripts de
 
 ## 1. Development & Quality Scripts
 
-| Command                     | Description                                                                                 |
-| :-------------------------- | :------------------------------------------------------------------------------------------ |
-| `bun run dev` / `bun start` | Starts the local Metro bundler development server.                                          |
-| `bun run start:clean`       | Starts development server with a clear cache (`expo start -c`).                             |
-| `bun run web`               | Launches the web application in a browser.                                                  |
-| `bun run ios`               | Compiles and launches the app on an iOS simulator.                                          |
-| `bun run android`           | Compiles and launches the app on an Android emulator or device.                             |
-| `bun test` / `bun run test` | Runs the test suite via Vitest.                                                             |
-| `bun run validate`          | Executes full validation suite (Prettier check, ESLint, TypeScript `tsc --noEmit`, Vitest). |
-| `bun run validate:fix`      | Runs full validation and automatically resolves formatting and mechanical lint issues.      |
-| `bun run format`            | Runs Prettier across all project files.                                                     |
-| `bun run lint`              | Runs ESLint with caching.                                                                   |
+| Command                     | Description                                                                              |
+| :-------------------------- | :--------------------------------------------------------------------------------------- |
+| `bun run dev` / `bun start` | Starts the local Metro bundler development server.                                       |
+| `bun run start:clean`       | Starts development server with a clear cache (`expo start -c`).                          |
+| `bun run web`               | Launches the web application in a browser.                                               |
+| `bun run ios`               | Compiles and launches the app on an iOS simulator.                                       |
+| `bun run android`           | Compiles and launches the app on an Android emulator or device.                          |
+| `bun test` / `bun run test` | Runs the test suite via Vitest.                                                          |
+| `bun run validate`          | Executes full validation suite (Oxfmt check, Oxlint, TypeScript `tsc --noEmit`, Vitest). |
+| `bun run validate:fix`      | Runs full validation and automatically resolves formatting and mechanical lint issues.   |
+| `bun run format`            | Runs Oxfmt across all project files.                                                     |
+| `bun run lint`              | Runs Oxlint.                                                                             |
 
 ---
 

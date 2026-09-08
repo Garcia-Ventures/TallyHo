@@ -26,17 +26,9 @@ import {
   Volume2,
 } from 'lucide-react-native';
 import { useState } from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  Image,
-  ImageSourcePropType,
-  Platform,
-  Pressable,
-  ScrollView,
-  useColorScheme,
-  View,
-} from 'react-native';
+import type { ImageSourcePropType } from 'react-native';
+import { ActivityIndicator, Alert, Image, Platform, Pressable, ScrollView, useColorScheme, View } from 'react-native';
+
 import logoHorizontalDark from '../../assets/logo-horizontal-dark.png';
 import logoHorizontal from '../../assets/logo-horizontal.png';
 import { RemoveAdsModal } from '../../src/components/RemoveAdsModal';

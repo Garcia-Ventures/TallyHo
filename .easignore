@@ -93,7 +93,6 @@ sketch
 .github/instructions/codacy.instructions.md
 
 dist/
-.eslintcache
 .expo/
 
 # Native builds

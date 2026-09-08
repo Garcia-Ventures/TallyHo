@@ -1,6 +1,6 @@
-import { execSync } from 'child_process';
-import fs from 'fs';
-import path from 'path';
+import { execSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
 
 function getSemverBump(currentVersion, bumpType) {
   const parts = currentVersion.split('.').map(Number);
@@ -71,7 +71,7 @@ function main() {
 
   // 4. Format updated files
   try {
-    execSync(`npx prettier --write package.json app.json CHANGELOG.md`, { stdio: 'ignore' });
+    execSync(`bunx oxfmt --write package.json app.json CHANGELOG.md`, { stdio: 'ignore' });
   } catch {
     // Ignore formatting errors
   }

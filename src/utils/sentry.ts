@@ -1,6 +1,6 @@
 /**
- * Centralized Sentry Telemetry & Observability Utility for Tally Ho.
- * Safely handles environments where native Sentry SDK is not initialized (e.g. Node unit tests).
+ * Centralized Sentry Telemetry & Observability Utility for Tally Ho. Safely handles environments where native Sentry
+ * SDK is not initialized (e.g. Node unit tests).
  */
 
 let SentryModule: typeof import('@sentry/react-native') | null = null;
@@ -16,9 +16,7 @@ export interface TelemetryContext {
   [key: string]: unknown;
 }
 
-/**
- * Capture an exception in Sentry with optional extra context data.
- */
+/** Capture an exception in Sentry with optional extra context data. */
 export function captureException(error: unknown, context?: TelemetryContext): void {
   if (!SentryModule) {
     return;
@@ -33,9 +31,7 @@ export function captureException(error: unknown, context?: TelemetryContext): vo
   }
 }
 
-/**
- * Record a structured breadcrumb in Sentry for tracing application flow.
- */
+/** Record a structured breadcrumb in Sentry for tracing application flow. */
 export function addBreadcrumb(
   category: string,
   message: string,
@@ -54,9 +50,7 @@ export function addBreadcrumb(
   });
 }
 
-/**
- * Track key game lifecycle events in Sentry breadcrumbs.
- */
+/** Track key game lifecycle events in Sentry breadcrumbs. */
 export function trackMatchEvent(
   event: 'match_created' | 'round_submitted' | 'round_edited' | 'match_completed' | 'storage_reset',
   details?: Record<string, unknown>,
@@ -64,9 +58,7 @@ export function trackMatchEvent(
   addBreadcrumb('game_lifecycle', `Match Event: ${event}`, details, 'info');
 }
 
-/**
- * Set user context info for Sentry events.
- */
+/** Set user context info for Sentry events. */
 export function setUserContext(userId: string, username?: string): void {
   if (!SentryModule) {
     return;

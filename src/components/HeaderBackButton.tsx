@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
 import React from 'react';
 import { Pressable, Text } from 'react-native';
+
 import { PALETTE } from '../constants/colors';
 import { nativeSound } from '../services/audio';
 

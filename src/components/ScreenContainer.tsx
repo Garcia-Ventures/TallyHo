@@ -35,8 +35,8 @@ const PADDING_MAP: Record<ScreenPadding, string> = {
 };
 
 /**
- * ScreenContainer provides consistent max-width capping, horizontal centering,
- * responsive padding, full-width headers, and optional scrollable behavior across all app screens and modals.
+ * ScreenContainer provides consistent max-width capping, horizontal centering, responsive padding, full-width headers,
+ * and optional scrollable behavior across all app screens and modals.
  */
 export const ScreenContainer: React.FC<ScreenContainerProps> = ({
   children,

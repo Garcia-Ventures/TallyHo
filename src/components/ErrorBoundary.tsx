@@ -1,6 +1,8 @@
 import { Button, Card, CardContent, Text } from '@gv-tech/ui-native';
-import { Component, ErrorInfo, ReactNode } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
+import { Component } from 'react';
 import { View } from 'react-native';
+
 import { captureException } from '../utils/sentry';
 
 interface Props {

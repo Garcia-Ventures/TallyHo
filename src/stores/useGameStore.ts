@@ -1,7 +1,8 @@
 import { create } from 'zustand';
+
 import { trackEvent } from '../services/analytics';
 import { storage } from '../services/storage';
-import { GameSession, Player, Round, RoundScore, RoundScoringType, ScoringMode } from '../types/game';
+import type { GameSession, Player, Round, RoundScore, RoundScoringType, ScoringMode } from '../types/game';
 import { checkWinCondition, shouldAdvanceRound } from '../utils/scoring';
 import { trackMatchEvent } from '../utils/sentry';
 

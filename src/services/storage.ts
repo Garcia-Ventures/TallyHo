@@ -1,4 +1,4 @@
-import { GameSession, Player, UserSettings } from '../types/game';
+import type { GameSession, Player, UserSettings } from '../types/game';
 
 const ACTIVE_GAME_KEY = 'tallyho_active_game';
 const MATCH_HISTORY_KEY = 'tallyho_match_history';

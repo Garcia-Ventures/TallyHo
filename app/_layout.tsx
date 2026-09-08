@@ -1,12 +1,12 @@
 import '../src/global.css';
 import '../src/shim-require';
-
 import { ThemeProvider } from '@gv-tech/ui-native';
+import * as Sentry from '@sentry/react-native';
 import { Stack } from 'expo-router';
 import { useEffect } from 'react';
-import { Image, ImageSourcePropType, Platform, useColorScheme } from 'react-native';
+import type { ImageSourcePropType } from 'react-native';
+import { Image, Platform, useColorScheme } from 'react-native';
 
-import * as Sentry from '@sentry/react-native';
 import logoHorizontalDark from '../assets/logo-horizontal-dark.png';
 import logoHorizontal from '../assets/logo-horizontal.png';
 import { CustomHeader } from '../src/components/CustomHeader';

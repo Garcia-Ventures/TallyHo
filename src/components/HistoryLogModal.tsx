@@ -1,7 +1,8 @@
 import { Badge, Button, Card, CardContent, Text } from '@gv-tech/ui-native';
 import React from 'react';
 import { Modal, ScrollView, View } from 'react-native';
-import { GameSession } from '../types/game';
+
+import type { GameSession } from '../types/game';
 import { calculatePlayerTotals, getSortedPlayers } from '../utils/scoring';
 import { ScreenContainer } from './ScreenContainer';
 

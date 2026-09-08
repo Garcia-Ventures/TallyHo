@@ -20,9 +20,7 @@ class SoundService {
     return this.ctx;
   }
 
-  /**
-   * Keypad Digit Tap (0-9)
-   */
+  /** Keypad Digit Tap (0-9) */
   public playKeypadTap(): void {
     const settings = storage.getSettings();
     if (!settings.soundEnabled) {
@@ -57,9 +55,7 @@ class SoundService {
     }
   }
 
-  /**
-   * Keypad Clear / Delete (CLR, ⌫)
-   */
+  /** Keypad Clear / Delete (CLR, ⌫) */
   public playKeypadClear(): void {
     const settings = storage.getSettings();
     if (!settings.soundEnabled) {
@@ -94,9 +90,7 @@ class SoundService {
     }
   }
 
-  /**
-   * Submitting Round Score (✓ Submit Round Score)
-   */
+  /** Submitting Round Score (✓ Submit Round Score) */
   public playRoundSubmit(): void {
     const settings = storage.getSettings();
     if (!settings.soundEnabled) {
@@ -133,9 +127,7 @@ class SoundService {
     }
   }
 
-  /**
-   * Preset Selection (Golf, Uno, Phase 10, etc.)
-   */
+  /** Preset Selection (Golf, Uno, Phase 10, etc.) */
   public playPresetSelect(): void {
     const settings = storage.getSettings();
     if (!settings.soundEnabled) {
@@ -170,9 +162,7 @@ class SoundService {
     }
   }
 
-  /**
-   * Start Match Action ("🚀 Start Match")
-   */
+  /** Start Match Action ("🚀 Start Match") */
   public playGameStart(): void {
     const settings = storage.getSettings();
     if (!settings.soundEnabled) {
@@ -208,9 +198,7 @@ class SoundService {
     }
   }
 
-  /**
-   * Switching Player Card / Active Turn
-   */
+  /** Switching Player Card / Active Turn */
   public playPlayerSwitch(): void {
     const settings = storage.getSettings();
     if (!settings.soundEnabled) {
@@ -245,9 +233,7 @@ class SoundService {
     }
   }
 
-  /**
-   * Navigation Tap (Modal Close / Back)
-   */
+  /** Navigation Tap (Modal Close / Back) */
   public playNavigationTap(): void {
     const settings = storage.getSettings();
     if (!settings.soundEnabled) {
@@ -282,9 +268,7 @@ class SoundService {
     }
   }
 
-  /**
-   * Settings Toggle Switch (Sound / Haptics On/Off)
-   */
+  /** Settings Toggle Switch (Sound / Haptics On/Off) */
   public playToggle(enabled = true): void {
     const settings = storage.getSettings();
     if (!settings.soundEnabled && enabled) {
@@ -326,9 +310,7 @@ class SoundService {
     }
   }
 
-  /**
-   * Game Over Victory Fanfare (Champion Celebration)
-   */
+  /** Game Over Victory Fanfare (Champion Celebration) */
   public playVictoryFanfare(): void {
     const settings = storage.getSettings();
     if (!settings.soundEnabled) {
@@ -368,9 +350,7 @@ class SoundService {
     }
   }
 
-  /**
-   * Destructive Action / Undo
-   */
+  /** Destructive Action / Undo */
   public playUndo(): void {
     this.playKeypadClear();
   }

@@ -1,5 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { View } from 'react-native';
+
 import { ScoreKeypadModal } from '../../src/components/ScoreKeypadModal';
 import { useGameStore } from '../../src/stores/useGameStore';
 

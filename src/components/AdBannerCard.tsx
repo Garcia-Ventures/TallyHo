@@ -2,8 +2,10 @@ import { Badge, Button, Card, CardContent, Text } from '@gv-tech/ui-native';
 import { ExternalLink, Megaphone, Sparkles } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Linking, View } from 'react-native';
+
 import { PALETTE } from '../constants/colors';
-import { AD_CONFIG, AdContent } from '../constants/config';
+import type { AdContent } from '../constants/config';
+import { AD_CONFIG } from '../constants/config';
 import { trackEvent } from '../services/analytics';
 import { useSettingsStore } from '../stores/useSettingsStore';
 import { RemoveAdsModal } from './RemoveAdsModal';

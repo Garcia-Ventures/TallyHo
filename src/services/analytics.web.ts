@@ -5,9 +5,7 @@ const DEFAULT_API_URL = 'https://openpanel.gventureshq.com/api';
 
 let opInstance: OpenPanel | null = null;
 
-/**
- * Initializes OpenPanel Web SDK on Web Target.
- */
+/** Initializes OpenPanel Web SDK on Web Target. */
 export function initAnalytics(): void {
   const clientId = process.env.EXPO_PUBLIC_OPENPANEL_CLIENT_ID || DEFAULT_CLIENT_ID;
   const apiUrl = process.env.EXPO_PUBLIC_OPENPANEL_API_URL || DEFAULT_API_URL;
@@ -42,9 +40,7 @@ export function initAnalytics(): void {
   }
 }
 
-/**
- * Tracks a custom event in OpenPanel Web SDK.
- */
+/** Tracks a custom event in OpenPanel Web SDK. */
 export function trackEvent(name: string, payload?: Record<string, unknown>): void {
   if (!opInstance) {
     return;

@@ -103,7 +103,7 @@ Before submitting changes, run the automated validation suite:
 bun run validate
 ```
 
-This runs Prettier formatting, ESLint checks, TypeScript type checks, and Vitest unit tests in parallel.
+This runs Oxfmt formatting, Oxlint checks, TypeScript type checks, and Vitest unit tests in parallel.
 
 ---
 

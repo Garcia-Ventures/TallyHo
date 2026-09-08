@@ -1,5 +1,5 @@
-import { spawn } from 'child_process';
-import { appendFileSync, existsSync } from 'fs';
+import { spawn } from 'node:child_process';
+import { appendFileSync, existsSync } from 'node:fs';
 
 const args = process.argv.slice(2);
 
