@@ -46,7 +46,7 @@ export async function initPurchases(): Promise<void> {
     });
 
     if (typeof __DEV__ !== 'undefined' && __DEV__) {
-      console.log('[RevenueCat] Initialized successfully with API Key:', API_KEY);
+      console.log('[RevenueCat] Initialized successfully');
     }
   } catch (err) {
     console.error('[RevenueCat] Initialization failed:', err);
