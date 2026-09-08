@@ -12,25 +12,14 @@ try {
   // Sentry native module disabled in unit test / non-native environment
 }
 
-export interface TelemetryContext {
-  [key: string]: unknown;
-}
-
 /**
- * Capture an exception in Sentry with optional extra context data.
+ * Capture an exception in Sentry.
  */
-export function captureException(error: unknown, context?: TelemetryContext): void {
+export function captureException(error: unknown): void {
   if (!SentryModule) {
     return;
   }
-  if (context) {
-    SentryModule.withScope((scope) => {
-      scope.setExtras(context);
-      SentryModule?.captureException(error);
-    });
-  } else {
-    SentryModule.captureException(error);
-  }
+  SentryModule.captureException(error);
 }
 
 /**

@@ -8,7 +8,6 @@ describe('sentry utility', () => {
 
   it('safely handles exception capture without crashing', () => {
     expect(() => captureException(new Error('Test exception'))).not.toThrow();
-    expect(() => captureException(new Error('With context'), { score: 100 })).not.toThrow();
   });
 
   it('safely adds breadcrumbs without crashing', () => {

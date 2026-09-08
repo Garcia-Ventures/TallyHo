@@ -23,10 +23,8 @@ export class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    captureException(error, {
-      componentStack: errorInfo.componentStack,
-    });
+  public componentDidCatch(error: Error, _errorInfo: ErrorInfo): void {
+    captureException(error);
   }
 
   private handleReset = (): void => {

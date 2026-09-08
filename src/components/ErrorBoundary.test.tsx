@@ -67,6 +67,6 @@ describe('ErrorBoundary Component', () => {
 
     const boundary = new ErrorBoundary({ children: <div>Normal</div> });
     boundary.componentDidCatch(err, { componentStack: 'MockStack' });
-    expect(captureException).toHaveBeenCalledWith(err, { componentStack: 'MockStack' });
+    expect(captureException).toHaveBeenCalledWith(err);
   });
 });
