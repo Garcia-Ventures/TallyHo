@@ -1,7 +1,8 @@
 import { Button, Card, CardContent, Text } from '@gv-tech/ui-native';
 import React, { useMemo } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
-import { GameSession, Player } from '../types/game';
+
+import type { GameSession, Player } from '../types/game';
 import { calculatePlayerTotals, getSortedPlayers } from '../utils/scoring';
 import { ScreenContainer } from './ScreenContainer';
 

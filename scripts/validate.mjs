@@ -1,6 +1,6 @@
-import { spawnSync } from 'child_process';
-import { existsSync, readdirSync, readFileSync } from 'fs';
-import { join } from 'path';
+import { spawnSync } from 'node:child_process';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 const args = process.argv.slice(2);
 
@@ -19,7 +19,7 @@ Usage:
   bun run validate [flags]
 
 Flags:
-  -f, --fix         Automatically fix formatting (Prettier) and linting (ESLint) errors
+  -f, --fix         Automatically fix formatting (Oxfmt) and linting (Oxlint) errors
   -c, --coverage    Run unit & component test suite with coverage report
   -b, --build       Run full production web export build (Expo Web)
   -m, --maestro     Validate syntax and structure of Maestro E2E test flows
@@ -85,14 +85,14 @@ function validateMaestroFlows() {
 
 const steps = [
   {
-    name: 'Formatting (Prettier)',
+    name: 'Formatting (Oxfmt)',
     command: 'bun',
-    args: isFix ? ['x', 'prettier', '--write', '.'] : ['x', 'prettier', '--check', '.'],
+    args: isFix ? ['x', 'oxfmt', '--write', '.'] : ['x', 'oxfmt', '--check', '.'],
   },
   {
-    name: 'Linting (ESLint)',
+    name: 'Linting (Oxlint)',
     command: 'bun',
-    args: isFix ? ['x', 'eslint', '.', '--cache', '--fix'] : ['x', 'eslint', '.', '--cache'],
+    args: isFix ? ['x', 'oxlint', '--fix', '.'] : ['x', 'oxlint', '.'],
   },
   {
     name: 'Type Check (TypeScript)',

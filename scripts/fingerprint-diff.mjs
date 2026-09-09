@@ -1,7 +1,7 @@
-import { execFileSync } from 'child_process';
-import { appendFileSync, existsSync, mkdtempSync, rmSync, symlinkSync } from 'fs';
-import { tmpdir } from 'os';
-import { join } from 'path';
+import { execFileSync } from 'node:child_process';
+import { appendFileSync, existsSync, mkdtempSync, rmSync, symlinkSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 import { hasNativeChanges } from './eas-build-safe.mjs';
 

@@ -1,4 +1,5 @@
 import { NativeModules } from 'react-native';
+
 import { storage } from './storage';
 
 interface HapticsModuleType {
@@ -14,9 +15,7 @@ interface HapticsModuleType {
   };
 }
 
-/**
- * Native Haptic Feedback Service using expo-haptics with safe native guards.
- */
+/** Native Haptic Feedback Service using expo-haptics with safe native guards. */
 class NativeHapticsService {
   private hapticsModule: HapticsModuleType | null = null;
   private isAvailable = true;

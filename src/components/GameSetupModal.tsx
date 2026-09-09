@@ -1,9 +1,11 @@
 import { Button, Card, CardContent, Input, Text } from '@gv-tech/ui-native';
 import React, { useState } from 'react';
 import { Modal, Pressable, ScrollView, View } from 'react-native';
+
 import { PALETTE } from '../constants/colors';
 import { nativeSound } from '../services/audio';
-import { GAME_PRESETS, GamePreset, PLAYER_COLORS, Player, RoundScoringType, ScoringMode } from '../types/game';
+import type { GamePreset, Player, RoundScoringType, ScoringMode } from '../types/game';
+import { GAME_PRESETS, PLAYER_COLORS } from '../types/game';
 import { generateId } from '../utils/uuid';
 import { ScreenContainer } from './ScreenContainer';
 

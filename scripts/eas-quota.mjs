@@ -1,5 +1,5 @@
-import { execFileSync } from 'child_process';
-import { appendFileSync, existsSync } from 'fs';
+import { execFileSync } from 'node:child_process';
+import { appendFileSync, existsSync } from 'node:fs';
 
 // Free plan budget: 15 Android + 15 iOS cloud builds per calendar month.
 // Paid plans use credits instead — override via --budget-android/--budget-ios.

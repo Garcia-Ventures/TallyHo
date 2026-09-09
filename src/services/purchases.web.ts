@@ -1,4 +1,5 @@
 import { PackageType, Purchases } from '@revenuecat/purchases-js';
+
 import { generateId } from '../utils/uuid';
 import { trackEvent } from './analytics';
 import type { PurchaseResult, PurchasesOffering, PurchasesOfferings, PurchasesPackage } from './purchases';

@@ -1,10 +1,12 @@
 import { Badge, Button, Card, CardContent, Text } from '@gv-tech/ui-native';
 import { useRouter } from 'expo-router';
 import { Pressable, View } from 'react-native';
+
 import { AdBannerCard } from '../src/components/AdBannerCard';
 import { ScreenContainer } from '../src/components/ScreenContainer';
 import { useGameStore } from '../src/stores/useGameStore';
-import { GAME_PRESETS, GamePreset } from '../src/types/game';
+import type { GamePreset } from '../src/types/game';
+import { GAME_PRESETS } from '../src/types/game';
 import { calculatePlayerTotals, getSortedPlayers } from '../src/utils/scoring';
 
 export default function HomeScreen() {

@@ -1,8 +1,8 @@
-import { GameHighlight, GameSession, Player, RoundScore } from '../types/game';
+import type { GameHighlight, GameSession, Player, RoundScore } from '../types/game';
 
 /**
- * Calculates the total net points for each player in a game session.
- * Net points for a round = points + bonusPoints - penaltyPoints.
+ * Calculates the total net points for each player in a game session. Net points for a round = points + bonusPoints -
+ * penaltyPoints.
  */
 export function calculatePlayerTotals(game: GameSession): Record<string, number> {
   const totals: Record<string, number> = {};
@@ -23,9 +23,7 @@ export function calculatePlayerTotals(game: GameSession): Record<string, number>
   return totals;
 }
 
-/**
- * Sorts players according to the game's scoring mode (RACE_LOW -> ascending, otherwise descending).
- */
+/** Sorts players according to the game's scoring mode (RACE_LOW -> ascending, otherwise descending). */
 export function getSortedPlayers(game: GameSession, totals?: Record<string, number>): Player[] {
   const playerTotals = totals || calculatePlayerTotals(game);
   return [...game.players].sort((a, b) => {
@@ -38,9 +36,7 @@ export function getSortedPlayers(game: GameSession, totals?: Record<string, numb
   });
 }
 
-/**
- * Determines if a win condition has been met for the game session.
- */
+/** Determines if a win condition has been met for the game session. */
 export function checkWinCondition(game: GameSession): { hasWinner: boolean; winnerId: string } {
   const totals = calculatePlayerTotals(game);
 
@@ -68,17 +64,13 @@ export function checkWinCondition(game: GameSession): { hasWinner: boolean; winn
   return { hasWinner: false, winnerId: '' };
 }
 
-/**
- * Determines whether to advance to the next round after submitting a score.
- */
+/** Determines whether to advance to the next round after submitting a score. */
 export function shouldAdvanceRound(game: GameSession, updatedScores: Record<string, RoundScore>): boolean {
   const isSingleWinner = game.roundScoringType === 'SINGLE_WINNER';
   return isSingleWinner || game.players.every((p) => Boolean(updatedScores[p.id]));
 }
 
-/**
- * Generates match highlights for the victory screen.
- */
+/** Generates match highlights for the victory screen. */
 export function calculateGameHighlights(game: GameSession): {
   maxSingleRoundScore: number;
   maxSingleRoundPlayer: Player | undefined;

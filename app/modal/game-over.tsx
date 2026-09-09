@@ -1,6 +1,7 @@
 import { Button, Card, CardContent, Text } from '@gv-tech/ui-native';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
+
 import { ConfettiCelebration } from '../../src/components/ConfettiCelebration';
 import { GameOverModal } from '../../src/components/GameOverModal';
 import { ScreenContainer } from '../../src/components/ScreenContainer';

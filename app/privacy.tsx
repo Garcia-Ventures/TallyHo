@@ -15,6 +15,7 @@ import {
   UserCheck,
 } from 'lucide-react-native';
 import { View } from 'react-native';
+
 import { ScreenContainer } from '../src/components/ScreenContainer';
 import { PALETTE } from '../src/constants/colors';
 

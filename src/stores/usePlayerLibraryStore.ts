@@ -1,6 +1,7 @@
 import { create } from 'zustand';
+
 import { storage } from '../services/storage';
-import { Player } from '../types/game';
+import type { Player } from '../types/game';
 
 interface PlayerLibraryState {
   players: Player[];

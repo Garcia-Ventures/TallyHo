@@ -34,7 +34,7 @@ vi.mock('../services/audio', () => ({
   },
 }));
 
-import { Player } from '../types/game';
+import type { Player } from '../types/game';
 import { ScoreKeypadModal } from './ScoreKeypadModal';
 
 describe('ScoreKeypadModal Component', () => {

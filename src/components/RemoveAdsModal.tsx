@@ -13,6 +13,7 @@ import {
 } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Alert, Modal, Platform, Pressable, ScrollView, View } from 'react-native';
+
 import { PALETTE } from '../constants/colors';
 import { trackEvent } from '../services/analytics';
 import { nativeSound } from '../services/audio';

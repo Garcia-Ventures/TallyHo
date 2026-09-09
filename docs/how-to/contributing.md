@@ -39,7 +39,7 @@ Thank you for contributing to **TallyHo**! This guide outlines our development w
 - **TypeScript**: Strict type-checking enabled. No `any` types unless strictly necessary and commented.
 - **Styling**: Use NativeWind Tailwind CSS utility classes and design tokens from `@gv-tech/design-tokens`.
 - **State Management**: Keep state minimal, immutable, and encapsulated in Zustand stores (`src/stores/`).
-- **Formatting**: Code formatting is enforced via Prettier with `@eng618/prettier-config`.
+- **Formatting & Linting**: Code formatting (Oxfmt) and linting (Oxlint) are enforced via `@gv-tech/oxc-config` (`oxlint.config.ts` / `oxfmt.config.ts`). Run `bun run validate:fix` before pushing.
 
 ---
 

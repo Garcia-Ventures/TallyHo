@@ -2,6 +2,7 @@ import { Button, Input, Text } from '@gv-tech/ui-native';
 import { AlertCircle, Mail, Sparkles, X } from 'lucide-react-native';
 import { useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, View } from 'react-native';
+
 import { PALETTE } from '../constants/colors';
 import { trackEvent } from '../services/analytics';
 import { nativeSound } from '../services/audio';

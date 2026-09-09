@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { GameSession, Player, UserSettings } from '../types/game';
+
+import type { GameSession, Player, UserSettings } from '../types/game';
 import { storage } from './storage';
 
 describe('storage service', () => {

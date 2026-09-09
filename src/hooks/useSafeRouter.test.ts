@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { useRouter } from 'expo-router';
 import { describe, expect, it, vi } from 'vitest';
+
 import { useSafeRouter } from './useSafeRouter';
 
 vi.mock('expo-router', () => ({

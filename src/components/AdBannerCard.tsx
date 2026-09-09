@@ -2,8 +2,10 @@ import { Badge, Button, Card, CardContent, Text } from '@gv-tech/ui-native';
 import { ExternalLink, Megaphone, Sparkles } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Linking, View } from 'react-native';
+
 import { PALETTE } from '../constants/colors';
-import { AD_CONFIG, AdContent } from '../constants/config';
+import type { AdContent } from '../constants/config';
+import { AD_CONFIG } from '../constants/config';
 import { trackEvent } from '../services/analytics';
 import { useSettingsStore } from '../stores/useSettingsStore';
 import { RemoveAdsModal } from './RemoveAdsModal';
@@ -24,9 +26,11 @@ export function AdBannerCard({ placement = 'home', className = '' }: AdBannerCar
       return;
     }
 
-    const selectedAd = settings.isAdBlocked
-      ? AD_CONFIG.adBlockerFallbackAd
-      : AD_CONFIG.houseAds[Math.floor(Math.random() * AD_CONFIG.houseAds.length)];
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    const randomIndex = array[0] % AD_CONFIG.houseAds.length;
+
+    const selectedAd = settings.isAdBlocked ? AD_CONFIG.adBlockerFallbackAd : AD_CONFIG.houseAds[randomIndex];
 
     setAdContent(selectedAd);
 

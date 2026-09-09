@@ -10,9 +10,7 @@ const DEFAULT_API_URL = 'https://openpanel.gventureshq.com/api';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let opInstance: any = null;
 
-/**
- * Initializes OpenPanel React Native SDK on Mobile Native Target (iOS & Android).
- */
+/** Initializes OpenPanel React Native SDK on Mobile Native Target (iOS & Android). */
 export function initAnalytics(): void {
   const clientId = process.env.EXPO_PUBLIC_OPENPANEL_CLIENT_ID || DEFAULT_CLIENT_ID;
   const apiUrl = process.env.EXPO_PUBLIC_OPENPANEL_API_URL || DEFAULT_API_URL;
@@ -48,9 +46,7 @@ export function initAnalytics(): void {
   }
 }
 
-/**
- * Tracks a custom event in OpenPanel React Native SDK.
- */
+/** Tracks a custom event in OpenPanel React Native SDK. */
 export function trackEvent(name: string, payload?: Record<string, unknown>): void {
   if (!opInstance) {
     return;

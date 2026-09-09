@@ -1,12 +1,8 @@
 import { Linking, Platform } from 'react-native';
-import Purchases, {
-  CustomerInfo,
-  LOG_LEVEL,
-  PURCHASES_ERROR_CODE,
-  PurchasesOfferings,
-  PurchasesPackage,
-} from 'react-native-purchases';
+import type { CustomerInfo, PurchasesOfferings, PurchasesPackage } from 'react-native-purchases';
+import Purchases, { LOG_LEVEL, PURCHASES_ERROR_CODE } from 'react-native-purchases';
 import RevenueCatUI, { PAYWALL_RESULT } from 'react-native-purchases-ui';
+
 import { trackEvent } from './analytics';
 
 const API_KEY =
@@ -25,9 +21,7 @@ export interface PurchaseResult {
   needsEmail?: boolean;
 }
 
-/**
- * Initializes RevenueCat SDK with the provided API key.
- */
+/** Initializes RevenueCat SDK with the provided API key. */
 export async function initPurchases(): Promise<void> {
   if (isInitialized) {
     return;
@@ -53,9 +47,7 @@ export async function initPurchases(): Promise<void> {
   }
 }
 
-/**
- * Checks if the customer info has active 'TallyHo Pro' (or 'pro') entitlement.
- */
+/** Checks if the customer info has active 'TallyHo Pro' (or 'pro') entitlement. */
 export function checkProEntitlement(customerInfo: CustomerInfo): boolean {
   if (!customerInfo || !customerInfo.entitlements || !customerInfo.entitlements.active) {
     return false;
@@ -64,9 +56,7 @@ export function checkProEntitlement(customerInfo: CustomerInfo): boolean {
   return Boolean(activeEntitlements['TallyHo Pro'] || activeEntitlements['pro']);
 }
 
-/**
- * Retrieves the current customer info from RevenueCat.
- */
+/** Retrieves the current customer info from RevenueCat. */
 export async function getCustomerInfo(): Promise<CustomerInfo | null> {
   if (!isInitialized) {
     await initPurchases();
@@ -79,9 +69,7 @@ export async function getCustomerInfo(): Promise<CustomerInfo | null> {
   }
 }
 
-/**
- * Retrieves configured offerings (Monthly, Yearly, Lifetime) from RevenueCat.
- */
+/** Retrieves configured offerings (Monthly, Yearly, Lifetime) from RevenueCat. */
 export async function getOfferings(): Promise<PurchasesOfferings | null> {
   if (!isInitialized) {
     await initPurchases();
@@ -94,9 +82,7 @@ export async function getOfferings(): Promise<PurchasesOfferings | null> {
   }
 }
 
-/**
- * Purchases a specific package (Monthly, Yearly, Lifetime) via RevenueCat.
- */
+/** Purchases a specific package (Monthly, Yearly, Lifetime) via RevenueCat. */
 export async function purchasePackage(pkg: PurchasesPackage): Promise<PurchaseResult> {
   if (!isInitialized) {
     await initPurchases();
@@ -117,9 +103,7 @@ export async function purchasePackage(pkg: PurchasesPackage): Promise<PurchaseRe
   }
 }
 
-/**
- * Purchases a package tier by identifier ('lifetime' | 'yearly' | 'monthly').
- */
+/** Purchases a package tier by identifier ('lifetime' | 'yearly' | 'monthly'). */
 export async function purchasePackageByIdentifier(
   tier: 'lifetime' | 'yearly' | 'monthly',
   _email?: string,
@@ -156,9 +140,7 @@ export async function purchasePackageByIdentifier(
   }
 }
 
-/**
- * Purchases the default Ad-Free lifetime package via RevenueCat.
- */
+/** Purchases the default Ad-Free lifetime package via RevenueCat. */
 export async function purchaseAdFreePackage(): Promise<PurchaseResult> {
   if (!isInitialized) {
     await initPurchases();
@@ -177,9 +159,7 @@ export async function purchaseAdFreePackage(): Promise<PurchaseResult> {
   }
 }
 
-/**
- * Restores previous purchases via RevenueCat (Google Play Store receipt or cross-platform email lookup).
- */
+/** Restores previous purchases via RevenueCat (Google Play Store receipt or cross-platform email lookup). */
 export async function restoreAdFreePurchases(email?: string): Promise<PurchaseResult> {
   if (!isInitialized) {
     await initPurchases();
@@ -215,9 +195,7 @@ export async function restoreAdFreePurchases(email?: string): Promise<PurchaseRe
   }
 }
 
-/**
- * Presents RevenueCat Paywall UI modal if user does not have TallyHo Pro entitlement.
- */
+/** Presents RevenueCat Paywall UI modal if user does not have TallyHo Pro entitlement. */
 export async function presentPaywall(): Promise<PurchaseResult> {
   if (!isInitialized) {
     await initPurchases();
@@ -243,9 +221,7 @@ export async function presentPaywall(): Promise<PurchaseResult> {
   }
 }
 
-/**
- * Presents RevenueCat Customer Center UI modal for subscription management & support.
- */
+/** Presents RevenueCat Customer Center UI modal for subscription management & support. */
 export async function presentCustomerCenter(): Promise<boolean> {
   if (!isInitialized) {
     await initPurchases();

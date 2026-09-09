@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { GameSession, Player } from '../types/game';
+
+import type { GameSession, Player } from '../types/game';
 import {
   calculateGameHighlights,
   calculatePlayerTotals,
