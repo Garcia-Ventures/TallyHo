@@ -5,6 +5,14 @@ All notable changes to the TallyHo project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.4.0...tally-ho-v1.4.1) (2026-09-08)
+
+
+### Bug Fixes
+
+* downgrade lightningcss to 1.30.1 to resolve native bundling issues and add dependabot ignore rule ([a0199eb](https://github.com/Garcia-Ventures/TallyHo/commit/a0199eb31039f3515654b45a34870183d29da351))
+* remove API key from console log ([#46](https://github.com/Garcia-Ventures/TallyHo/issues/46)) ([e09ddcb](https://github.com/Garcia-Ventures/TallyHo/commit/e09ddcbfe8082458b05faedb507b354044f6de67))
+
 ## [1.4.0](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.3.1...tally-ho-v1.4.0) (2026-09-05)
 
 
