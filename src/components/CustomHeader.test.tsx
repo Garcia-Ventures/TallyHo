@@ -5,7 +5,7 @@ vi.mock('react-native', () => ({
   Platform: { OS: 'web' },
   View: ({ children, ...props }: React.ComponentProps<'div'>) => <div {...props}>{children}</div>,
   Text: ({ children, ...props }: React.ComponentProps<'span'>) => <span {...props}>{children}</span>,
-  Image: ({ ...props }: React.ComponentProps<'img'>) => <img {...props} />,
+  Image: ({ alt = '', ...props }: React.ComponentProps<'img'>) => <img alt={alt} {...props} />,
   useColorScheme: () => 'light',
 }));
 

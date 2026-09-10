@@ -1,4 +1,5 @@
 import type { GameSession, Player, UserSettings } from '../types/game';
+import { logError } from '../utils/logger';
 
 const ACTIVE_GAME_KEY = 'tallyho_active_game';
 const MATCH_HISTORY_KEY = 'tallyho_match_history';
@@ -45,7 +46,7 @@ export const storage = {
       const data = getStorageItem(ACTIVE_GAME_KEY);
       return data ? JSON.parse(data) : null;
     } catch (e) {
-      console.error('Failed to load active game', e);
+      logError('Failed to load active game', e);
       return null;
     }
   },
@@ -54,7 +55,7 @@ export const storage = {
     try {
       setStorageItem(ACTIVE_GAME_KEY, JSON.stringify(game));
     } catch (e) {
-      console.error('Failed to save active game', e);
+      logError('Failed to save active game', e);
     }
   },
 
@@ -62,7 +63,7 @@ export const storage = {
     try {
       removeStorageItem(ACTIVE_GAME_KEY);
     } catch (e) {
-      console.error('Failed to clear active game', e);
+      logError('Failed to clear active game', e);
     }
   },
 
@@ -72,7 +73,7 @@ export const storage = {
       const data = getStorageItem(MATCH_HISTORY_KEY);
       return data ? JSON.parse(data) : [];
     } catch (e) {
-      console.error('Failed to load match history', e);
+      logError('Failed to load match history', e);
       return [];
     }
   },
@@ -84,7 +85,7 @@ export const storage = {
       setStorageItem(MATCH_HISTORY_KEY, JSON.stringify(updated));
       storage.clearActiveGame();
     } catch (e) {
-      console.error('Failed to archive match', e);
+      logError('Failed to archive match', e);
     }
   },
 
@@ -94,7 +95,7 @@ export const storage = {
       const updated = history.filter((g) => g.id !== gameId);
       setStorageItem(MATCH_HISTORY_KEY, JSON.stringify(updated));
     } catch (e) {
-      console.error('Failed to delete match from history', e);
+      logError('Failed to delete match from history', e);
     }
   },
 
@@ -116,7 +117,7 @@ export const storage = {
       setStorageItem(PLAYER_LIBRARY_KEY, JSON.stringify(defaultLibrary));
       return defaultLibrary;
     } catch (e) {
-      console.error('Failed to load player library', e);
+      logError('Failed to load player library', e);
       return [];
     }
   },
@@ -136,7 +137,7 @@ export const storage = {
 
       setStorageItem(PLAYER_LIBRARY_KEY, JSON.stringify(updated));
     } catch (e) {
-      console.error('Failed to save player to library', e);
+      logError('Failed to save player to library', e);
     }
   },
 
@@ -146,7 +147,7 @@ export const storage = {
       const updated = library.filter((p) => p.id !== playerId);
       setStorageItem(PLAYER_LIBRARY_KEY, JSON.stringify(updated));
     } catch (e) {
-      console.error('Failed to delete player from library', e);
+      logError('Failed to delete player from library', e);
     }
   },
 
@@ -156,7 +157,7 @@ export const storage = {
       const data = getStorageItem(SETTINGS_KEY);
       return data ? { ...DEFAULT_SETTINGS, ...JSON.parse(data) } : DEFAULT_SETTINGS;
     } catch (e) {
-      console.error('Failed to load settings', e);
+      logError('Failed to load settings', e);
       return DEFAULT_SETTINGS;
     }
   },
@@ -165,7 +166,7 @@ export const storage = {
     try {
       setStorageItem(SETTINGS_KEY, JSON.stringify(settings));
     } catch (e) {
-      console.error('Failed to save settings', e);
+      logError('Failed to save settings', e);
     }
   },
 
@@ -176,7 +177,7 @@ export const storage = {
       removeStorageItem(PLAYER_LIBRARY_KEY);
       removeStorageItem(SETTINGS_KEY);
     } catch (e) {
-      console.error('Failed to clear storage', e);
+      logError('Failed to clear storage', e);
     }
   },
 };

@@ -25,12 +25,13 @@ export interface CustomHeaderProps {
 }
 
 export function CustomHeader({ options, route, back }: CustomHeaderProps) {
+  const themeMode = useSettingsStore((state) => state.settings.themeMode);
+  const systemScheme = useColorScheme();
+
   if (Platform.OS !== 'web') {
     return null;
   }
 
-  const themeMode = useSettingsStore((state) => state.settings.themeMode);
-  const systemScheme = useColorScheme();
   const isDark = themeMode === 'dark' || (themeMode === 'system' && systemScheme === 'dark');
   const logoSource = isDark ? logoHorizontalDark : logoHorizontal;
 

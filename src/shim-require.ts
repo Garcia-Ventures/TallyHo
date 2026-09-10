@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import * as ReactJsxRuntime from 'react/jsx-runtime';
 
 if (typeof Array.prototype.at !== 'function') {
+  // eslint-disable-next-line no-extend-native
   Array.prototype.at = function <T>(this: T[], n: number): T | undefined {
     const len = this.length;
     const k = n >= 0 ? n : len + n;
@@ -11,6 +12,7 @@ if (typeof Array.prototype.at !== 'function') {
 }
 
 if (typeof String.prototype.at !== 'function') {
+  // eslint-disable-next-line no-extend-native
   String.prototype.at = function (this: string, n: number): string | undefined {
     const len = this.length;
     const k = n >= 0 ? n : len + n;

@@ -21,12 +21,12 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
   onUpdateRounds,
   isRouteModal = false,
 }) => {
+  const [editingRoundIndex, setEditingRoundIndex] = useState<number | null>(null);
+  const [editScoreMap, setEditScoreMap] = useState<Record<string, string>>({});
+
   if (!isOpen) {
     return null;
   }
-
-  const [editingRoundIndex, setEditingRoundIndex] = useState<number | null>(null);
-  const [editScoreMap, setEditScoreMap] = useState<Record<string, string>>({});
 
   const handleStartEdit = (index: number, round: Round) => {
     nativeSound.playKeypadTap();

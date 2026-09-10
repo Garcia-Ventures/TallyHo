@@ -23,15 +23,16 @@ const COUNTED_STATUSES = new Set(['NEW', 'IN_QUEUE', 'IN_PROGRESS', 'PENDING_CAN
  * --github-output       append outputs to $GITHUB_OUTPUT
  * --summary             append quota badge to $GITHUB_STEP_SUMMARY
  */
+function toInt(v, fallback) {
+  const n = Number.parseInt(v, 10);
+  return Number.isFinite(n) && n >= 0 ? n : fallback;
+}
+
 export function parseArgs(argv) {
   const args = argv.slice(2);
   const get = (flag, fallback) => {
     const i = args.indexOf(flag);
     return i !== -1 && args[i + 1] && !args[i + 1].startsWith('--') ? args[i + 1] : fallback;
-  };
-  const toInt = (v, fallback) => {
-    const n = Number.parseInt(v, 10);
-    return Number.isFinite(n) && n >= 0 ? n : fallback;
   };
   const request = get('--request', get('--platform', 'android')) || 'android';
   return {
@@ -123,18 +124,19 @@ export function requestOk(summary, request) {
   return platforms.every((p) => summary.remaining[p] > 0);
 }
 
+function quotaBar(used, budget) {
+  const pct = budget === 0 ? 100 : Math.min(100, Math.round((used / budget) * 100));
+  const filled = Math.round(pct / 10);
+  return `${'█'.repeat(filled)}${'░'.repeat(10 - filled)} ${pct}%`;
+}
+
 export function formatBadge(summary) {
-  const bar = (used, budget) => {
-    const pct = budget === 0 ? 100 : Math.min(100, Math.round((used / budget) * 100));
-    const filled = Math.round(pct / 10);
-    return `${'█'.repeat(filled)}${'░'.repeat(10 - filled)} ${pct}%`;
-  };
   const icon = summary.overall === 'exhausted' ? '🛑' : summary.overall === 'warning' ? '⚠️' : '✅';
   return [
     `## ${icon} EAS Build Quota — ${summary.month}`,
     '',
-    `- Android: **${summary.used.android}/${summary.budget.android}** used (${summary.remaining.android} left) ${bar(summary.used.android, summary.budget.android)}`,
-    `- iOS: **${summary.used.ios}/${summary.budget.ios}** used (${summary.remaining.ios} left) ${bar(summary.used.ios, summary.budget.ios)}`,
+    `- Android: **${summary.used.android}/${summary.budget.android}** used (${summary.remaining.android} left) ${quotaBar(summary.used.android, summary.budget.android)}`,
+    `- iOS: **${summary.used.ios}/${summary.budget.ios}** used (${summary.remaining.ios} left) ${quotaBar(summary.used.ios, summary.budget.ios)}`,
     '',
     summary.overall === 'ok'
       ? 'Headroom is healthy. JS-only changes should still prefer OTA updates.'

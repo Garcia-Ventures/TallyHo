@@ -3,7 +3,9 @@
  * SDK is not initialized (e.g. Node unit tests).
  */
 
-let SentryModule: typeof import('@sentry/react-native') | null = null;
+import type * as SentryRN from '@sentry/react-native';
+
+let SentryModule: typeof SentryRN | null = null;
 
 try {
   // eslint-disable-next-line @typescript-eslint/no-require-imports

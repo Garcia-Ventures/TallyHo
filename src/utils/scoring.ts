@@ -26,6 +26,7 @@ export function calculatePlayerTotals(game: GameSession): Record<string, number>
 /** Sorts players according to the game's scoring mode (RACE_LOW -> ascending, otherwise descending). */
 export function getSortedPlayers(game: GameSession, totals?: Record<string, number>): Player[] {
   const playerTotals = totals || calculatePlayerTotals(game);
+  // eslint-disable-next-line unicorn/no-array-sort -- spread-copy first, so sort() does not mutate the original (lib target predates ES2023 toSorted)
   return [...game.players].sort((a, b) => {
     const scoreA = playerTotals[a.id] || 0;
     const scoreB = playerTotals[b.id] || 0;
@@ -39,15 +40,16 @@ export function getSortedPlayers(game: GameSession, totals?: Record<string, numb
 /** Determines if a win condition has been met for the game session. */
 export function checkWinCondition(game: GameSession): { hasWinner: boolean; winnerId: string } {
   const totals = calculatePlayerTotals(game);
+  const targetScore = game.targetScore;
 
-  if (game.targetScore) {
+  if (targetScore) {
     if (game.scoringMode === 'RACE_HIGH') {
-      const leader = game.players.find((p) => (totals[p.id] || 0) >= game.targetScore!);
+      const leader = game.players.find((p) => (totals[p.id] || 0) >= targetScore);
       if (leader) {
         return { hasWinner: true, winnerId: leader.id };
       }
     } else if (game.scoringMode === 'RACE_LOW') {
-      const exceeded = game.players.some((p) => (totals[p.id] || 0) >= game.targetScore!);
+      const exceeded = game.players.some((p) => (totals[p.id] || 0) >= targetScore);
       if (exceeded) {
         const sorted = getSortedPlayers(game, totals);
         return { hasWinner: true, winnerId: sorted[0]?.id || '' };

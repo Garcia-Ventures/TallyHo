@@ -4,6 +4,8 @@ import NetInfo from '@react-native-community/netinfo';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
+import { logInfo } from '../utils/logger';
+
 const DEFAULT_CLIENT_ID = 'f68ef1dc-81f3-4f14-b15f-218614e0913a';
 const DEFAULT_API_URL = 'https://openpanel.gventureshq.com/api';
 
@@ -17,7 +19,7 @@ export function initAnalytics(): void {
 
   if (!clientId) {
     if (typeof __DEV__ !== 'undefined' && __DEV__) {
-      console.log('[Analytics] No EXPO_PUBLIC_OPENPANEL_CLIENT_ID configured. OpenPanel Native disabled.');
+      logInfo('[Analytics] No EXPO_PUBLIC_OPENPANEL_CLIENT_ID configured. OpenPanel Native disabled.');
     }
     return;
   }
@@ -37,11 +39,11 @@ export function initAnalytics(): void {
     });
 
     if (typeof __DEV__ !== 'undefined' && __DEV__) {
-      console.log(`[Analytics] Initialized OpenPanel Native SDK (${Platform.OS}) successfully.`);
+      logInfo(`[Analytics] Initialized OpenPanel Native SDK (${Platform.OS}) successfully.`);
     }
   } catch (err) {
     if (typeof __DEV__ !== 'undefined' && __DEV__) {
-      console.log('[Analytics] Failed to initialize OpenPanel Native SDK:', err);
+      logInfo('[Analytics] Failed to initialize OpenPanel Native SDK:', err);
     }
   }
 }
@@ -55,7 +57,7 @@ export function trackEvent(name: string, payload?: Record<string, unknown>): voi
     opInstance.track(name, payload);
   } catch (err) {
     if (typeof __DEV__ !== 'undefined' && __DEV__) {
-      console.log(`[Analytics] Error tracking event "${name}":`, err);
+      logInfo(`[Analytics] Error tracking event "${name}":`, err);
     }
   }
 }

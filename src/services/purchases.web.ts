@@ -1,5 +1,6 @@
 import { PackageType, Purchases } from '@revenuecat/purchases-js';
 
+import { logError, logWarn } from '../utils/logger';
 import { generateId } from '../utils/uuid';
 import { trackEvent } from './analytics';
 import type { PurchaseResult, PurchasesOffering, PurchasesOfferings, PurchasesPackage } from './purchases';
@@ -32,7 +33,7 @@ export async function initPurchases(): Promise<Purchases | null> {
 
   const apiKey = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY_WEB;
   if (!apiKey) {
-    console.warn('[Purchases Web] EXPO_PUBLIC_REVENUECAT_API_KEY_WEB is not set.');
+    logWarn('[Purchases Web] EXPO_PUBLIC_REVENUECAT_API_KEY_WEB is not set.');
     return null;
   }
 
@@ -41,7 +42,7 @@ export async function initPurchases(): Promise<Purchases | null> {
     purchasesInstance = Purchases.configure(apiKey, userId);
     return purchasesInstance;
   } catch (err) {
-    console.error('[Purchases Web] Failed to configure RevenueCat Purchases JS:', err);
+    logError('[Purchases Web] Failed to configure RevenueCat Purchases JS:', err);
     return null;
   }
 }
@@ -54,7 +55,7 @@ export async function getCustomerInfo() {
   try {
     return await p.getCustomerInfo();
   } catch (err) {
-    console.error('[Purchases Web] Failed to fetch customer info:', err);
+    logError('[Purchases Web] Failed to fetch customer info:', err);
     return null;
   }
 }
@@ -114,7 +115,7 @@ export async function getOfferings(): Promise<PurchasesOfferings | null> {
       current: mappedOffering,
     };
   } catch (err) {
-    console.error('[Purchases Web] Failed to fetch offerings:', err);
+    logError('[Purchases Web] Failed to fetch offerings:', err);
     return null;
   }
 }
@@ -188,7 +189,7 @@ export async function purchasePackageByIdentifier(
       trackEvent('purchase_cancelled', { tier, platform: 'web' });
       return { success: false, isPro: false, userCancelled: true };
     }
-    console.error('[Purchases Web] Purchase failed:', err);
+    logError('[Purchases Web] Purchase failed:', err);
     return { success: false, isPro: false, error: error.message || 'Payment could not be completed.' };
   }
 }
@@ -236,7 +237,7 @@ export async function restoreAdFreePurchases(email?: string): Promise<PurchaseRe
     };
   } catch (err: unknown) {
     const error = err as { message?: string };
-    console.error('[Purchases Web] Failed to restore purchases:', err);
+    logError('[Purchases Web] Failed to restore purchases:', err);
     return { success: false, isPro: false, error: error.message || 'Unable to restore purchases at this time.' };
   }
 }
@@ -267,7 +268,7 @@ export async function presentCustomerCenter(): Promise<boolean> {
 
     return false;
   } catch (err) {
-    console.error('[Purchases Web] Failed to open customer center:', err);
+    logError('[Purchases Web] Failed to open customer center:', err);
     return false;
   }
 }

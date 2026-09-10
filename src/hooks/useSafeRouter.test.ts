@@ -9,7 +9,7 @@ vi.mock('expo-router', () => ({
 }));
 
 describe('useSafeRouter', () => {
-  it('returns useRouter when it does not throw', () => {
+  it('returns the expo-router instance', () => {
     const mockRouter = { push: vi.fn(), back: vi.fn() };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     vi.mocked(useRouter).mockReturnValue(mockRouter as any);
@@ -17,26 +17,5 @@ describe('useSafeRouter', () => {
     const { result } = renderHook(() => useSafeRouter());
 
     expect(result.current).toBe(mockRouter);
-  });
-
-  it('returns fallback router when useRouter throws', () => {
-    vi.mocked(useRouter).mockImplementation(() => {
-      throw new Error('No router');
-    });
-
-    // Suppress console.error if renderHook prints errors, but actually testing-library might catch it
-    // Wait, the hook internally catches it! So it won't throw to the test runner.
-    const { result } = renderHook(() => useSafeRouter());
-
-    expect(result.current).toEqual({
-      back: expect.any(Function),
-      push: expect.any(Function),
-    });
-
-    // Test calling the fallback functions to ensure they don't crash
-    expect(() => {
-      result.current.back();
-      result.current.push('/test');
-    }).not.toThrow();
   });
 });

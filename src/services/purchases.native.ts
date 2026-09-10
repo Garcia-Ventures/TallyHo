@@ -3,6 +3,7 @@ import type { CustomerInfo, PurchasesOfferings, PurchasesPackage } from 'react-n
 import Purchases, { LOG_LEVEL, PURCHASES_ERROR_CODE } from 'react-native-purchases';
 import RevenueCatUI, { PAYWALL_RESULT } from 'react-native-purchases-ui';
 
+import { logError, logInfo, logWarn } from '../utils/logger';
 import { trackEvent } from './analytics';
 
 const API_KEY =
@@ -40,10 +41,10 @@ export async function initPurchases(): Promise<void> {
     });
 
     if (typeof __DEV__ !== 'undefined' && __DEV__) {
-      console.log('[RevenueCat] Initialized successfully');
+      logInfo('[RevenueCat] Initialized successfully');
     }
   } catch (err) {
-    console.error('[RevenueCat] Initialization failed:', err);
+    logError('[RevenueCat] Initialization failed:', err);
   }
 }
 
@@ -64,7 +65,7 @@ export async function getCustomerInfo(): Promise<CustomerInfo | null> {
   try {
     return await Purchases.getCustomerInfo();
   } catch (err) {
-    console.error('[RevenueCat] Failed to fetch CustomerInfo:', err);
+    logError('[RevenueCat] Failed to fetch CustomerInfo:', err);
     return null;
   }
 }
@@ -77,7 +78,7 @@ export async function getOfferings(): Promise<PurchasesOfferings | null> {
   try {
     return await Purchases.getOfferings();
   } catch (err) {
-    console.error('[RevenueCat] Failed to fetch Offerings:', err);
+    logError('[RevenueCat] Failed to fetch Offerings:', err);
     return null;
   }
 }
@@ -98,7 +99,7 @@ export async function purchasePackage(pkg: PurchasesPackage): Promise<PurchaseRe
     if (error.userCancelled || error.code === PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR) {
       return { success: false, isPro: false, userCancelled: true };
     }
-    console.error('[RevenueCat] Purchase failed:', error);
+    logError('[RevenueCat] Purchase failed:', error);
     return { success: false, isPro: false, error: error.message || 'Purchase failed' };
   }
 }
@@ -190,7 +191,7 @@ export async function restoreAdFreePurchases(email?: string): Promise<PurchaseRe
     return { success: true, isPro };
   } catch (err: unknown) {
     const error = err as { message?: string };
-    console.error('[RevenueCat] Restore failed:', err);
+    logError('[RevenueCat] Restore failed:', err);
     return { success: false, isPro: false, error: error.message || 'Restore failed' };
   }
 }
@@ -216,7 +217,7 @@ export async function presentPaywall(): Promise<PurchaseResult> {
     }
     return { success: false, isPro: false };
   } catch (err) {
-    console.error('[RevenueCat] Paywall presentation failed:', err);
+    logError('[RevenueCat] Paywall presentation failed:', err);
     return { success: false, isPro: false };
   }
 }
@@ -236,7 +237,7 @@ export async function presentCustomerCenter(): Promise<boolean> {
     await RevenueCatUI.presentCustomerCenter();
     return true;
   } catch (err) {
-    console.warn('[RevenueCat] Customer Center presentation failed, falling back to store link:', err);
+    logWarn('[RevenueCat] Customer Center presentation failed, falling back to store link:', err);
     if (Platform.OS === 'android') {
       await Linking.openURL('https://play.google.com/store/account/subscriptions?package=com.gventureshq.tallyho');
       return true;

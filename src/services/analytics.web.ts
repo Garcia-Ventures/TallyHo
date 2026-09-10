@@ -1,5 +1,7 @@
 import { OpenPanel } from '@openpanel/web';
 
+import { logInfo } from '../utils/logger';
+
 const DEFAULT_CLIENT_ID = 'f68ef1dc-81f3-4f14-b15f-218614e0913a';
 const DEFAULT_API_URL = 'https://openpanel.gventureshq.com/api';
 
@@ -12,7 +14,7 @@ export function initAnalytics(): void {
 
   if (!clientId) {
     if (typeof __DEV__ !== 'undefined' && __DEV__) {
-      console.log('[Analytics] No EXPO_PUBLIC_OPENPANEL_CLIENT_ID configured. OpenPanel Web disabled.');
+      logInfo('[Analytics] No EXPO_PUBLIC_OPENPANEL_CLIENT_ID configured. OpenPanel Web disabled.');
     }
     return;
   }
@@ -31,11 +33,11 @@ export function initAnalytics(): void {
     });
 
     if (typeof __DEV__ !== 'undefined' && __DEV__) {
-      console.log('[Analytics] Initialized OpenPanel Web SDK successfully:', clientId);
+      logInfo('[Analytics] Initialized OpenPanel Web SDK successfully:', clientId);
     }
   } catch (err) {
     if (typeof __DEV__ !== 'undefined' && __DEV__) {
-      console.log('[Analytics] Failed to initialize OpenPanel Web SDK:', err);
+      logInfo('[Analytics] Failed to initialize OpenPanel Web SDK:', err);
     }
   }
 }
@@ -49,7 +51,7 @@ export function trackEvent(name: string, payload?: Record<string, unknown>): voi
     opInstance.track(name, payload);
   } catch (err) {
     if (typeof __DEV__ !== 'undefined' && __DEV__) {
-      console.log(`[Analytics] Error tracking event "${name}":`, err);
+      logInfo(`[Analytics] Error tracking event "${name}":`, err);
     }
   }
 }

@@ -24,6 +24,7 @@ import {
   restoreAdFreePurchases,
 } from '../services/purchases';
 import { useSettingsStore } from '../stores/useSettingsStore';
+import { logWarn } from '../utils/logger';
 import { showToast } from '../utils/toast';
 import { RestorePurchaseModal } from './RestorePurchaseModal';
 
@@ -71,6 +72,11 @@ const DEFAULT_PLAN_OPTIONS: PlanOption[] = [
     badgeColor: 'bg-chip-navy/20 text-chip-navy',
   },
 ];
+
+const handlePresentCustomerCenter = async () => {
+  trackEvent('customer_center_opened');
+  await presentCustomerCenter();
+};
 
 export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
   const { settings, purchaseRemoveAds, resetAdFreeStatus } = useSettingsStore();
@@ -124,7 +130,7 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
           setPlans(updatedPlans);
         }
       } catch (err) {
-        console.warn('[RemoveAdsModal] Failed to load dynamic offerings from RevenueCat:', err);
+        logWarn('[RemoveAdsModal] Failed to load dynamic offerings from RevenueCat:', err);
       }
     }
 
@@ -195,11 +201,6 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
     } else {
       trackEvent('purchase_cancelled', { tier: selectedTier });
     }
-  };
-
-  const handlePresentCustomerCenter = async () => {
-    trackEvent('customer_center_opened');
-    await presentCustomerCenter();
   };
 
   const handleRestore = async () => {

@@ -24,5 +24,10 @@ export default defineConfig({
       files: ['app/_layout.tsx', 'src/shim-require.test.ts', 'src/native-types.d.ts'],
       rules: { 'import/no-unassigned-import': 'off' },
     },
+    {
+      // CLI scripts legitimately log to stdout/stderr (quota badges, build logs, release notes).
+      files: ['scripts/**/*.mjs'],
+      rules: { 'no-console': 'off' },
+    },
   ],
 });

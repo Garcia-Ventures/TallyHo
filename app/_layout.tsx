@@ -9,7 +9,7 @@ import { Image, Platform, useColorScheme } from 'react-native';
 
 import logoHorizontalDark from '../assets/logo-horizontal-dark.png';
 import logoHorizontal from '../assets/logo-horizontal.png';
-import { CustomHeader } from '../src/components/CustomHeader';
+import { CustomHeader, type CustomHeaderProps } from '../src/components/CustomHeader';
 import { ErrorBoundary } from '../src/components/ErrorBoundary';
 import { HeaderBackButton } from '../src/components/HeaderBackButton';
 import { HeaderCloseButton } from '../src/components/HeaderCloseButton';
@@ -47,15 +47,63 @@ Sentry.init({
   // spotlight: __DEV__,
 });
 
+function useIsDark(): boolean {
+  const themeMode = useSettingsStore((state) => state.settings.themeMode);
+  const systemScheme = useColorScheme();
+  return themeMode === 'dark' || (themeMode === 'system' && systemScheme === 'dark');
+}
+
+function useHeaderTintColor(): string {
+  const isDark = useIsDark();
+  return isDark ? PALETTE.dark.foreground : PALETTE.ink.primary;
+}
+
+// Stable module-scope header components (avoids redefining components during render).
+function WebHeader(props: CustomHeaderProps) {
+  return <CustomHeader {...props} />;
+}
+
+function AppLogoTitle() {
+  const isDark = useIsDark();
+  return (
+    <Image
+      source={(isDark ? logoHorizontalDark : logoHorizontal) as ImageSourcePropType}
+      style={{ width: 140, height: 40 }}
+      resizeMode="contain"
+      accessibilityLabel="TallyHo Logo"
+    />
+  );
+}
+
+function ThemedHeaderCloseButton() {
+  const tintColor = useHeaderTintColor();
+  return <HeaderCloseButton tintColor={tintColor} />;
+}
+
+function GameOverHeaderCloseButton() {
+  const tintColor = useHeaderTintColor();
+  return (
+    <HeaderCloseButton
+      tintColor={tintColor}
+      onPress={() => {
+        useGameStore.getState().clearActiveGame();
+      }}
+    />
+  );
+}
+
+function PrivacyHeaderBackButton() {
+  const tintColor = useHeaderTintColor();
+  return <HeaderBackButton tintColor={tintColor} />;
+}
+
 export default Sentry.wrap(function RootLayout() {
   const loadInitialData = useGameStore((state) => state.loadInitialData);
   const loadPlayers = usePlayerLibraryStore((state) => state.loadPlayers);
   const loadSettings = useSettingsStore((state) => state.loadSettings);
   const themeMode = useSettingsStore((state) => state.settings.themeMode);
-  const systemScheme = useColorScheme();
-
-  const isDark = themeMode === 'dark' || (themeMode === 'system' && systemScheme === 'dark');
-  const tintColor = isDark ? PALETTE.dark.foreground : PALETTE.ink.primary;
+  const isDark = useIsDark();
+  const tintColor = useHeaderTintColor();
 
   useEffect(() => {
     initAnalytics();
@@ -78,20 +126,13 @@ export default Sentry.wrap(function RootLayout() {
             contentStyle: {
               backgroundColor: isDark ? PALETTE.dark.background : PALETTE.paper[50],
             },
-            header: Platform.OS === 'web' ? (props) => <CustomHeader {...props} /> : undefined,
+            header: Platform.OS === 'web' ? WebHeader : undefined,
           }}
         >
           <Stack.Screen
             name="index"
             options={{
-              headerTitle: () => (
-                <Image
-                  source={(isDark ? logoHorizontalDark : logoHorizontal) as ImageSourcePropType}
-                  style={{ width: 140, height: 40 }}
-                  resizeMode="contain"
-                  accessibilityLabel="TallyHo Logo"
-                />
-              ),
+              headerTitle: AppLogoTitle,
               headerTitleAlign: 'center',
             }}
           />
@@ -110,7 +151,7 @@ export default Sentry.wrap(function RootLayout() {
               headerShown: true,
               headerBackVisible: false,
               headerLeft: () => null,
-              headerRight: () => <HeaderCloseButton tintColor={tintColor} />,
+              headerRight: ThemedHeaderCloseButton,
             }}
           />
           <Stack.Screen
@@ -121,7 +162,7 @@ export default Sentry.wrap(function RootLayout() {
               headerShown: true,
               headerBackVisible: false,
               headerLeft: () => null,
-              headerRight: () => <HeaderCloseButton tintColor={tintColor} />,
+              headerRight: ThemedHeaderCloseButton,
             }}
           />
           <Stack.Screen
@@ -132,14 +173,7 @@ export default Sentry.wrap(function RootLayout() {
               headerShown: true,
               headerBackVisible: false,
               headerLeft: () => null,
-              headerRight: () => (
-                <HeaderCloseButton
-                  tintColor={tintColor}
-                  onPress={() => {
-                    useGameStore.getState().clearActiveGame();
-                  }}
-                />
-              ),
+              headerRight: GameOverHeaderCloseButton,
             }}
           />
           <Stack.Screen
@@ -150,7 +184,7 @@ export default Sentry.wrap(function RootLayout() {
               headerShown: true,
               headerBackVisible: false,
               headerLeft: () => null,
-              headerRight: () => <HeaderCloseButton tintColor={tintColor} />,
+              headerRight: ThemedHeaderCloseButton,
             }}
           />
           <Stack.Screen
@@ -161,7 +195,7 @@ export default Sentry.wrap(function RootLayout() {
               headerShown: true,
               headerBackVisible: false,
               headerLeft: () => null,
-              headerRight: () => <HeaderCloseButton tintColor={tintColor} />,
+              headerRight: ThemedHeaderCloseButton,
             }}
           />
           <Stack.Screen
@@ -172,7 +206,7 @@ export default Sentry.wrap(function RootLayout() {
               headerShown: true,
               headerBackVisible: false,
               headerLeft: () => null,
-              headerRight: () => <HeaderCloseButton tintColor={tintColor} />,
+              headerRight: ThemedHeaderCloseButton,
             }}
           />
           <Stack.Screen
@@ -180,7 +214,7 @@ export default Sentry.wrap(function RootLayout() {
             options={{
               title: 'Privacy Policy',
               headerShown: true,
-              headerLeft: () => <HeaderBackButton tintColor={tintColor} />,
+              headerLeft: PrivacyHeaderBackButton,
             }}
           />
         </Stack>

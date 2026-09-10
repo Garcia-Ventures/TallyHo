@@ -124,7 +124,11 @@ describe('useGameStore', () => {
     });
 
     // Artificially clear rounds
-    const current = useGameStore.getState().activeGame!;
+    const current = useGameStore.getState().activeGame;
+    expect(current).toBeDefined();
+    if (!current) {
+      throw new Error('expected activeGame to be set');
+    }
     useGameStore.setState({ activeGame: { ...current, rounds: [] } });
 
     const result = store.submitRoundScore({ playerId: 'p1', points: 20 });
@@ -212,7 +216,12 @@ describe('useGameStore', () => {
       roundScoringType: 'EVERY_PLAYER',
       players: [{ id: 'p1', name: 'Eric', initials: 'E', color: '#E5A93C' }],
     });
-    const gameId = useGameStore.getState().activeGame!.id;
+    const gameAfterCreate = useGameStore.getState().activeGame;
+    expect(gameAfterCreate).toBeDefined();
+    if (!gameAfterCreate) {
+      throw new Error('expected activeGame to be set');
+    }
+    const gameId = gameAfterCreate.id;
     store.endMatchManually();
     expect(useGameStore.getState().matchHistory.length).toBe(1);
 
