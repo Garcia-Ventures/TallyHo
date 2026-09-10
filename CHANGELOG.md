@@ -5,6 +5,23 @@ All notable changes to the TallyHo project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.2](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.4.1...tally-ho-v1.4.2) (2026-09-10)
+
+
+### Bug Fixes
+
+* resolve Sentry integration web incompatibility and add crypto fallback for Hermes environments ([79bebbf](https://github.com/Garcia-Ventures/TallyHo/commit/79bebbfffe362ca70f60fabb32317ce5fcffb751))
+
+
+### Code Refactoring
+
+* implement centralized logger utility and replace console statements across services ([9c43313](https://github.com/Garcia-Ventures/TallyHo/commit/9c43313e06eb70a39acf474ab3e42952f56b70ba))
+
+
+### Miscellaneous Chores
+
+* define custom changelog sections in release-please configuration ([523e9a8](https://github.com/Garcia-Ventures/TallyHo/commit/523e9a8fc525d74e2210dfe15e25294d42c76a25))
+
 ## [1.4.1](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.4.0...tally-ho-v1.4.1) (2026-09-08)
 
 
