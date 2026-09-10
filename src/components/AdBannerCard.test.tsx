@@ -1,3 +1,4 @@
+import { render, screen } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -84,5 +85,18 @@ describe('AdBannerCard Component', () => {
 
     const html = renderToString(<AdBannerCard placement="home" />);
     expect(html).toBe('');
+  });
+
+  it('does not crash when crypto is undefined (React Native Hermes regression test for REACT-NATIVE-N/M)', () => {
+    const originalCrypto = globalThis.crypto;
+    try {
+      // @ts-expect-error - simulating React Native environment where crypto is not defined
+      delete globalThis.crypto;
+
+      expect(() => render(<AdBannerCard placement="home" />)).not.toThrow();
+      expect(screen.getByText('Supports Free TallyHo')).toBeDefined();
+    } finally {
+      globalThis.crypto = originalCrypto;
+    }
   });
 });

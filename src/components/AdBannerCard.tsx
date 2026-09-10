@@ -26,9 +26,22 @@ export function AdBannerCard({ placement = 'home', className = '' }: AdBannerCar
       return;
     }
 
-    const array = new Uint32Array(1);
-    crypto.getRandomValues(array);
-    const randomIndex = array[0] % AD_CONFIG.houseAds.length;
+    // Hermes on Android does not provide a global `crypto` object (REACT-NATIVE-N/M).
+    // Use getRandomValues when available, otherwise fall back to Math.random.
+    const getRandomIndex = (length: number): number => {
+      try {
+        const cryptoObj = typeof globalThis !== 'undefined' ? (globalThis as { crypto?: Crypto }).crypto : undefined;
+        if (cryptoObj?.getRandomValues) {
+          const array = new Uint32Array(1);
+          cryptoObj.getRandomValues(array);
+          return array[0] % length;
+        }
+      } catch {
+        // fall through to Math.random below
+      }
+      return Math.floor(Math.random() * length);
+    };
+    const randomIndex = getRandomIndex(AD_CONFIG.houseAds.length);
 
     const selectedAd = settings.isAdBlocked ? AD_CONFIG.adBlockerFallbackAd : AD_CONFIG.houseAds[randomIndex];
 
