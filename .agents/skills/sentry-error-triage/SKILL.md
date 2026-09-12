@@ -10,8 +10,8 @@ Use this skill when investigating production/preview crashes, user-reported issu
 ## Sentry Project Context
 
 - **Organization**: `garcia-ventures`
-- **Project**: `react-native`
-- **MCP Endpoint**: `https://mcp.sentry.dev/mcp/garcia-ventures/react-native`
+- **Project**: `tallyho`
+- **MCP Endpoint**: `https://mcp.sentry.dev/mcp/garcia-ventures/tallyho`
 
 ---
 
