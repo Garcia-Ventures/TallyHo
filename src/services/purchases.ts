@@ -1,3 +1,9 @@
+/**
+ * Canonical RevenueCat entitlement identifier for TallyHo Pro. Must match the Entitlements identifier in the RevenueCat
+ * dashboard.
+ */
+export const PRO_ENTITLEMENT_ID = 'TallyHo Pro';
+
 export interface PurchaseResult {
   success: boolean;
   isPro: boolean;
@@ -5,6 +11,8 @@ export interface PurchaseResult {
   error?: string;
   redirected?: boolean;
   needsEmail?: boolean;
+  /** Store reports the product as already owned — caller should recover via restore. */
+  alreadyOwned?: boolean;
 }
 
 export interface PurchasesProduct {
@@ -37,7 +45,7 @@ export interface PurchasesOfferings {
 }
 
 export async function initPurchases(): Promise<void> {
-  // Vitest test fallback
+  // Base fallback for non-platform runtimes (unit tests) — intentionally a no-op.
 }
 
 export async function getCustomerInfo(): Promise<null> {
@@ -49,28 +57,28 @@ export async function getOfferings(): Promise<PurchasesOfferings | null> {
 }
 
 export async function purchasePackage(): Promise<PurchaseResult> {
-  return { success: true, isPro: true };
+  return { success: false, isPro: false, error: 'Purchases unavailable on this platform' };
 }
 
 export async function purchasePackageByIdentifier(
   _tier: 'lifetime' | 'yearly' | 'monthly',
   _email?: string,
 ): Promise<PurchaseResult> {
-  return { success: true, isPro: true };
+  return { success: false, isPro: false, error: 'Purchases unavailable on this platform' };
 }
 
 export async function purchaseAdFreePackage(): Promise<PurchaseResult> {
-  return { success: true, isPro: true };
+  return { success: false, isPro: false, error: 'Purchases unavailable on this platform' };
 }
 
 export async function restoreAdFreePurchases(_email?: string): Promise<PurchaseResult> {
-  return { success: true, isPro: true };
+  return { success: false, isPro: false, error: 'Purchases unavailable on this platform' };
 }
 
 export async function presentPaywall(): Promise<PurchaseResult> {
-  return { success: true, isPro: true };
+  return { success: false, isPro: false, error: 'Purchases unavailable on this platform' };
 }
 
 export async function presentCustomerCenter(): Promise<boolean> {
-  return true;
+  return false;
 }

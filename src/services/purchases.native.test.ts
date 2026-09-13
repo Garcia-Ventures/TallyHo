@@ -20,7 +20,10 @@ const { mockNativePurchases, mockRevenueCatUI } = vi.hoisted(() => {
 vi.mock('react-native-purchases', () => ({
   default: mockNativePurchases,
   LOG_LEVEL: { DEBUG: 'DEBUG' },
-  PURCHASES_ERROR_CODE: { PURCHASE_CANCELLED_ERROR: '1' },
+  PURCHASES_ERROR_CODE: {
+    PURCHASE_CANCELLED_ERROR: '1',
+    PRODUCT_ALREADY_PURCHASED_ERROR: 'PRODUCT_ALREADY_PURCHASED_ERROR',
+  },
 }));
 
 vi.mock('react-native-purchases-ui', () => ({
@@ -100,6 +103,64 @@ describe('purchases.native service', () => {
     const result = await purchasePackageByIdentifier('lifetime');
     expect(result.success).toBe(true);
     expect(result.isPro).toBe(true);
+  });
+
+  describe('already-owned recovery (TALLYHO-P)', () => {
+    const mockPkg = { identifier: 'com.gventureshq.tallyho.lifetime', packageType: 'LIFETIME' };
+    const offeringsPayload = {
+      current: {
+        identifier: 'default',
+        lifetime: mockPkg,
+        availablePackages: [mockPkg],
+      },
+    };
+
+    it('recovers via restore when the store reports already-purchased by code', async () => {
+      mockNativePurchases.getOfferings.mockResolvedValueOnce(offeringsPayload);
+      mockNativePurchases.purchasePackage.mockRejectedValueOnce({
+        code: 'PRODUCT_ALREADY_PURCHASED_ERROR',
+        message: 'This product is already active for the user.',
+      });
+      mockNativePurchases.restorePurchases.mockResolvedValueOnce({
+        entitlements: { active: { 'TallyHo Pro': {} } },
+      });
+
+      const result = await purchasePackageByIdentifier('lifetime');
+      expect(mockNativePurchases.restorePurchases).toHaveBeenCalled();
+      expect(result.success).toBe(true);
+      expect(result.isPro).toBe(true);
+    });
+
+    it('recovers via restore when the store reports already-active by message only', async () => {
+      mockNativePurchases.getOfferings.mockResolvedValueOnce(offeringsPayload);
+      mockNativePurchases.purchasePackage.mockRejectedValueOnce({
+        code: 'UNKNOWN',
+        message: 'This product is already active for the user.',
+      });
+      mockNativePurchases.restorePurchases.mockResolvedValueOnce({
+        entitlements: { active: { 'TallyHo Pro': {} } },
+      });
+
+      const result = await purchasePackageByIdentifier('lifetime');
+      expect(result.success).toBe(true);
+      expect(result.isPro).toBe(true);
+    });
+
+    it('returns alreadyOwned when restore finds no entitlement', async () => {
+      mockNativePurchases.getOfferings.mockResolvedValueOnce(offeringsPayload);
+      mockNativePurchases.purchasePackage.mockRejectedValueOnce({
+        code: 'PRODUCT_ALREADY_PURCHASED_ERROR',
+        message: 'Already owned.',
+      });
+      mockNativePurchases.restorePurchases.mockResolvedValueOnce({
+        entitlements: { active: {} },
+      });
+
+      const result = await purchasePackageByIdentifier('lifetime');
+      expect(result.success).toBe(false);
+      expect(result.alreadyOwned).toBe(true);
+      expect(result.error).toContain('Restore');
+    });
   });
 
   describe('restoreAdFreePurchases on Native', () => {

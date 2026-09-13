@@ -195,6 +195,11 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
     } else if (result.redirected) {
       trackEvent('checkout_redirected', { tier: selectedTier });
       onClose();
+    } else if (result.alreadyOwned) {
+      // Store reports the product as already active (e.g. an earlier
+      // sandbox/test-track purchase). Recover by restoring the entitlement.
+      trackEvent('purchase_already_owned', { tier: selectedTier });
+      await handleRestore();
     } else if (!result.userCancelled) {
       trackEvent('purchase_error', { tier: selectedTier, error: result.error });
       setErrorMessage(result.error || 'The purchase process could not be completed.');

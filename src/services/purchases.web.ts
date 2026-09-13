@@ -3,6 +3,7 @@ import { PackageType, Purchases } from '@revenuecat/purchases-js';
 import { logError, logWarn } from '../utils/logger';
 import { generateId } from '../utils/uuid';
 import { trackEvent } from './analytics';
+import { PRO_ENTITLEMENT_ID } from './purchases';
 import type { PurchaseResult, PurchasesOffering, PurchasesOfferings, PurchasesPackage } from './purchases';
 
 export const ANONYMOUS_USER_STORAGE_KEY = 'tallyho_web_app_user_id';
@@ -173,9 +174,7 @@ export async function purchasePackageByIdentifier(
       ...(cleanEmail ? { customerEmail: cleanEmail } : {}),
     });
 
-    const isPro = Boolean(
-      result.customerInfo?.entitlements?.active?.['TallyHo Pro'] || result.customerInfo?.entitlements?.active?.pro,
-    );
+    const isPro = Boolean(result.customerInfo?.entitlements?.active?.[PRO_ENTITLEMENT_ID]);
 
     if (isPro) {
       trackEvent('purchase_success', { tier, isPro: true, platform: 'web' });
@@ -219,9 +218,7 @@ export async function restoreAdFreePurchases(email?: string): Promise<PurchaseRe
     }
 
     const customerInfo = await p.getCustomerInfo();
-    const isPro = Boolean(
-      customerInfo?.entitlements?.active?.['TallyHo Pro'] || customerInfo?.entitlements?.active?.pro,
-    );
+    const isPro = Boolean(customerInfo?.entitlements?.active?.[PRO_ENTITLEMENT_ID]);
 
     if (isPro) {
       return { success: true, isPro: true };

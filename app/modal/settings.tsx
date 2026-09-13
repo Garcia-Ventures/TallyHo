@@ -40,6 +40,7 @@ import { nativeSound } from '../../src/services/audio';
 import { restoreAdFreePurchases } from '../../src/services/purchases';
 import { storage } from '../../src/services/storage';
 import { useSettingsStore } from '../../src/stores/useSettingsStore';
+import { getAppVersionLabel } from '../../src/utils/appInfo';
 import { showToast } from '../../src/utils/toast';
 
 export default function SettingsModal() {
@@ -508,7 +509,7 @@ export default function SettingsModal() {
             accessibilityLabel="TallyHo Logo"
           />
           <Text className="text-muted-foreground text-center text-xs font-semibold">
-            TallyHo v1.0.0 (Build 42) • Crafted by Garcia Ventures
+            {`TallyHo ${getAppVersionLabel()} • Crafted by Garcia Ventures`}
           </Text>
         </View>
       </ScrollView>

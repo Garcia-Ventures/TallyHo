@@ -11,9 +11,9 @@ export const AD_CONFIG = {
   // Enabled if explicitly set in env or running in __DEV__ mode
   showTestAds: process.env.EXPO_PUBLIC_SHOW_TEST_ADS !== 'false',
 
-  // Product entitlements & product IDs
+  // Product entitlements & product IDs (entitlement must match RevenueCat dashboard)
   productId: 'tallyho_ad_free_lifetime',
-  entitlementId: 'pro',
+  entitlementId: 'TallyHo Pro',
 
   // House ad cards (self-hosted rotating ads)
   houseAds: [

@@ -3,8 +3,10 @@ import type { CustomerInfo, PurchasesOfferings, PurchasesPackage } from 'react-n
 import Purchases, { LOG_LEVEL, PURCHASES_ERROR_CODE } from 'react-native-purchases';
 import RevenueCatUI, { PAYWALL_RESULT } from 'react-native-purchases-ui';
 
+import { useSettingsStore } from '../stores/useSettingsStore';
 import { logError, logInfo, logWarn } from '../utils/logger';
 import { trackEvent } from './analytics';
+import { PRO_ENTITLEMENT_ID } from './purchases';
 
 const API_KEY =
   (Platform.OS === 'android'
@@ -20,6 +22,8 @@ export interface PurchaseResult {
   error?: string;
   redirected?: boolean;
   needsEmail?: boolean;
+  /** Store reports the product as already owned — caller should recover via restore. */
+  alreadyOwned?: boolean;
 }
 
 /** Initializes RevenueCat SDK with the provided API key. */
@@ -35,9 +39,12 @@ export async function initPurchases(): Promise<void> {
     Purchases.configure({ apiKey: API_KEY });
     isInitialized = true;
 
-    // Listen to real-time customer info updates
+    // Listen to real-time customer info updates and sync Pro grants to the store.
+    // Grant-only: never auto-revoke here to avoid flapping on transient states.
     Purchases.addCustomerInfoUpdateListener((customerInfo) => {
-      checkProEntitlement(customerInfo);
+      if (checkProEntitlement(customerInfo)) {
+        useSettingsStore.getState().purchaseRemoveAds();
+      }
     });
 
     if (typeof __DEV__ !== 'undefined' && __DEV__) {
@@ -48,13 +55,12 @@ export async function initPurchases(): Promise<void> {
   }
 }
 
-/** Checks if the customer info has active 'TallyHo Pro' (or 'pro') entitlement. */
+/** Checks if the customer info has the active TallyHo Pro entitlement. */
 export function checkProEntitlement(customerInfo: CustomerInfo): boolean {
   if (!customerInfo || !customerInfo.entitlements || !customerInfo.entitlements.active) {
     return false;
   }
-  const activeEntitlements = customerInfo.entitlements.active;
-  return Boolean(activeEntitlements['TallyHo Pro'] || activeEntitlements['pro']);
+  return Boolean(customerInfo.entitlements.active[PRO_ENTITLEMENT_ID]);
 }
 
 /** Retrieves the current customer info from RevenueCat. */
@@ -99,9 +105,39 @@ export async function purchasePackage(pkg: PurchasesPackage): Promise<PurchaseRe
     if (error.userCancelled || error.code === PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR) {
       return { success: false, isPro: false, userCancelled: true };
     }
+    if (isAlreadyOwnedError(error)) {
+      // Play Store reports the product as already owned (e.g. an earlier
+      // sandbox/test-track purchase is active on this account). Recover by
+      // restoring — the entitlement check decides whether Pro is granted.
+      logInfo('[RevenueCat] Product already owned, attempting restore for recovery');
+      try {
+        const customerInfo = await Purchases.restorePurchases();
+        const isPro = checkProEntitlement(customerInfo);
+        if (isPro) {
+          trackEvent('purchase_recovered_via_restore', {});
+          return { success: true, isPro };
+        }
+      } catch (restoreErr) {
+        logError('[RevenueCat] Recovery restore after already-owned failed:', restoreErr);
+      }
+      return {
+        success: false,
+        isPro: false,
+        alreadyOwned: true,
+        error: 'This product is already active on your account. Use Restore below to unlock Pro.',
+      };
+    }
     logError('[RevenueCat] Purchase failed:', error);
     return { success: false, isPro: false, error: error.message || 'Purchase failed' };
   }
+}
+
+/** Detects store already-owned errors by code or message across SDK versions. */
+function isAlreadyOwnedError(error: { code?: unknown; message?: string }): boolean {
+  if (error.code === PURCHASES_ERROR_CODE.PRODUCT_ALREADY_PURCHASED_ERROR) {
+    return true;
+  }
+  return /already (active|owned|purchased)/i.test(error.message || '');
 }
 
 /** Purchases a package tier by identifier ('lifetime' | 'yearly' | 'monthly'). */
@@ -204,7 +240,7 @@ export async function presentPaywall(): Promise<PurchaseResult> {
 
   try {
     const paywallResult = await RevenueCatUI.presentPaywallIfNeeded({
-      requiredEntitlementIdentifier: 'TallyHo Pro',
+      requiredEntitlementIdentifier: PRO_ENTITLEMENT_ID,
     });
 
     if (paywallResult === PAYWALL_RESULT.PURCHASED || paywallResult === PAYWALL_RESULT.RESTORED) {
