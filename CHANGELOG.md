@@ -5,6 +5,18 @@ All notable changes to the TallyHo project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.3](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.4.2...tally-ho-v1.4.3) (2026-09-13)
+
+
+### Bug Fixes
+
+* recover already-owned purchases via restore and canonicalize Pro entitlement ([06a14b9](https://github.com/Garcia-Ventures/TallyHo/commit/06a14b9ba021e0766c7bcb5b1c3759b847bb738b))
+
+
+### Miscellaneous Chores
+
+* rename sentry project slug from react-native to tallyho ([9446854](https://github.com/Garcia-Ventures/TallyHo/commit/944685470611ff47bffcd30928bd92109e01883a))
+
 ## [1.4.2](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.4.1...tally-ho-v1.4.2) (2026-09-10)
 
 
