@@ -1,5 +1,6 @@
 import { Badge, Button, Card, CardContent, Text } from '@gv-tech/ui-native';
 import { useRouter } from 'expo-router';
+import { useMemo } from 'react';
 import { Pressable, View } from 'react-native';
 
 import { AdBannerCard } from '../src/components/AdBannerCard';
@@ -12,6 +13,15 @@ import { calculatePlayerTotals, getSortedPlayers } from '../src/utils/scoring';
 export default function HomeScreen() {
   const router = useRouter();
   const { activeGame, matchHistory } = useGameStore();
+
+  const recentMatches = useMemo(() => {
+    return matchHistory.slice(0, 3).map((game) => {
+      const totals = calculatePlayerTotals(game);
+      const sorted = getSortedPlayers(game, totals);
+      const winner = sorted[0];
+      return { game, winner };
+    });
+  }, [matchHistory]);
 
   const handleSelectPreset = (preset: GamePreset) => {
     router.push({
@@ -135,11 +145,7 @@ export default function HomeScreen() {
             </Card>
           ) : (
             <View className="gap-3.5">
-              {matchHistory.slice(0, 3).map((game) => {
-                const totals = calculatePlayerTotals(game);
-                const sorted = getSortedPlayers(game, totals);
-                const winner = sorted[0];
-
+              {recentMatches.map(({ game, winner }) => {
                 return (
                   <Card key={game.id} className="border-border bg-card p-5">
                     <CardContent className="flex-row items-center justify-between p-0">
