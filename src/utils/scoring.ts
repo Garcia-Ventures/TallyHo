@@ -1,10 +1,16 @@
 import type { GameHighlight, GameSession, Player, RoundScore } from '../types/game';
 
+const totalsCache = new WeakMap<GameSession, Record<string, number>>();
+
 /**
  * Calculates the total net points for each player in a game session. Net points for a round = points + bonusPoints -
  * penaltyPoints.
  */
 export function calculatePlayerTotals(game: GameSession): Record<string, number> {
+  if (totalsCache.has(game)) {
+    return totalsCache.get(game)!;
+  }
+
   const totals: Record<string, number> = {};
 
   game.players.forEach((player) => {
@@ -20,6 +26,7 @@ export function calculatePlayerTotals(game: GameSession): Record<string, number>
     });
   });
 
+  totalsCache.set(game, totals);
   return totals;
 }
 
