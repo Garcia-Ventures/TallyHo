@@ -5,6 +5,41 @@ All notable changes to the TallyHo project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.3](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.4.2...tally-ho-v1.4.3) (2026-09-14)
+
+
+### Bug Fixes
+
+* recover already-owned purchases via restore and canonicalize Pro entitlement ([06a14b9](https://github.com/Garcia-Ventures/TallyHo/commit/06a14b9ba021e0766c7bcb5b1c3759b847bb738b))
+
+
+### Performance Improvements
+
+* Memoize `calculatePlayerTotals` ([#61](https://github.com/Garcia-Ventures/TallyHo/issues/61)) ([94f67ec](https://github.com/Garcia-Ventures/TallyHo/commit/94f67ec0fb2911431e3fec8b916ba08e84632282))
+* memoize recent matches display in home screen ([#64](https://github.com/Garcia-Ventures/TallyHo/issues/64)) ([ad142d9](https://github.com/Garcia-Ventures/TallyHo/commit/ad142d9f92706d2ad80fb73af8c2118dcd67e198))
+
+
+### Code Refactoring
+
+* **analytics:** replace explicit 'any' with specific type OpenPanel ([#60](https://github.com/Garcia-Ventures/TallyHo/issues/60)) ([616b68d](https://github.com/Garcia-Ventures/TallyHo/commit/616b68d5165458484e017a684d9f89ee213afb7f))
+* Replace explicit any with specific types in scoring tests ([#58](https://github.com/Garcia-Ventures/TallyHo/issues/58)) ([9dbed6f](https://github.com/Garcia-Ventures/TallyHo/commit/9dbed6fe6af4b5ff1ba7925adb9ec068066ad338))
+
+
+### Tests
+
+* add unit tests for game constants in src/types/game.test.ts ([#62](https://github.com/Garcia-Ventures/TallyHo/issues/62)) ([1970ab4](https://github.com/Garcia-Ventures/TallyHo/commit/1970ab43281776c41ef5b6ab2aaf848b648e5da3))
+* replace `any` with specific types in scoring tests ([#63](https://github.com/Garcia-Ventures/TallyHo/issues/63)) ([bad616b](https://github.com/Garcia-Ventures/TallyHo/commit/bad616bd28c8d75a36861cd70f82ff477c3de033))
+* replace explicit any with unknown assertion in scoring utility tests ([#52](https://github.com/Garcia-Ventures/TallyHo/issues/52)) ([175f9f3](https://github.com/Garcia-Ventures/TallyHo/commit/175f9f33eee784141e54ad0f394690bf6a28bda4))
+
+
+### Miscellaneous Chores
+
+* add explicit return type to dismissToast ([#53](https://github.com/Garcia-Ventures/TallyHo/issues/53)) ([fb3dcf5](https://github.com/Garcia-Ventures/TallyHo/commit/fb3dcf5ff4d27b1e7b0757ab9798ecf4b000e174))
+* Add explicit return type to getCustomerInfo ([#55](https://github.com/Garcia-Ventures/TallyHo/issues/55)) ([a4db729](https://github.com/Garcia-Ventures/TallyHo/commit/a4db7294abe730f897fd5152ff8b64c7ecc97861))
+* add explicit return type to useSafeRouter ([#54](https://github.com/Garcia-Ventures/TallyHo/issues/54)) ([1e14ecc](https://github.com/Garcia-Ventures/TallyHo/commit/1e14ecc71eb43bcdfa5cff799c6d785b2ce04832))
+* add explicit return types to exported functions in toast.tsx ([#56](https://github.com/Garcia-Ventures/TallyHo/issues/56)) ([1efd1c3](https://github.com/Garcia-Ventures/TallyHo/commit/1efd1c3732e3aa5f4a50cceda987b24414dd4303))
+* rename sentry project slug from react-native to tallyho ([9446854](https://github.com/Garcia-Ventures/TallyHo/commit/944685470611ff47bffcd30928bd92109e01883a))
+
 ## [1.4.2](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.4.1...tally-ho-v1.4.2) (2026-09-10)
 
 
