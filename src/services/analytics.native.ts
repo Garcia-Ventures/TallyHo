@@ -9,8 +9,7 @@ import { logInfo } from '../utils/logger';
 const DEFAULT_CLIENT_ID = 'f68ef1dc-81f3-4f14-b15f-218614e0913a';
 const DEFAULT_API_URL = 'https://openpanel.gventureshq.com/api';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let opInstance: any = null;
+let opInstance: OpenPanel | null = null;
 
 /** Initializes OpenPanel React Native SDK on Mobile Native Target (iOS & Android). */
 export function initAnalytics(): void {
