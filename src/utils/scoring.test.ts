@@ -190,6 +190,25 @@ describe('scoring utility', () => {
   });
 
   describe('checkWinCondition', () => {
+    it('handles empty game gracefully', () => {
+      const emptyGame: GameSession = {
+        id: 'empty',
+        name: 'Empty Game',
+        scoringMode: 'RACE_HIGH',
+        roundScoringType: 'EVERY_PLAYER',
+        players: [],
+        rounds: [],
+        status: 'ACTIVE',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      const winResult = checkWinCondition(emptyGame);
+
+      expect(winResult.hasWinner).toBe(false);
+      expect(winResult.winnerId).toBe('');
+    });
+
     it('detects win condition when target score is reached in RACE_HIGH mode', () => {
       const winResult = checkWinCondition(mockGame);
       expect(winResult.hasWinner).toBe(true);
