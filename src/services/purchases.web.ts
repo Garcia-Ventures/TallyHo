@@ -1,4 +1,4 @@
-import { PackageType, Purchases } from '@revenuecat/purchases-js';
+import { CustomerInfo, PackageType, Purchases } from '@revenuecat/purchases-js';
 
 import { logError, logWarn } from '../utils/logger';
 import { generateId } from '../utils/uuid';
@@ -48,7 +48,7 @@ export async function initPurchases(): Promise<Purchases | null> {
   }
 }
 
-export async function getCustomerInfo() {
+export async function getCustomerInfo(): Promise<CustomerInfo | null> {
   const p = await initPurchases();
   if (!p) {
     return null;

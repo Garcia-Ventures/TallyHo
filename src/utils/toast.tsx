@@ -27,7 +27,7 @@ export function showToast(
   description?: string,
   variant: 'default' | 'destructive' | 'success' = 'default',
   duration = 4000,
-) {
+): void {
   const id = `toast_${Date.now()}_${++nextToastId}`;
   const newToast: ToastMessage = { id, title, description, variant, duration };
   activeToasts = [...activeToasts.slice(-2), newToast];
@@ -38,12 +38,12 @@ export function showToast(
   }, duration);
 }
 
-export function dismissToast(id: string) {
+export function dismissToast(id: string): void {
   activeToasts = activeToasts.filter((t) => t.id !== id);
   notify();
 }
 
-export function AppToaster() {
+export function AppToaster(): React.JSX.Element | null {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   useEffect(() => {
