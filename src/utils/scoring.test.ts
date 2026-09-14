@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { GameSession, Player } from '../types/game';
+import type { GameSession, Player, RoundScore } from '../types/game';
 import {
   calculateGameHighlights,
   calculatePlayerTotals,
@@ -406,10 +406,8 @@ describe('scoring utility', () => {
             roundNumber: 1,
             timestamp: new Date().toISOString(),
             scores: {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              p1: undefined as any,
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              p2: null as any,
+              p1: undefined as unknown as RoundScore,
+              p2: null as unknown as RoundScore,
             },
           },
         ],
@@ -428,8 +426,7 @@ describe('scoring utility', () => {
             roundNumber: 1,
             timestamp: new Date().toISOString(),
             scores: {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              p1: { playerId: 'p1' } as any, // Missing points field entirely
+              p1: { playerId: 'p1' } as unknown as RoundScore, // Missing points field entirely
               p2: { playerId: 'p2', points: 0, bonusPoints: 0, penaltyPoints: 0 },
             },
           },
