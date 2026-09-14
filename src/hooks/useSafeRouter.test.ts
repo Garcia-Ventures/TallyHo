@@ -11,8 +11,7 @@ vi.mock('expo-router', () => ({
 describe('useSafeRouter', () => {
   it('returns the expo-router instance', () => {
     const mockRouter = { push: vi.fn(), back: vi.fn() };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    vi.mocked(useRouter).mockReturnValue(mockRouter as any);
+    vi.mocked(useRouter).mockReturnValue(mockRouter as unknown as ReturnType<typeof useRouter>);
 
     const { result } = renderHook(() => useSafeRouter());
 
