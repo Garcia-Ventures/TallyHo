@@ -1,4 +1,5 @@
-import { CustomerInfo, PackageType, Purchases } from '@revenuecat/purchases-js';
+import { PackageType, Purchases } from '@revenuecat/purchases-js';
+import type { CustomerInfo } from '@revenuecat/purchases-js';
 
 import { logError, logWarn } from '../utils/logger';
 import { generateId } from '../utils/uuid';
