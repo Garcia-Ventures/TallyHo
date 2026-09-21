@@ -14,7 +14,7 @@ describe('logger utility', () => {
   });
 
   it('logs info without crashing and forwards extra args', () => {
-    const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const spy = vi.spyOn(console, 'info').mockImplementation(() => {});
     vi.stubGlobal('__DEV__', true);
     try {
       expect(() => logInfo('Init done', { detail: 1 })).not.toThrow();
@@ -28,7 +28,7 @@ describe('logger utility', () => {
   it('does not touch console in production mode', () => {
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const logSpy = vi.spyOn(console, 'info').mockImplementation(() => {});
     vi.stubGlobal('__DEV__', false);
     try {
       logError('prod error', new Error('x'));
