@@ -84,12 +84,17 @@ describe('GameSetupModal Component', () => {
     expect(html).toContain('Start Match');
   });
 
-  it('safely adds a new player when crypto is undefined (React Native Hermes regression test)', () => {
-    const originalCrypto = globalThis.crypto;
+  it('safely adds a new player when only crypto.getRandomValues is available', () => {
     const onStartGame = vi.fn();
     try {
-      // @ts-expect-error - simulating React Native environment where crypto is not defined
-      delete globalThis.crypto;
+      vi.stubGlobal('crypto', {
+        getRandomValues: (arr: Uint8Array) => {
+          for (let i = 0; i < arr.length; i++) {
+            arr[i] = Math.floor(Math.random() * 256);
+          }
+          return arr;
+        },
+      });
 
       render(<GameSetupModal isOpen={true} onClose={vi.fn()} preset={GAME_PRESETS[0]} onStartGame={onStartGame} />);
 
@@ -111,7 +116,7 @@ describe('GameSetupModal Component', () => {
       expect(newPlayer).toBeDefined();
       expect(newPlayer.id.startsWith('p_')).toBe(true);
     } finally {
-      globalThis.crypto = originalCrypto;
+      vi.unstubAllGlobals();
     }
   });
 });
