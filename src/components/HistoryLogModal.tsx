@@ -1,5 +1,5 @@
 import { Badge, Button, Card, CardContent, Text } from '@gv-tech/ui-native';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Modal, ScrollView, View } from 'react-native';
 
 import type { GameSession } from '../types/game';
@@ -21,6 +21,39 @@ export const HistoryLogModal: React.FC<HistoryLogModalProps> = ({
   onClearHistory,
   isRouteModal = false,
 }) => {
+  const renderedHistory = useMemo(() => {
+    return history.map((game) => {
+      const totals = calculatePlayerTotals(game);
+      const winner = game.winnerId
+        ? game.players.find((p) => p.id === game.winnerId)
+        : getSortedPlayers(game, totals)[0];
+
+      return (
+        <Card key={game.id} className="border-border bg-card p-4">
+          <CardContent className="gap-2 p-0">
+            <View className="flex-row items-center justify-between">
+              <Text className="text-foreground text-base font-black">{game.name}</Text>
+              <Text className="text-muted-foreground text-[10px]">{new Date(game.createdAt).toLocaleDateString()}</Text>
+            </View>
+
+            {winner && (
+              <Badge variant="secondary" className="bg-chip-mustard/15 flex-row items-center gap-1.5 self-start p-2">
+                <Text className="text-xs">👑</Text>
+                <Text className="text-foreground text-xs font-bold">
+                  Winner: {winner.name} ({totals[winner.id]} pts)
+                </Text>
+              </Badge>
+            )}
+
+            <Text className="text-muted-foreground text-[10px]">
+              {game.players.length} Players • {game.rounds.length} Rounds Logged
+            </Text>
+          </CardContent>
+        </Card>
+      );
+    });
+  }, [history]);
+
   if (!isOpen) {
     return null;
   }
@@ -54,40 +87,7 @@ export const HistoryLogModal: React.FC<HistoryLogModalProps> = ({
               </CardContent>
             </Card>
           ) : (
-            history.map((game) => {
-              const totals = calculatePlayerTotals(game);
-              const sorted = getSortedPlayers(game, totals);
-              const winner = sorted[0];
-
-              return (
-                <Card key={game.id} className="border-border bg-card p-4">
-                  <CardContent className="gap-2 p-0">
-                    <View className="flex-row items-center justify-between">
-                      <Text className="text-foreground text-base font-black">{game.name}</Text>
-                      <Text className="text-muted-foreground text-[10px]">
-                        {new Date(game.createdAt).toLocaleDateString()}
-                      </Text>
-                    </View>
-
-                    {winner && (
-                      <Badge
-                        variant="secondary"
-                        className="bg-chip-mustard/15 flex-row items-center gap-1.5 self-start p-2"
-                      >
-                        <Text className="text-xs">👑</Text>
-                        <Text className="text-foreground text-xs font-bold">
-                          Winner: {winner.name} ({totals[winner.id]} pts)
-                        </Text>
-                      </Badge>
-                    )}
-
-                    <Text className="text-muted-foreground text-[10px]">
-                      {game.players.length} Players • {game.rounds.length} Rounds Logged
-                    </Text>
-                  </CardContent>
-                </Card>
-              );
-            })
+            renderedHistory
           )}
         </ScrollView>
 

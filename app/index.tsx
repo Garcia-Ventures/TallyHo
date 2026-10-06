@@ -16,6 +16,11 @@ export default function HomeScreen() {
 
   const recentMatches = useMemo(() => {
     return matchHistory.slice(0, 3).map((game) => {
+      if (game.winnerId) {
+        const winner = game.players.find((p) => p.id === game.winnerId);
+        return { game, winner };
+      }
+
       const totals = calculatePlayerTotals(game);
       const sorted = getSortedPlayers(game, totals);
       const winner = sorted[0];
