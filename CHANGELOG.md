@@ -5,6 +5,28 @@ All notable changes to the TallyHo project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.5](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.4.4...tally-ho-v1.4.5) (2026-10-06)
+
+
+### Performance Improvements
+
+* **index:** optimize recentMatches winner calculation ([#66](https://github.com/Garcia-Ventures/TallyHo/issues/66)) ([28c9b45](https://github.com/Garcia-Ventures/TallyHo/commit/28c9b45500a0ab96289a357ff7b96ef469c9ade5))
+
+
+### Code Refactoring
+
+* **logger:** inline environment checks for dead-code elimination ([#69](https://github.com/Garcia-Ventures/TallyHo/issues/69)) ([576b846](https://github.com/Garcia-Ventures/TallyHo/commit/576b8461ecaeba40732003be9807dd7a659a7604))
+* **logger:** remove console.warn from logWarn ([#68](https://github.com/Garcia-Ventures/TallyHo/issues/68)) ([fcc1273](https://github.com/Garcia-Ventures/TallyHo/commit/fcc127375dad93f4dc2a021db2b75a5906c7cb67))
+
+
+### Build System
+
+* **deps:** bump @revenuecat/purchases-js from 1.59.0 to 1.65.0 ([#72](https://github.com/Garcia-Ventures/TallyHo/issues/72)) ([9fb3759](https://github.com/Garcia-Ventures/TallyHo/commit/9fb3759295b175fc05fc15f32e3e6b2dd154cfd1))
+* **deps:** bump @sentry/react-native from 8.25.0 to 8.29.0 ([#74](https://github.com/Garcia-Ventures/TallyHo/issues/74)) ([e89470c](https://github.com/Garcia-Ventures/TallyHo/commit/e89470ca9312311f78f728c13ef5774dfb0a702a))
+* **deps:** bump expo-haptics from 57.0.2 to 57.0.3 ([#75](https://github.com/Garcia-Ventures/TallyHo/issues/75)) ([d661b45](https://github.com/Garcia-Ventures/TallyHo/commit/d661b450c94148ee483530218103ebff5fabb74f))
+* **deps:** bump expo-router from 57.0.20 to 57.0.24 ([#76](https://github.com/Garcia-Ventures/TallyHo/issues/76)) ([8a4e8dc](https://github.com/Garcia-Ventures/TallyHo/commit/8a4e8dc1ed4883ed2d015971a1892ca38305a0d5))
+* **deps:** bump expo-updates from 57.0.21 to 57.0.24 ([#73](https://github.com/Garcia-Ventures/TallyHo/issues/73)) ([ce0b7f6](https://github.com/Garcia-Ventures/TallyHo/commit/ce0b7f657b8ef3690127de004fd2770aeb44ca48))
+
 ## [1.4.4](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.4.3...tally-ho-v1.4.4) (2026-09-18)
 
 
