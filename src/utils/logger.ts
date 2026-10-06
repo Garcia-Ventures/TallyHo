@@ -22,6 +22,6 @@ export function logWarn(message: string, error?: unknown): void {
 export function logInfo(message: string, ...args: unknown[]): void {
   if (typeof __DEV__ !== 'undefined' && __DEV__) {
     // eslint-disable-next-line no-console
-    console.log(message, ...args);
+    console.info(message, ...args);
   }
 }
