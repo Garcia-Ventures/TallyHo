@@ -200,9 +200,12 @@ export const useGameStore = create<GameState>((set, get) => ({
       return;
     }
 
+    const winResult = checkWinCondition(activeGame);
+
     const completedGame: GameSession = {
       ...activeGame,
       status: 'COMPLETED',
+      winnerId: winResult.winnerId || activeGame.winnerId,
     };
     storage.archiveMatch(completedGame);
     const updatedHistory = storage.getMatchHistory();
