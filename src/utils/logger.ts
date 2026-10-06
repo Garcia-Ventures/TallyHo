@@ -9,7 +9,7 @@ export function logError(message: string, error?: unknown): void {
   captureException(error ?? new Error(message), { message });
 }
 
-/** Warning-level log: dev console output + Sentry capture in all environments. */
+/** Warning-level log: Sentry capture in all environments. */
 export function logWarn(message: string, error?: unknown): void {
   if (typeof __DEV__ !== 'undefined' && __DEV__) {
     // eslint-disable-next-line no-console
