@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { generateId, generateUUID } from './uuid';
 
@@ -10,11 +10,16 @@ describe('uuid utility', () => {
     expect(id).toMatch(UUID_V4_REGEX);
   });
 
-  it('generates a valid UUID when crypto is undefined (React Native Hermes simulation)', () => {
-    const originalCrypto = globalThis.crypto;
+  it('generates a valid UUID when only crypto.getRandomValues is available', () => {
     try {
-      // @ts-expect-error - simulating React Native environment where crypto is missing
-      delete globalThis.crypto;
+      vi.stubGlobal('crypto', {
+        getRandomValues: (arr: Uint8Array) => {
+          for (let i = 0; i < arr.length; i++) {
+            arr[i] = Math.floor(Math.random() * 256);
+          }
+          return arr;
+        },
+      });
 
       const id = generateUUID();
       expect(id).toMatch(UUID_V4_REGEX);
@@ -23,7 +28,19 @@ describe('uuid utility', () => {
       expect(prefixed.startsWith('p_')).toBe(true);
       expect(prefixed.slice(2)).toMatch(UUID_V4_REGEX);
     } finally {
-      globalThis.crypto = originalCrypto;
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it('throws an error when crypto is undefined (no secure randomness available)', () => {
+    try {
+      vi.stubGlobal('crypto', undefined);
+
+      expect(() => generateUUID()).toThrowError(
+        'Secure random number generation is not supported in this environment.',
+      );
+    } finally {
+      vi.unstubAllGlobals();
     }
   });
 
