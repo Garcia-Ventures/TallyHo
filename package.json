@@ -75,7 +75,7 @@
     "expo-dev-client": "~57.0.18",
     "expo-haptics": "^57.0.3",
     "expo-linking": "~57.0.9",
-    "expo-router": "~57.0.20",
+    "expo-router": "~57.0.24",
     "expo-splash-screen": "~57.0.8",
     "expo-updates": "~57.0.24",
     "lightningcss": "1.30.1",
