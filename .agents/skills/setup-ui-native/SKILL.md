@@ -128,8 +128,8 @@ Screen root views MUST use `flex-1 bg-background`:
 
 ```tsx
 import './src/global.css';
-import { View } from 'react-native';
 import { ThemeProvider, Button, Text } from '@gv-tech/ui-native';
+import { View } from 'react-native';
 
 export default function App() {
   return (

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { formatBadge, monthStartUTC, parseArgs, requestOk, statusFor, summarizeBuilds } from './eas-quota.mjs';
 
 const NOW = new Date('2026-09-04T12:00:00Z');

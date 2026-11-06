@@ -50,7 +50,8 @@ export const NATIVE_CHANGE_PATTERNS = [
 
 /**
  * Returns true if any changed file requires a native rebuild.
- * @param {string[]} files git-changed file paths
+ *
+ * @param { string[] } files Git-changed file paths
  */
 export function hasNativeChanges(files) {
   if (!Array.isArray(files) || files.length === 0) {

@@ -41,7 +41,40 @@ Sentry.init({
       : [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
 
   // Filter known non-fatal native environment quirks & handled edge cases
-  ignoreErrors: ['General error retrieving the install referrer', 'findNodeHandle is not supported on web'],
+  // (TALLYHO-9/Q/R/P: Play Store referrer on emulators + expected RevenueCat
+  // billing states that are handled in-app with friendly UI).
+  ignoreErrors: [
+    'General error retrieving the install referrer',
+    'installation referrer API',
+    'Play Store may not be installed',
+    'not allowed to make the purchase',
+    'already active for the user',
+    'already owned',
+    'already purchased',
+    'Error performing request',
+    'Failed to fetch Offerings',
+    'findNodeHandle is not supported on web',
+  ],
+
+  beforeSend(event) {
+    const values = event.exception?.values ?? [];
+    const text = [...values.map((v) => `${v.value ?? ''} ${v.type ?? ''}`), event.message ?? '']
+      .join(' ')
+      .toLowerCase();
+    if (
+      text.includes('install referrer') ||
+      text.includes('installation referrer api') ||
+      text.includes('not allowed to make the purchase') ||
+      text.includes('already active') ||
+      text.includes('already owned') ||
+      text.includes('already purchased') ||
+      text.includes('error performing request') ||
+      text.includes('failed to fetch offerings')
+    ) {
+      return null;
+    }
+    return event;
+  },
 
   // uncomment the line below to enable Spotlight (https://spotlightjs.com)
   // spotlight: __DEV__,

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { addBreadcrumb, captureException, setUserContext, trackMatchEvent } from './sentry';
+import { addBreadcrumb, captureException, isExpectedBillingError, setUserContext, trackMatchEvent } from './sentry';
 
 describe('sentry utility', () => {
   beforeEach(() => {
@@ -27,5 +27,27 @@ describe('sentry utility', () => {
 
   it('safely sets user context', () => {
     expect(() => setUserContext('usr_123', 'Player One')).not.toThrow();
+  });
+
+  it('flags expected store/billing states (TALLYHO-9/Q/R/P)', () => {
+    expect(
+      isExpectedBillingError(
+        new Error(
+          "The current Play Store app doesn't provide the installation referrer API, or the Play Store may not be installed.",
+        ),
+      ),
+    ).toBe(true);
+    expect(isExpectedBillingError(new Error('The device or user is not allowed to make the purchase.'))).toBe(true);
+    expect(
+      isExpectedBillingError(new Error('Error performing request.'), {
+        message: '[RevenueCat] Failed to fetch Offerings:',
+      }),
+    ).toBe(true);
+    expect(isExpectedBillingError(new Error('This product is already active for the user.'))).toBe(true);
+  });
+
+  it('does not flag unexpected errors', () => {
+    expect(isExpectedBillingError(new Error('Null is not an object (evaluating foo.bar)'))).toBe(false);
+    expect(isExpectedBillingError(new Error('boom'), { message: '[RevenueCat] Initialization failed:' })).toBe(false);
   });
 });

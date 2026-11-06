@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { decideNativeChanged, mapPlatforms, parseArgs } from './fingerprint-diff.mjs';
 
 describe('fingerprint-diff helpers', () => {

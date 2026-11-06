@@ -5,6 +5,7 @@ import RevenueCatUI, { PAYWALL_RESULT } from 'react-native-purchases-ui';
 
 import { useSettingsStore } from '../stores/useSettingsStore';
 import { logError, logInfo, logWarn } from '../utils/logger';
+import { isExpectedBillingError } from '../utils/sentry';
 import { trackEvent } from './analytics';
 import { PRO_ENTITLEMENT_ID } from './purchases';
 
@@ -38,7 +39,6 @@ export async function initPurchases(): Promise<void> {
     }
     Purchases.configure({ apiKey: API_KEY });
     isInitialized = true;
-
     // Listen to real-time customer info updates and sync Pro grants to the store.
     // Grant-only: never auto-revoke here to avoid flapping on transient states.
     Purchases.addCustomerInfoUpdateListener((customerInfo) => {
@@ -51,6 +51,10 @@ export async function initPurchases(): Promise<void> {
       logInfo('[RevenueCat] Initialized successfully');
     }
   } catch (err) {
+    if (isExpectedBillingError(err, { message: '[RevenueCat] Initialization failed:' })) {
+      logInfo('[RevenueCat] Initialization skipped (expected store state)');
+      return;
+    }
     logError('[RevenueCat] Initialization failed:', err);
   }
 }
@@ -71,6 +75,10 @@ export async function getCustomerInfo(): Promise<CustomerInfo | null> {
   try {
     return await Purchases.getCustomerInfo();
   } catch (err) {
+    if (isExpectedBillingError(err, { message: '[RevenueCat] Failed to fetch CustomerInfo:' })) {
+      logInfo('[RevenueCat] CustomerInfo unavailable (expected store state)');
+      return null;
+    }
     logError('[RevenueCat] Failed to fetch CustomerInfo:', err);
     return null;
   }
@@ -84,6 +92,10 @@ export async function getOfferings(): Promise<PurchasesOfferings | null> {
   try {
     return await Purchases.getOfferings();
   } catch (err) {
+    if (isExpectedBillingError(err, { message: '[RevenueCat] Failed to fetch Offerings:' })) {
+      logInfo('[RevenueCat] Offerings unavailable (expected store state)');
+      return null;
+    }
     logError('[RevenueCat] Failed to fetch Offerings:', err);
     return null;
   }
@@ -105,6 +117,14 @@ export async function purchasePackage(pkg: PurchasesPackage): Promise<PurchaseRe
     if (error.userCancelled || error.code === PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR) {
       return { success: false, isPro: false, userCancelled: true };
     }
+    if (isBillingNotAllowedError(error)) {
+      logInfo('[RevenueCat] Purchase not allowed on this device (expected store state)');
+      return {
+        success: false,
+        isPro: false,
+        error: 'Purchases are not allowed on this device. Please check your store settings and try again.',
+      };
+    }
     if (isAlreadyOwnedError(error)) {
       // Play Store reports the product as already owned (e.g. an earlier
       // sandbox/test-track purchase is active on this account). Recover by
@@ -118,7 +138,9 @@ export async function purchasePackage(pkg: PurchasesPackage): Promise<PurchaseRe
           return { success: true, isPro };
         }
       } catch (restoreErr) {
-        logError('[RevenueCat] Recovery restore after already-owned failed:', restoreErr);
+        if (!isExpectedBillingError(restoreErr)) {
+          logError('[RevenueCat] Recovery restore after already-owned failed:', restoreErr);
+        }
       }
       return {
         success: false,
@@ -126,6 +148,10 @@ export async function purchasePackage(pkg: PurchasesPackage): Promise<PurchaseRe
         alreadyOwned: true,
         error: 'This product is already active on your account. Use Restore below to unlock Pro.',
       };
+    }
+    if (isExpectedBillingError(error, { message: '[RevenueCat] Purchase failed:' })) {
+      logInfo('[RevenueCat] Purchase ended in expected store state');
+      return { success: false, isPro: false, error: error.message || 'Purchase failed' };
     }
     logError('[RevenueCat] Purchase failed:', error);
     return { success: false, isPro: false, error: error.message || 'Purchase failed' };
@@ -138,6 +164,22 @@ function isAlreadyOwnedError(error: { code?: unknown; message?: string }): boole
     return true;
   }
   return /already (active|owned|purchased)/i.test(error.message || '');
+}
+
+/** Detects devices/users that are not allowed to make purchases (TALLYHO-Q). */
+function isBillingNotAllowedError(error: { code?: unknown; message?: string }): boolean {
+  const code = String(error.code ?? '').toUpperCase();
+  if (
+    code.includes('NOT_ALLOWED') ||
+    code.includes('PAYMENT_NOT_ALLOWED') ||
+    code.includes('BILLING_UNAVAILABLE') ||
+    code.includes('PURCHASE_NOT_ALLOWED')
+  ) {
+    return true;
+  }
+  return /not allowed to make the purchase|purchase.?s? (are )?not allowed|billing (is )?unavailable/i.test(
+    error.message || '',
+  );
 }
 
 /** Purchases a package tier by identifier ('lifetime' | 'yearly' | 'monthly'). */
@@ -227,7 +269,11 @@ export async function restoreAdFreePurchases(email?: string): Promise<PurchaseRe
     return { success: true, isPro };
   } catch (err: unknown) {
     const error = err as { message?: string };
-    logError('[RevenueCat] Restore failed:', err);
+    if (!isExpectedBillingError(err, { message: '[RevenueCat] Restore failed:' })) {
+      logError('[RevenueCat] Restore failed:', err);
+    } else {
+      logInfo('[RevenueCat] Restore ended in expected store state');
+    }
     return { success: false, isPro: false, error: error.message || 'Restore failed' };
   }
 }
@@ -253,7 +299,11 @@ export async function presentPaywall(): Promise<PurchaseResult> {
     }
     return { success: false, isPro: false };
   } catch (err) {
-    logError('[RevenueCat] Paywall presentation failed:', err);
+    if (!isExpectedBillingError(err, { message: '[RevenueCat] Paywall presentation failed:' })) {
+      logError('[RevenueCat] Paywall presentation failed:', err);
+    } else {
+      logInfo('[RevenueCat] Paywall dismissed in expected store state');
+    }
     return { success: false, isPro: false };
   }
 }
@@ -273,7 +323,11 @@ export async function presentCustomerCenter(): Promise<boolean> {
     await RevenueCatUI.presentCustomerCenter();
     return true;
   } catch (err) {
-    logWarn('[RevenueCat] Customer Center presentation failed, falling back to store link:', err);
+    if (isExpectedBillingError(err)) {
+      logInfo('[RevenueCat] Customer Center unavailable (expected store state), falling back to store link');
+    } else {
+      logWarn('[RevenueCat] Customer Center presentation failed, falling back to store link:', err);
+    }
     if (Platform.OS === 'android') {
       await Linking.openURL('https://play.google.com/store/account/subscriptions?package=com.gventureshq.tallyho');
       return true;

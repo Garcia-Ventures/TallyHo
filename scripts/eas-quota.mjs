@@ -69,7 +69,8 @@ export function statusFor(remaining, warnAt) {
 
 /**
  * Count this month's quota-consuming builds per platform.
- * @param {Array} builds raw `eas build:list --json` entries
+ *
+ * @param { Array } builds Raw `eas build:list --json` entries
  */
 export function summarizeBuilds(
   builds,

@@ -43,6 +43,13 @@ vi.mock('./analytics', () => ({
   trackEvent: vi.fn(),
 }));
 
+vi.mock('../utils/logger', () => ({
+  logError: vi.fn(),
+  logInfo: vi.fn(),
+  logWarn: vi.fn(),
+}));
+
+import { logError, logInfo } from '../utils/logger';
 import {
   getCustomerInfo,
   getOfferings,
@@ -207,6 +214,55 @@ describe('purchases.native service', () => {
       expect(Linking.openURL).toHaveBeenCalledWith(
         expect.stringContaining('play.google.com/store/account/subscriptions'),
       );
+    });
+  });
+
+  describe('expected store states stay out of Sentry (TALLYHO-Q/R)', () => {
+    const mockPkg = { identifier: 'com.gventureshq.tallyho.lifetime', packageType: 'LIFETIME' };
+    const offeringsPayload = {
+      current: {
+        identifier: 'default',
+        lifetime: mockPkg,
+        availablePackages: [mockPkg],
+      },
+    };
+
+    it('returns null without logError when Offerings fetch fails with a network request error', async () => {
+      vi.mocked(logError).mockClear();
+      mockNativePurchases.getOfferings.mockRejectedValueOnce(new Error('Error performing request.'));
+
+      const offerings = await getOfferings();
+
+      expect(offerings).toBeNull();
+      expect(logError).not.toHaveBeenCalled();
+      expect(logInfo).toHaveBeenCalled();
+    });
+
+    it('returns a friendly error without logError when purchases are not allowed on the device', async () => {
+      vi.mocked(logError).mockClear();
+      mockNativePurchases.getOfferings.mockResolvedValueOnce(offeringsPayload);
+      mockNativePurchases.purchasePackage.mockRejectedValueOnce(
+        new Error('The device or user is not allowed to make the purchase.'),
+      );
+
+      const result = await purchasePackageByIdentifier('lifetime');
+
+      expect(result.success).toBe(false);
+      expect(result.userCancelled).not.toBe(true);
+      expect(result.alreadyOwned).not.toBe(true);
+      expect(result.error).toContain('not allowed');
+      expect(logError).not.toHaveBeenCalled();
+    });
+
+    it('still logs unexpected purchase failures to Sentry', async () => {
+      vi.mocked(logError).mockClear();
+      mockNativePurchases.getOfferings.mockResolvedValueOnce(offeringsPayload);
+      mockNativePurchases.purchasePackage.mockRejectedValueOnce(new Error('Null is not an object'));
+
+      const result = await purchasePackageByIdentifier('lifetime');
+
+      expect(result.success).toBe(false);
+      expect(logError).toHaveBeenCalled();
     });
   });
 });

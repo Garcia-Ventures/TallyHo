@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { generateFallbackSummary, isQuotaLimitError } from './eas-build-safe.mjs';
 
 describe('eas-build-safe utility', () => {

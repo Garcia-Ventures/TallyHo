@@ -18,9 +18,61 @@ export interface TelemetryContext {
   [key: string]: unknown;
 }
 
+/**
+ * Substrings (lowercased) identifying expected store / billing states that should not pollute Sentry. Covers TALLYHO-9
+ * (Play Store referrer on emulators), TALLYHO-Q (purchase not allowed), TALLYHO-R (transient Offerings fetch failure),
+ * and TALLYHO-P (already-owned).
+ */
+const EXPECTED_BILLING_PATTERNS = [
+  'install referrer',
+  'installation referrer api',
+  'play store may not be installed',
+  'not allowed to make the purchase',
+  'purchase not allowed',
+  'purchase_not_allowed',
+  'billing is unavailable',
+  'billing_unavailable',
+  'already active',
+  'already owned',
+  'already purchased',
+  'product_already_purchased',
+  'error performing request',
+  'failed to fetch offerings',
+  'purchase cancelled',
+  'purchase_cancelled',
+  'user cancelled',
+  'usercancelled',
+];
+
+function messageOf(error: unknown): string {
+  if (typeof error === 'string') {
+    return error;
+  }
+  if (error instanceof Error) {
+    return `${error.message} ${error.name}`;
+  }
+  if (error && typeof error === 'object') {
+    const maybe = error as { message?: unknown; code?: unknown };
+    return `${String(maybe.message ?? '')} ${String(maybe.code ?? '')}`;
+  }
+  return '';
+}
+
+/** Returns true when the error represents an expected store/billing state. */
+export function isExpectedBillingError(error: unknown, context?: TelemetryContext): boolean {
+  const haystack = `${messageOf(error)} ${typeof context?.message === 'string' ? context.message : ''}`.toLowerCase();
+  if (!haystack.trim()) {
+    return false;
+  }
+  return EXPECTED_BILLING_PATTERNS.some((pattern) => haystack.includes(pattern));
+}
+
 /** Capture an exception in Sentry with optional extra context data. */
 export function captureException(error: unknown, context?: TelemetryContext): void {
   if (!SentryModule) {
+    return;
+  }
+  if (isExpectedBillingError(error, context)) {
     return;
   }
   if (context) {
