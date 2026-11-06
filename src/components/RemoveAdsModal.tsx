@@ -11,6 +11,7 @@ import {
   X,
   Zap,
 } from 'lucide-react-native';
+import type { SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 import { Alert, Modal, Platform, Pressable, ScrollView, View } from 'react-native';
 
@@ -367,7 +368,7 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
                     <Input
                       placeholder="your.email@example.com"
                       value={email}
-                      onChangeText={(text) => {
+                      onChangeText={(text: SetStateAction<string>) => {
                         setEmail(text);
                         if (errorMessage) {
                           setErrorMessage('');

@@ -162,7 +162,7 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
                               <Input
                                 keyboardType="numeric"
                                 value={editScoreMap[p.id] ?? String(pts)}
-                                onChangeText={(val) =>
+                                onChangeText={(val: any) =>
                                   setEditScoreMap({
                                     ...editScoreMap,
                                     [p.id]: val,

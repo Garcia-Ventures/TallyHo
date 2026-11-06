@@ -1,5 +1,6 @@
 import { Button, Input, Text } from '@gv-tech/ui-native';
 import { AlertCircle, Mail, Sparkles, X } from 'lucide-react-native';
+import type { SetStateAction } from 'react';
 import { useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, View } from 'react-native';
 
@@ -107,7 +108,7 @@ export function RestorePurchaseModal({ isOpen, onClose, onSuccess }: RestorePurc
             <Input
               placeholder="your.email@example.com"
               value={email}
-              onChangeText={(text) => {
+              onChangeText={(text: SetStateAction<string>) => {
                 setEmail(text);
                 if (errorMessage) {
                   setErrorMessage('');
