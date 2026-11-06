@@ -53,7 +53,8 @@
             "backgroundColor": "#181A19"
           }
         }
-      ]
+      ],
+      "@sentry/react-native"
     ],
     "scheme": ["tallyho", "rc-a78351999d"],
     "extra": {
