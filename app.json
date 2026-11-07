@@ -56,10 +56,7 @@
       ],
       "@sentry/react-native"
     ],
-    "scheme": [
-      "tallyho",
-      "rc-a78351999d"
-    ],
+    "scheme": ["tallyho", "rc-a78351999d"],
     "extra": {
       "router": {},
       "eas": {
