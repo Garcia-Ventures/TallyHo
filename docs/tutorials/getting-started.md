@@ -8,7 +8,7 @@ Welcome to **TallyHo**! This step-by-step tutorial walks you through setting up 
 
 Ensure you have the following installed on your machine:
 
-- **Node.js** (v20+ or v22 LTS recommended)
+- **Node.js** (v20+ or v24 LTS recommended)
 - **Bun** (v1.1+ recommended package manager & test runner)
 
   ```bash
