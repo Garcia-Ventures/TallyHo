@@ -7,8 +7,9 @@ const totalsCache = new WeakMap<GameSession, Record<string, number>>();
  * penaltyPoints.
  */
 export function calculatePlayerTotals(game: GameSession): Record<string, number> {
-  if (totalsCache.has(game)) {
-    return totalsCache.get(game)!;
+  const cached = totalsCache.get(game);
+  if (cached) {
+    return cached;
   }
 
   const totals: Record<string, number> = {};

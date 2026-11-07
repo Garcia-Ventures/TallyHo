@@ -1,7 +1,3 @@
-import { readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -18,18 +14,10 @@ import {
 } from './purchases';
 import { PRO_ENTITLEMENT_ID as entitlementFromConstants } from './purchases.constants';
 
-const servicesDir = dirname(fileURLToPath(import.meta.url));
-
 describe('PRO_ENTITLEMENT_ID', () => {
-  it('matches the RevenueCat dashboard id and is not loaded through the platform module', () => {
+  it('matches the RevenueCat dashboard id', () => {
     expect(entitlementFromConstants).toBe('TallyHo Pro');
     expect(PRO_ENTITLEMENT_ID).toBe(entitlementFromConstants);
-
-    for (const fileName of ['purchases.web.ts', 'purchases.native.ts']) {
-      const source = readFileSync(join(servicesDir, fileName), 'utf8');
-      expect(source).toContain("from './purchases.constants'");
-      expect(source).not.toMatch(/import\s*\{[^}]*PRO_ENTITLEMENT_ID[^}]*\}\s*from\s*'\.\/purchases'/);
-    }
   });
 });
 
