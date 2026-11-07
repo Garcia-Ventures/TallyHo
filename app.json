@@ -2,7 +2,7 @@
   "expo": {
     "name": "TallyHo",
     "slug": "tallyho",
-    "version": "1.4.5",
+    "version": "1.4.6",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -56,7 +56,10 @@
       ],
       "@sentry/react-native"
     ],
-    "scheme": ["tallyho", "rc-a78351999d"],
+    "scheme": [
+      "tallyho",
+      "rc-a78351999d"
+    ],
     "extra": {
       "router": {},
       "eas": {

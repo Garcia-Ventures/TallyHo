@@ -5,6 +5,37 @@ All notable changes to the TallyHo project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.6](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.4.5...tally-ho-v1.4.6) (2026-11-07)
+
+
+### Bug Fixes
+
+* improve type safety in RoundHistoryModal and optimize caching in scoring utility ([8002bb3](https://github.com/Garcia-Ventures/TallyHo/commit/8002bb3440762b12cc273f03933ce4ca5897ad1d))
+* update error handling for expected billing states in purchases service ([f7056b9](https://github.com/Garcia-Ventures/TallyHo/commit/f7056b993e1faec7c41f456eeb50d6b5aa92b635))
+
+
+### Code Refactoring
+
+* **purchases:** separate PRO_ENTITLEMENT_ID into constants file ([36c7ebf](https://github.com/Garcia-Ventures/TallyHo/commit/36c7ebf834ad5dac7ba59a0dec207e09c5deaced))
+
+
+### Build System
+
+* **deps-dev:** bump postcss from 8.5.28 to 8.5.32 ([#78](https://github.com/Garcia-Ventures/TallyHo/issues/78)) ([c3bddd2](https://github.com/Garcia-Ventures/TallyHo/commit/c3bddd2b50b3944697fa38c5b7637bb5057c2513))
+* **deps:** bump @openpanel/react-native from 1.4.1 to 1.4.3 ([#80](https://github.com/Garcia-Ventures/TallyHo/issues/80)) ([53bea1a](https://github.com/Garcia-Ventures/TallyHo/commit/53bea1ab357eed577b51af4d384abec894d2f981))
+* **deps:** bump react-native-purchases-ui from 10.9.0 to 11.0.0 ([#79](https://github.com/Garcia-Ventures/TallyHo/issues/79)) ([32c2259](https://github.com/Garcia-Ventures/TallyHo/commit/32c2259d2569bb7b6e992ad734482236380f44f0))
+* **deps:** bump react-native-reanimated from 4.5.1 to 4.7.1 ([#81](https://github.com/Garcia-Ventures/TallyHo/issues/81)) ([877ed5d](https://github.com/Garcia-Ventures/TallyHo/commit/877ed5d330e6566dc9e8f66a36d84f3aacf44a3e))
+* **deps:** update @expo/config and @expo/env versions in bun.lock ([d667585](https://github.com/Garcia-Ventures/TallyHo/commit/d667585b593cb299531c52439d1976391039c64b))
+* **deps:** update dependencies and improve type safety in components ([dea2c82](https://github.com/Garcia-Ventures/TallyHo/commit/dea2c821e139a699390dd83f7fd72223cf0250f9))
+* **deps:** update react and related packages to latest versions ([e0cd1d1](https://github.com/Garcia-Ventures/TallyHo/commit/e0cd1d196eb65b164bf5cf267bb4409d6ef04f41))
+* **deps:** update react-native-worklets to version 0.13.1 ([4327ac7](https://github.com/Garcia-Ventures/TallyHo/commit/4327ac7273b6d54410c06a75b4fe8067bbf622b5))
+* **deps:** upgrade expo and related packages to version 58 ([ff30a64](https://github.com/Garcia-Ventures/TallyHo/commit/ff30a648d5d4a172a8f995a7e1c13ca2e1a9deaf))
+
+
+### Miscellaneous Chores
+
+* upgrade Node.js and TypeScript configurations ([5e95f1f](https://github.com/Garcia-Ventures/TallyHo/commit/5e95f1fa0714a0663eebf0f5261da522ae16f8db))
+
 ## [1.4.5](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.4.4...tally-ho-v1.4.5) (2026-10-06)
 
 
