@@ -4,8 +4,8 @@ import type { CustomerInfo } from '@revenuecat/purchases-js';
 import { logError, logWarn } from '../utils/logger';
 import { generateId } from '../utils/uuid';
 import { trackEvent } from './analytics';
-import { PRO_ENTITLEMENT_ID } from './purchases';
 import type { PurchaseResult, PurchasesOffering, PurchasesOfferings, PurchasesPackage } from './purchases';
+import { PRO_ENTITLEMENT_ID } from './purchases.constants';
 
 export const ANONYMOUS_USER_STORAGE_KEY = 'tallyho_web_app_user_id';
 

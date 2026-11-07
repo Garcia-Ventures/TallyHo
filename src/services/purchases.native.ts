@@ -7,7 +7,7 @@ import { useSettingsStore } from '../stores/useSettingsStore';
 import { logError, logInfo, logWarn } from '../utils/logger';
 import { isExpectedBillingError } from '../utils/sentry';
 import { trackEvent } from './analytics';
-import { PRO_ENTITLEMENT_ID } from './purchases';
+import { PRO_ENTITLEMENT_ID } from './purchases.constants';
 
 const API_KEY =
   (Platform.OS === 'android'

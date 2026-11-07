@@ -1,8 +1,4 @@
-/**
- * Canonical RevenueCat entitlement identifier for TallyHo Pro. Must match the Entitlements identifier in the RevenueCat
- * dashboard.
- */
-export const PRO_ENTITLEMENT_ID = 'TallyHo Pro';
+export { PRO_ENTITLEMENT_ID } from './purchases.constants';
 
 export interface PurchaseResult {
   success: boolean;
