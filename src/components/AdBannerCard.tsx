@@ -1,11 +1,12 @@
 import { Badge, Button, Card, CardContent, Text } from '@gv-tech/ui-native';
 import { ExternalLink, Megaphone, Sparkles } from 'lucide-react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Linking, View } from 'react-native';
 
 import { PALETTE } from '../constants/colors';
 import type { AdContent } from '../constants/config';
 import { AD_CONFIG } from '../constants/config';
+import { nextHouseAd } from '../constants/houseAdRotation';
 import { trackEvent } from '../services/analytics';
 import { useSettingsStore } from '../stores/useSettingsStore';
 import { RemoveAdsModal } from './RemoveAdsModal';
@@ -19,12 +20,21 @@ export function AdBannerCard({ placement = 'home', className = '' }: AdBannerCar
   const { settings } = useSettingsStore();
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
   const [adContent, setAdContent] = useState<AdContent>(AD_CONFIG.houseAds[0]);
+  const impressionKey = useRef<string | null>(null);
 
-  // Select ad content on mount & track impression
+  // Select ad content on mount & track impression.
+  // The ref skips a second run of the same placement (React strict mode)
+  // so the rotation advances once per real impression.
   useEffect(() => {
     if (settings.isAdFree) {
       return;
     }
+
+    const key = `${placement}:${settings.isAdBlocked}`;
+    if (impressionKey.current === key) {
+      return;
+    }
+    impressionKey.current = key;
 
     // Hermes on Android does not provide a global `crypto` object (REACT-NATIVE-N/M).
     // Use getRandomValues when available, otherwise fall back to Math.random.
@@ -41,9 +51,10 @@ export function AdBannerCard({ placement = 'home', className = '' }: AdBannerCar
       }
       return Math.floor(Math.random() * length);
     };
-    const randomIndex = getRandomIndex(AD_CONFIG.houseAds.length);
 
-    const selectedAd = settings.isAdBlocked ? AD_CONFIG.adBlockerFallbackAd : AD_CONFIG.houseAds[randomIndex];
+    const selectedAd = settings.isAdBlocked
+      ? AD_CONFIG.adBlockerFallbackAd
+      : nextHouseAd(AD_CONFIG.houseAds, getRandomIndex);
 
     setAdContent(selectedAd);
 

@@ -36,6 +36,10 @@ vi.mock('../services/analytics', () => ({
   trackEvent: vi.fn(),
 }));
 
+vi.mock('../constants/houseAdRotation', () => ({
+  nextHouseAd: (ads: { badge: string }[]) => ads[1],
+}));
+
 let mockStoreState = {
   settings: {
     isAdFree: false,
@@ -78,6 +82,11 @@ describe('AdBannerCard Component', () => {
   it('renders house ad banner when user is not ad-free', () => {
     const html = renderToString(<AdBannerCard placement="home" />);
     expect(html).toContain('TALLYHO PRO');
+  });
+
+  it('shows the next house ad in the rotation after mount', () => {
+    render(<AdBannerCard placement="home" />);
+    expect(screen.getByText('PARABLE BLOOM')).toBeDefined();
   });
 
   it('returns null and does not render when user isAdFree', () => {

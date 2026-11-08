@@ -37,17 +37,38 @@ describe('AD_CONFIG', () => {
     expect(AD_CONFIG.productId).toBe('tallyho_ad_free_lifetime');
     expect(AD_CONFIG.entitlementId).toBe('TallyHo Pro');
 
-    // House Ads
+    // House Ads — own-brand rotation before any external network.
     expect(Array.isArray(AD_CONFIG.houseAds)).toBe(true);
-    expect(AD_CONFIG.houseAds.length).toBe(2);
+    expect(AD_CONFIG.houseAds.map((ad: AdContent) => ad.id)).toEqual([
+      'house_ad_pro',
+      'house_ad_parable_bloom',
+      'house_ad_gventures',
+      'house_ad_gv_travel',
+      'house_ad_gv_design',
+      'house_ad_eric',
+    ]);
 
     const houseAdPro = AD_CONFIG.houseAds.find((ad: AdContent) => ad.id === 'house_ad_pro');
     expect(houseAdPro).toBeDefined();
     expect(houseAdPro?.title).toContain('Ad-Free');
+    expect(houseAdPro?.linkUrl).toBeUndefined();
 
-    const houseAdGventures = AD_CONFIG.houseAds.find((ad: AdContent) => ad.id === 'house_ad_gventures');
-    expect(houseAdGventures).toBeDefined();
-    expect(houseAdGventures?.linkUrl).toBe('https://gventureshq.com');
+    const expectedLinks: Record<string, string> = {
+      house_ad_parable_bloom: 'https://parable-bloom.pages.dev/',
+      house_ad_gventures: 'https://gventureshq.com',
+      house_ad_gv_travel: 'https://gvtravel.pages.dev/',
+      house_ad_gv_design: 'https://design.gventureshq.com',
+      house_ad_eric: 'https://garciaericn.com/',
+    };
+
+    for (const [id, linkUrl] of Object.entries(expectedLinks)) {
+      const ad = AD_CONFIG.houseAds.find((entry: AdContent) => entry.id === id);
+      expect(ad?.linkUrl).toBe(linkUrl);
+      expect(ad?.title.length).toBeGreaterThan(0);
+      expect(ad?.description.length).toBeGreaterThan(0);
+      expect(ad?.badge.length).toBeGreaterThan(0);
+      expect(ad?.actionText.length).toBeGreaterThan(0);
+    }
 
     // Ad Blocker Fallback Ad
     expect(AD_CONFIG.adBlockerFallbackAd).toBeDefined();

@@ -41,6 +41,7 @@ Technical descriptions, API signatures, dictionaries, and command catalogs:
 - **[CLI Scripts & Tooling](reference/cli-scripts.md)** — Complete catalog of all `package.json` scripts, validation flags, and EAS commands.
 - **[Store Metadata & Assets](reference/store-metadata.md)** — App Store & Google Play listing copy, keywords, and screenshot specifications.
 - **[Observability & Telemetry](reference/observability.md)** — Sentry crash reporting, Error Boundaries, and OpenPanel analytics event taxonomy.
+- **[House Ad Rotation](reference/house-ads.md)** — Own-brand cards shown before any external ad network.
 - **[Release Notes Template](RELEASE_NOTES.md)** — Generated release notes from conventional commits.
 
 ---

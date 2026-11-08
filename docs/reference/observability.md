@@ -32,11 +32,13 @@ TallyHo uses self-hosted OpenPanel instances via `@openpanel/react-native` and `
 
 ### Tracked Event Taxonomy
 
-| Event Name           | Trigger                          | Payload                                      |
-| :------------------- | :------------------------------- | :------------------------------------------- |
-| `match_started`      | New game initialized             | `{ scoringModel, playerCount, targetScore }` |
-| `round_completed`    | Round points submitted           | `{ roundNumber, leaderMargin }`              |
-| `match_completed`    | Winner declared / match finished | `{ totalRounds, winnerId, durationMinutes }` |
-| `paywall_viewed`     | Pro modal opened                 | `{ source }`                                 |
-| `purchase_success`   | In-app purchase verified         | `{ package, isPro }`                         |
-| `purchases_restored` | Restore purchases button tapped  | `{ isPro }`                                  |
+| Event Name           | Trigger                          | Payload                                       |
+| :------------------- | :------------------------------- | :-------------------------------------------- |
+| `match_started`      | New game initialized             | `{ scoringModel, playerCount, targetScore }`  |
+| `round_completed`    | Round points submitted           | `{ roundNumber, leaderMargin }`               |
+| `match_completed`    | Winner declared / match finished | `{ totalRounds, winnerId, durationMinutes }`  |
+| `paywall_viewed`     | Pro modal opened                 | `{ source }`                                  |
+| `purchase_success`   | In-app purchase verified         | `{ package, isPro }`                          |
+| `purchases_restored` | Restore purchases button tapped  | `{ isPro }`                                   |
+| `ad_impression`      | House ad card shown              | `{ adId, placement, badge }`                  |
+| `ad_click`           | House ad action tapped           | `{ adId, placement, badge, hasExternalLink }` |

@@ -15,7 +15,9 @@ export const AD_CONFIG = {
   productId: 'tallyho_ad_free_lifetime',
   entitlementId: 'TallyHo Pro',
 
-  // House ad cards (self-hosted rotating ads)
+  // House ads only. These promote Garcia Ventures and Eric's own sites.
+  // External ad networks stay out until this catalog is the baseline rotation.
+  // An ad with no linkUrl opens the TallyHo Pro purchase sheet.
   houseAds: [
     {
       id: 'house_ad_pro',
@@ -25,13 +27,40 @@ export const AD_CONFIG = {
       actionText: 'Unlock Ad-Free ($1.99)',
     },
     {
-      id: 'house_ad_gventures',
-      title: '✨ Discover More Game Night Tools',
+      id: 'house_ad_parable_bloom',
+      title: '🌸 Play Parable Bloom',
       description:
-        'Crafted with passion by GVTech. Enjoy clean, fast, privacy-focused scorekeepers with zero tracking.',
-      badge: 'GVTECH GAMES',
-      actionText: 'Learn More',
+        'A calm Christ-centered puzzle from Garcia Ventures. Slide vines through 500+ garden levels and meet Scripture along the way.',
+      badge: 'PARABLE BLOOM',
+      actionText: 'Play on the Web',
+      linkUrl: 'https://parable-bloom.pages.dev/',
+    },
+    {
+      id: 'house_ad_gventures',
+      title: '✨ Garcia Ventures HQ',
+      description:
+        'TallyHo is one venture under the parent brand. See the studios, products, and experiments we are building.',
+      badge: 'GARCIA VENTURES',
+      actionText: 'Visit HQ',
       linkUrl: 'https://gventureshq.com',
+    },
+    {
+      id: 'house_ad_gv_travel',
+      title: '✈️ Plan a Trip with GV Travel',
+      description:
+        'Thoughtful family travel planning from Garcia Ventures. Curated cruises and itineraries, with less stress and clearer spending.',
+      badge: 'GV TRAVEL',
+      actionText: 'See GV Travel',
+      linkUrl: 'https://gv-travel.com/',
+    },
+    {
+      id: 'house_ad_gv_design',
+      title: '🎨 The System Behind the App',
+      description:
+        'GV Tech Design is the shared design language for Garcia Ventures products, including TallyHo. Browse the live playground.',
+      badge: 'GV TECH DESIGN',
+      actionText: 'Open Playground',
+      linkUrl: 'https://design.gventureshq.com',
     },
   ] as AdContent[],
 
