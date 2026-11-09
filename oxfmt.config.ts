@@ -1,4 +1,7 @@
 import { oxfmtConfig } from '@gv-tech/oxc-config/oxfmt';
 import { defineConfig } from 'oxfmt';
 
-export default defineConfig({ ...oxfmtConfig });
+export default defineConfig({
+  ...oxfmtConfig,
+  ignorePatterns: ['CHANGELOG.md'],
+});

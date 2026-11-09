@@ -1,9 +1,0 @@
-.husky
-.expo
-dist
-ios
-android
-node_modules
-coverage
-bun.lock
-type-errors.log
