@@ -5,6 +5,21 @@ All notable changes to the TallyHo project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.4.6...tally-ho-v1.5.0) (2026-11-09)
+
+
+### Features
+
+* **config:** introduce app.config.ts for version management ([6740690](https://github.com/Garcia-Ventures/TallyHo/commit/6740690676410f601c9ce01d6d5cedcc07ace656))
+* **eas:** add environment configuration to eas.json and update scripts ([ea03b64](https://github.com/Garcia-Ventures/TallyHo/commit/ea03b64e7589f032be27ffa8d9fd4ded325424fe))
+* implement house ad rotation feature ([815a521](https://github.com/Garcia-Ventures/TallyHo/commit/815a521708b7d3739011b20ad4705f865687d7a2))
+* **purchases:** enhance RevenueCat integration and error handling ([2a23a6e](https://github.com/Garcia-Ventures/TallyHo/commit/2a23a6ea14ce54c9e21dfa1915c66a5807aa6034))
+
+
+### Documentation
+
+* update house ads documentation and configuration ([67e0bd7](https://github.com/Garcia-Ventures/TallyHo/commit/67e0bd7150bab0188a68c3e3b20cb35b6492fe79))
+
 ## [1.4.6](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.4.5...tally-ho-v1.4.6) (2026-11-07)
 
 
