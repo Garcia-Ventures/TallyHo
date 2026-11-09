@@ -9,12 +9,26 @@ import { isExpectedBillingError } from '../utils/sentry';
 import { trackEvent } from './analytics';
 import { PRO_ENTITLEMENT_ID } from './purchases.constants';
 
-const API_KEY =
-  (Platform.OS === 'android'
-    ? process.env.EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID || process.env.EXPO_PUBLIC_REVENUECAT_API_KEY
-    : process.env.EXPO_PUBLIC_REVENUECAT_API_KEY_IOS || process.env.EXPO_PUBLIC_REVENUECAT_API_KEY) || '';
-
 let isInitialized = false;
+/** Latches after a missing key or a failed configure so we do not call the native SDK again (TALLYHO-Y/Z). */
+let configurationFailed = false;
+
+function nonemptyEnv(value: string | undefined): string {
+  return value?.trim() ?? '';
+}
+
+/** Reads the platform RevenueCat public SDK key. Blank keys must never reach Purchases.configure. */
+function readNativeApiKey(): string {
+  const platformKey =
+    Platform.OS === 'android'
+      ? nonemptyEnv(process.env.EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID)
+      : nonemptyEnv(process.env.EXPO_PUBLIC_REVENUECAT_API_KEY_IOS);
+  return platformKey || nonemptyEnv(process.env.EXPO_PUBLIC_REVENUECAT_API_KEY);
+}
+
+function purchasesDisabledResult(): PurchaseResult {
+  return { success: false, isPro: false, error: 'Purchases are unavailable right now.' };
+}
 
 export interface PurchaseResult {
   success: boolean;
@@ -27,17 +41,31 @@ export interface PurchaseResult {
   alreadyOwned?: boolean;
 }
 
-/** Initializes RevenueCat SDK with the provided API key. */
-export async function initPurchases(): Promise<void> {
+/**
+ * Configures RevenueCat once. Returns false when the SDK must not be called.
+ * A blank API key throws an uncaught native IllegalArgumentException (TALLYHO-Y) and leaves no singleton, so the next
+ * offerings fetch reports "no singleton instance" (TALLYHO-Z).
+ */
+async function ensureConfigured(): Promise<boolean> {
   if (isInitialized) {
-    return;
+    return true;
+  }
+  if (configurationFailed) {
+    return false;
+  }
+
+  const apiKey = readNativeApiKey();
+  if (!apiKey) {
+    configurationFailed = true;
+    logWarn('[RevenueCat] API key is not set. Purchases stay disabled.');
+    return false;
   }
 
   try {
     if (typeof __DEV__ !== 'undefined' && __DEV__) {
       Purchases.setLogLevel(LOG_LEVEL.DEBUG);
     }
-    Purchases.configure({ apiKey: API_KEY });
+    Purchases.configure({ apiKey });
     isInitialized = true;
     // Listen to real-time customer info updates and sync Pro grants to the store.
     // Grant-only: never auto-revoke here to avoid flapping on transient states.
@@ -50,13 +78,22 @@ export async function initPurchases(): Promise<void> {
     if (typeof __DEV__ !== 'undefined' && __DEV__) {
       logInfo('[RevenueCat] Initialized successfully');
     }
+    return true;
   } catch (err) {
+    // Do not retry. A native configure failure is not always a catchable JS exception, and calling again crashes.
+    configurationFailed = true;
     if (isExpectedBillingError(err, { message: '[RevenueCat] Initialization failed:' })) {
       logInfo('[RevenueCat] Initialization skipped (expected store state)');
-      return;
+      return false;
     }
     logError('[RevenueCat] Initialization failed:', err);
+    return false;
   }
+}
+
+/** Initializes RevenueCat SDK with the provided API key. */
+export async function initPurchases(): Promise<void> {
+  await ensureConfigured();
 }
 
 /** Checks if the customer info has the active TallyHo Pro entitlement. */
@@ -69,8 +106,8 @@ export function checkProEntitlement(customerInfo: CustomerInfo): boolean {
 
 /** Retrieves the current customer info from RevenueCat. */
 export async function getCustomerInfo(): Promise<CustomerInfo | null> {
-  if (!isInitialized) {
-    await initPurchases();
+  if (!(await ensureConfigured())) {
+    return null;
   }
   try {
     return await Purchases.getCustomerInfo();
@@ -86,8 +123,8 @@ export async function getCustomerInfo(): Promise<CustomerInfo | null> {
 
 /** Retrieves configured offerings (Monthly, Yearly, Lifetime) from RevenueCat. */
 export async function getOfferings(): Promise<PurchasesOfferings | null> {
-  if (!isInitialized) {
-    await initPurchases();
+  if (!(await ensureConfigured())) {
+    return null;
   }
   try {
     return await Purchases.getOfferings();
@@ -103,8 +140,8 @@ export async function getOfferings(): Promise<PurchasesOfferings | null> {
 
 /** Purchases a specific package (Monthly, Yearly, Lifetime) via RevenueCat. */
 export async function purchasePackage(pkg: PurchasesPackage): Promise<PurchaseResult> {
-  if (!isInitialized) {
-    await initPurchases();
+  if (!(await ensureConfigured())) {
+    return purchasesDisabledResult();
   }
 
   try {
@@ -187,8 +224,8 @@ export async function purchasePackageByIdentifier(
   tier: 'lifetime' | 'yearly' | 'monthly',
   _email?: string,
 ): Promise<PurchaseResult> {
-  if (!isInitialized) {
-    await initPurchases();
+  if (!(await ensureConfigured())) {
+    return purchasesDisabledResult();
   }
 
   try {
@@ -221,8 +258,8 @@ export async function purchasePackageByIdentifier(
 
 /** Purchases the default Ad-Free lifetime package via RevenueCat. */
 export async function purchaseAdFreePackage(): Promise<PurchaseResult> {
-  if (!isInitialized) {
-    await initPurchases();
+  if (!(await ensureConfigured())) {
+    return purchasesDisabledResult();
   }
 
   try {
@@ -240,8 +277,8 @@ export async function purchaseAdFreePackage(): Promise<PurchaseResult> {
 
 /** Restores previous purchases via RevenueCat (Google Play Store receipt or cross-platform email lookup). */
 export async function restoreAdFreePurchases(email?: string): Promise<PurchaseResult> {
-  if (!isInitialized) {
-    await initPurchases();
+  if (!(await ensureConfigured())) {
+    return purchasesDisabledResult();
   }
 
   try {
@@ -280,8 +317,8 @@ export async function restoreAdFreePurchases(email?: string): Promise<PurchaseRe
 
 /** Presents RevenueCat Paywall UI modal if user does not have TallyHo Pro entitlement. */
 export async function presentPaywall(): Promise<PurchaseResult> {
-  if (!isInitialized) {
-    await initPurchases();
+  if (!(await ensureConfigured())) {
+    return purchasesDisabledResult();
   }
 
   try {
@@ -310,8 +347,8 @@ export async function presentPaywall(): Promise<PurchaseResult> {
 
 /** Presents RevenueCat Customer Center UI modal for subscription management & support. */
 export async function presentCustomerCenter(): Promise<boolean> {
-  if (!isInitialized) {
-    await initPurchases();
+  if (!(await ensureConfigured())) {
+    return false;
   }
 
   try {

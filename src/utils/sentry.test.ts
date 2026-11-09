@@ -44,6 +44,7 @@ describe('sentry utility', () => {
       }),
     ).toBe(true);
     expect(isExpectedBillingError(new Error('This product is already active for the user.'))).toBe(true);
+    expect(isExpectedBillingError(new Error('There was an unknown backend error.'))).toBe(true);
   });
 
   it('does not flag unexpected errors', () => {

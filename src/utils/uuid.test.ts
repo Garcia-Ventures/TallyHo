@@ -32,13 +32,32 @@ describe('uuid utility', () => {
     }
   });
 
-  it('throws an error when crypto is undefined (no secure randomness available)', () => {
+  it('still generates a v4 UUID when crypto is unavailable (TALLYHO-S)', () => {
     try {
       vi.stubGlobal('crypto', undefined);
 
-      expect(() => generateUUID()).toThrowError(
-        'Secure random number generation is not supported in this environment.',
-      );
+      const id = generateUUID();
+      expect(id).toMatch(UUID_V4_REGEX);
+
+      const ids = new Set<string>();
+      for (let i = 0; i < 20; i++) {
+        ids.add(generateId('p'));
+      }
+      expect(ids.size).toBe(20);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it('falls back when getRandomValues throws', () => {
+    try {
+      vi.stubGlobal('crypto', {
+        getRandomValues: () => {
+          throw new Error('Secure random number generation is not supported in this environment.');
+        },
+      });
+
+      expect(generateUUID()).toMatch(UUID_V4_REGEX);
     } finally {
       vi.unstubAllGlobals();
     }

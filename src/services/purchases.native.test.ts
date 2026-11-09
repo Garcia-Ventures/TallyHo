@@ -59,14 +59,23 @@ import {
   restoreAdFreePurchases,
 } from './purchases.native';
 
+async function loadFreshPurchasesModule() {
+  vi.resetModules();
+  const native = await import('./purchases.native');
+  const logger = await import('../utils/logger');
+  return { native, logger };
+}
+
 describe('purchases.native service', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubEnv('EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID', 'test_android_key');
+    vi.stubEnv('EXPO_PUBLIC_REVENUECAT_API_KEY', '');
   });
 
   it('initializes native purchases with API key and log level', async () => {
     await initPurchases();
-    expect(mockNativePurchases.configure).toHaveBeenCalled();
+    expect(mockNativePurchases.configure).toHaveBeenCalledWith({ apiKey: 'test_android_key' });
   });
 
   it('fetches customer info', async () => {
@@ -263,6 +272,49 @@ describe('purchases.native service', () => {
 
       expect(result.success).toBe(false);
       expect(logError).toHaveBeenCalled();
+    });
+  });
+
+  describe('SDK stays unconfigured without a key (TALLYHO-Y/Z)', () => {
+    it('does not call Purchases.configure or later SDK methods when the API key is blank', async () => {
+      vi.stubEnv('EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID', '   ');
+      vi.stubEnv('EXPO_PUBLIC_REVENUECAT_API_KEY', '');
+      vi.stubEnv('EXPO_PUBLIC_REVENUECAT_API_KEY_IOS', '');
+
+      const { native, logger } = await loadFreshPurchasesModule();
+      await native.initPurchases();
+      await expect(native.getCustomerInfo()).resolves.toBeNull();
+      await expect(native.getOfferings()).resolves.toBeNull();
+      const purchase = await native.purchasePackageByIdentifier('lifetime');
+
+      expect(mockNativePurchases.configure).not.toHaveBeenCalled();
+      expect(mockNativePurchases.getCustomerInfo).not.toHaveBeenCalled();
+      expect(mockNativePurchases.getOfferings).not.toHaveBeenCalled();
+      expect(purchase.success).toBe(false);
+      expect(purchase.error).toContain('unavailable');
+      expect(logger.logWarn).toHaveBeenCalledTimes(1);
+      expect(logger.logError).not.toHaveBeenCalled();
+    });
+
+    it('does not retry the SDK after configure throws', async () => {
+      vi.stubEnv('EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID', 'test_android_key');
+      mockNativePurchases.configure.mockImplementation(() => {
+        throw new Error('API key must be set. Get this from the RevenueCat web app');
+      });
+
+      try {
+        const { native, logger } = await loadFreshPurchasesModule();
+        await native.initPurchases();
+        await native.getOfferings();
+        await native.getCustomerInfo();
+
+        expect(mockNativePurchases.configure).toHaveBeenCalledTimes(1);
+        expect(mockNativePurchases.getOfferings).not.toHaveBeenCalled();
+        expect(mockNativePurchases.getCustomerInfo).not.toHaveBeenCalled();
+        expect(logger.logError).toHaveBeenCalledTimes(1);
+      } finally {
+        mockNativePurchases.configure.mockReset();
+      }
     });
   });
 });

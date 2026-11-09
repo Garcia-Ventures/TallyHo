@@ -1,25 +1,41 @@
 /**
- * Generates an RFC4122 v4-compliant UUID safely across all JavaScript runtimes (React Native Hermes/JSC, Web,
- * Node/SSR).
+ * Generates an RFC4122 v4-style unique ID safely across JavaScript runtimes (React Native Hermes/JSC, Web, Node/SSR).
  *
- * Avoids direct reference to `crypto` identifier which throws ReferenceError in React Native.
+ * Avoids a bare `crypto` identifier, which throws ReferenceError in React Native. Prefers Web Crypto. Hermes on Android
+ * often has no global `crypto` (TALLYHO-S); local ids then fall back to Math.random so player setup does not crash.
+ * These ids are local identifiers, not secrets.
  */
+function secureBytes(length: number): Uint8Array | null {
+  try {
+    const cryptoObj = globalThis.crypto;
+    if (!cryptoObj?.getRandomValues) {
+      return null;
+    }
+    const bytes = new Uint8Array(length);
+    cryptoObj.getRandomValues(bytes);
+    return bytes;
+  } catch {
+    return null;
+  }
+}
+
 export function generateUUID(): string {
-  if (typeof globalThis !== 'undefined' && globalThis.crypto?.randomUUID) {
-    return globalThis.crypto.randomUUID();
+  try {
+    if (typeof globalThis.crypto?.randomUUID === 'function') {
+      return globalThis.crypto.randomUUID();
+    }
+  } catch {
+    // randomUUID can exist and still reject on some embedded engines.
   }
 
-  // RFC4122 v4 compliant fallback using secure random numbers
-  if (typeof globalThis !== 'undefined' && globalThis.crypto?.getRandomValues) {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      const randomValue = globalThis.crypto.getRandomValues(new Uint8Array(1))[0];
-      const r = (randomValue ?? 0) & 15;
-      const v = c === 'x' ? r : (r & 0x3) | 0x8;
-      return v.toString(16);
-    });
-  }
-
-  throw new Error('Secure random number generation is not supported in this environment.');
+  const bytes = secureBytes(16);
+  let index = 0;
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const source = bytes ? (bytes[index++] ?? 0) : Math.floor(Math.random() * 256);
+    const r = source & 15;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
 }
 
 /** Generates a prefixed unique ID, e.g. `generateId('p')` -> `p_xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx` */

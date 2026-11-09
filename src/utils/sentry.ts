@@ -21,7 +21,7 @@ export interface TelemetryContext {
 /**
  * Substrings (lowercased) identifying expected store / billing states that should not pollute Sentry. Covers TALLYHO-9
  * (Play Store referrer on emulators), TALLYHO-Q (purchase not allowed), TALLYHO-R (transient Offerings fetch failure),
- * and TALLYHO-P (already-owned).
+ * TALLYHO-P (already-owned), and TALLYHO-T (RevenueCat unknown backend error while fetching offerings).
  */
 const EXPECTED_BILLING_PATTERNS = [
   'install referrer',
@@ -37,6 +37,7 @@ const EXPECTED_BILLING_PATTERNS = [
   'already purchased',
   'product_already_purchased',
   'error performing request',
+  'unknown backend error',
   'failed to fetch offerings',
   'purchase cancelled',
   'purchase_cancelled',

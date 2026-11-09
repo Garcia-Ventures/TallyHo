@@ -41,7 +41,7 @@ Sentry.init({
       : [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
 
   // Filter known non-fatal native environment quirks & handled edge cases
-  // (TALLYHO-9/Q/R/P: Play Store referrer on emulators + expected RevenueCat
+  // (TALLYHO-9/Q/R/P/T: Play Store referrer on emulators + expected RevenueCat
   // billing states that are handled in-app with friendly UI).
   ignoreErrors: [
     'General error retrieving the install referrer',
@@ -52,6 +52,7 @@ Sentry.init({
     'already owned',
     'already purchased',
     'Error performing request',
+    'unknown backend error',
     'Failed to fetch Offerings',
     'findNodeHandle is not supported on web',
   ],
@@ -69,6 +70,7 @@ Sentry.init({
       text.includes('already owned') ||
       text.includes('already purchased') ||
       text.includes('error performing request') ||
+      text.includes('unknown backend error') ||
       text.includes('failed to fetch offerings')
     ) {
       return null;

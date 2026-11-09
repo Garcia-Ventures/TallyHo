@@ -119,4 +119,25 @@ describe('GameSetupModal Component', () => {
       vi.unstubAllGlobals();
     }
   });
+
+  it('adds a player when the runtime has no crypto (TALLYHO-S)', () => {
+    const onStartGame = vi.fn();
+    try {
+      vi.stubGlobal('crypto', undefined);
+
+      render(<GameSetupModal isOpen={true} onClose={vi.fn()} preset={GAME_PRESETS[0]} onStartGame={onStartGame} />);
+
+      fireEvent.change(screen.getByPlaceholderText('Add player name...'), { target: { value: 'Dana' } });
+      fireEvent.click(screen.getByText('+ Add'));
+
+      expect(screen.getByText('Dana')).toBeDefined();
+      fireEvent.click(screen.getByText('🚀 Start Match'));
+
+      const passedPlayers = onStartGame.mock.calls[0][0].players;
+      const added = passedPlayers.find((p: { name: string }) => p.name === 'Dana');
+      expect(added.id).toMatch(/^p_[0-9a-f-]{36}$/i);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
 });
