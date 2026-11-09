@@ -5,6 +5,14 @@ All notable changes to the TallyHo project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.5.0...tally-ho-v1.5.1) (2026-11-09)
+
+
+### Miscellaneous Chores
+
+* **dependencies:** update package versions in bun.lock and package.json ([97ad476](https://github.com/Garcia-Ventures/TallyHo/commit/97ad476e96e7acd952c92413faf4c97f7623b0aa))
+* **prettier:** remove .prettierignore and update oxfmt.config.ts ([547b09c](https://github.com/Garcia-Ventures/TallyHo/commit/547b09ce43039bce9427c3f10c374e55285a5328))
+
 ## [1.5.0](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.4.6...tally-ho-v1.5.0) (2026-11-09)
 
 
