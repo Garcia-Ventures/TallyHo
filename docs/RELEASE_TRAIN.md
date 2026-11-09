@@ -54,6 +54,8 @@ bun run build:android:local:apk    # preview APK, no quota
 bun run build:android:local:submit # production AAB + submit, no quota
 ```
 
+Those update scripts pass `--environment preview` or `--environment production`, so the bundle inlines the Expo dashboard variables for that environment. `eas.json` sets the same `environment` on each build profile.
+
 ## Before enabling the train
 
 - Set `EXPO_TOKEN` in repo secrets.

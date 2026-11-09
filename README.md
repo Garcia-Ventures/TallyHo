@@ -118,7 +118,7 @@ For release runbooks and build commands, see the **[Release & Deployment Guide](
 - [x] **Code Quality & Tests:** Verified via `bun run validate` (0 type errors, 100% test pass).
 - [ ] **Google Play IAP Setup:** Configure In-App Products & Subscriptions in Google Play Console.
 - [ ] **RevenueCat Dashboard:** Map Products to Entitlement `TallyHo Pro` under Offering `default` (`lifetime`, `yearly`, `monthly`).
-- [ ] **EAS Production Secrets:** Set `EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID` via `eas secret:create`.
+- [x] **EAS production environment:** `EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID` is set on the Expo production environment. Builds load it via `eas.json` `"environment"`, and `bun run update:production` passes `--environment production`.
 - [ ] **Automated EAS Release:** Push tag `v*.*.*` to trigger [`.github/workflows/release.yml`](.github/workflows/release.yml) (Android production `.aab`).
 - [ ] **Sandbox & E2E Testing:** Verify purchase flows via Google Play License Testing and Maestro (`maestro test .maestro/match-flow.yaml`).
 
