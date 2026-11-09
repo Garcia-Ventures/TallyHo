@@ -1,6 +1,6 @@
 # Reference: House Ad Rotation
 
-TallyHo shows a single sponsored card on the home screen and again on the game-over sheet. Until an external ad network is connected, that card rotates through **house ads** only: Garcia Ventures properties and Eric N. Garcia's own site.
+TallyHo shows a single sponsored card on the home screen and again on the game-over sheet. Until an external ad network is connected, that card rotates through **house ads** only: Garcia Ventures properties.
 
 The catalog lives in `AD_CONFIG.houseAds` (`src/constants/config.ts`). `AdBannerCard` asks `nextHouseAd` for the next entry.
 
@@ -24,9 +24,8 @@ Impressions and taps are `ad_impression` and `ad_click` in OpenPanel, with `adId
 | `house_ad_gventures`     | https://gventureshq.com          | Garcia Ventures HQ        |
 | `house_ad_gv_travel`     | https://gv-travel.com/           | GV Travel                 |
 | `house_ad_gv_design`     | https://design.gventureshq.com   | GV Tech Design playground |
-| `house_ad_eric`          | https://garciaericn.com/         | Eric N. Garcia            |
 
-GV Travel does not have a custom domain in the HQ ventures list yet. The ad uses the live Pages site. Tally (the envelope budget app) has no public URL, so it is not in the rotation.
+Tally (the envelope budget app) has no public URL, so it is not in the rotation.
 
 ## Adding an entry
 

@@ -45,7 +45,6 @@ describe('AD_CONFIG', () => {
       'house_ad_gventures',
       'house_ad_gv_travel',
       'house_ad_gv_design',
-      'house_ad_eric',
     ]);
 
     const houseAdPro = AD_CONFIG.houseAds.find((ad: AdContent) => ad.id === 'house_ad_pro');
@@ -56,9 +55,8 @@ describe('AD_CONFIG', () => {
     const expectedLinks: Record<string, string> = {
       house_ad_parable_bloom: 'https://parable-bloom.pages.dev/',
       house_ad_gventures: 'https://gventureshq.com',
-      house_ad_gv_travel: 'https://gvtravel.pages.dev/',
+      house_ad_gv_travel: 'https://gv-travel.com/',
       house_ad_gv_design: 'https://design.gventureshq.com',
-      house_ad_eric: 'https://garciaericn.com/',
     };
 
     for (const [id, linkUrl] of Object.entries(expectedLinks)) {

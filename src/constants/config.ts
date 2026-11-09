@@ -15,7 +15,7 @@ export const AD_CONFIG = {
   productId: 'tallyho_ad_free_lifetime',
   entitlementId: 'TallyHo Pro',
 
-  // House ads only. These promote Garcia Ventures and Eric's own sites.
+  // House ads only. These promote Garcia Ventures properties.
   // External ad networks stay out until this catalog is the baseline rotation.
   // An ad with no linkUrl opens the TallyHo Pro purchase sheet.
   houseAds: [
