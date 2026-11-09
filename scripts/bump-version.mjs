@@ -38,7 +38,6 @@ function getSemverBump(currentVersion, bumpType) {
 function main() {
   const bumpArg = process.argv[2] || 'patch';
   const pkgPath = path.resolve(process.cwd(), 'package.json');
-  const appJsonPath = path.resolve(process.cwd(), 'app.json');
 
   const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
   const currentVersion = pkg.version || '1.0.0';
@@ -50,18 +49,9 @@ function main() {
   pkg.version = newVersion;
   fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n', 'utf8');
   console.log(`✅ Updated package.json version: ${newVersion}`);
+  console.log('✅ Expo version follows package.json through app.config.ts');
 
-  // 2. Update app.json
-  if (fs.existsSync(appJsonPath)) {
-    const appJson = JSON.parse(fs.readFileSync(appJsonPath, 'utf8'));
-    if (appJson.expo) {
-      appJson.expo.version = newVersion;
-      fs.writeFileSync(appJsonPath, JSON.stringify(appJson, null, 2) + '\n', 'utf8');
-      console.log(`✅ Updated app.json expo.version: ${newVersion}`);
-    }
-  }
-
-  // 3. Generate & append CHANGELOG section
+  // 2. Generate & append CHANGELOG section
   try {
     console.log(`📝 Generating CHANGELOG section for v${newVersion}...`);
     execSync(`node ./scripts/release-notes.mjs ${newVersion}`, { stdio: 'inherit' });
@@ -69,9 +59,9 @@ function main() {
     console.warn(`⚠️ Failed to generate release notes automatically:`, err.message);
   }
 
-  // 4. Format updated files
+  // 3. Format updated files
   try {
-    execSync(`bunx oxfmt --write package.json app.json CHANGELOG.md`, { stdio: 'ignore' });
+    execSync(`bunx oxfmt --write package.json CHANGELOG.md`, { stdio: 'ignore' });
   } catch {
     // Ignore formatting errors
   }

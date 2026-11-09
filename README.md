@@ -99,7 +99,7 @@ In the project directory, you can run:
 
 ### Versioning & Release
 
-- `bun run version:bump <version>` — Synchronizes version bump in `package.json` and `app.json`.
+- `bun run version:bump <version>` — Bumps `package.json`. The Expo config reads that version from `app.config.ts`.
 - `bun run version:patch` / `minor` / `major` — Semantic version bumping scripts.
 - `bun run changelog` — Generates release notes from conventional commits.
 

@@ -38,7 +38,7 @@ Complete reference of all development, build, validation, and release scripts de
 
 | Command                 | Parameters  | Description                                                                                           |
 | :---------------------- | :---------- | :---------------------------------------------------------------------------------------------------- |
-| `bun run version:bump`  | `<version>` | Synchronizes version across `package.json` and `app.json`.                                            |
+| `bun run version:bump`  | `<version>` | Bumps `package.json`. Expo reads that version from `app.config.ts`.                                   |
 | `bun run version:patch` | None        | Increments patch version (e.g. `1.0.2` ➔ `1.0.3`).                                                    |
 | `bun run version:minor` | None        | Increments minor version (e.g. `1.0.2` ➔ `1.1.0`).                                                    |
 | `bun run version:major` | None        | Increments major version (e.g. `1.0.2` ➔ `2.0.0`).                                                    |

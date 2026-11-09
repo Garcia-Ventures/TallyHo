@@ -26,7 +26,7 @@ The continuous delivery pipeline is fully automated via [`.github/workflows/rele
    - Push conventional commits to `main` (or merge feature branches into `main`).
 2. **Automated Release PR**:
    - Google `release-please` automatically maintains an open Release Pull Request titled e.g. `chore(main): release 1.1.0`.
-   - The PR automatically updates [`CHANGELOG.md`](../../CHANGELOG.md), [`package.json`](../../package.json), and [`app.json`](../../app.json) (`$.expo.version`).
+   - The PR automatically updates [`CHANGELOG.md`](../../CHANGELOG.md) and [`package.json`](../../package.json). `app.config.ts` copies that version into the Expo config, so release-please does not rewrite [`app.json`](../../app.json).
 3. **Merge the Release PR**:
    - Merging the Release PR automatically tags the repository (e.g. `v1.1.0`) and publishes the GitHub Release.
 4. **Automated EAS Store Build & Submit**:
