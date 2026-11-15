@@ -2,6 +2,8 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { parseDocument } from 'yaml';
+
 const args = process.argv.slice(2);
 
 const showHelp = args.includes('--help') || args.includes('-h');
@@ -63,12 +65,20 @@ function validateMaestroFlows() {
         errors.push(`${file}: File is empty`);
         continue;
       }
-      // Basic YAML sanity check: verify balanced indentation & key-value structures
-      const lines = content.split('\n');
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        if (line.includes('\t')) {
-          errors.push(`${file}:${i + 1}: Contains hard tabs (YAML requires spaces)`);
+      const documents = content
+        .split(/^---\s*$/m)
+        .map((part) => part.trim())
+        .filter(Boolean);
+      if (documents.length < 2) {
+        errors.push(`${file}: Expected an appId header and a step list separated by ---`);
+        continue;
+      }
+      for (const part of documents) {
+        const partDoc = parseDocument(part);
+        if (partDoc.errors.length > 0) {
+          for (const error of partDoc.errors) {
+            errors.push(`${file}: ${error.message}`);
+          }
         }
       }
     } catch (err) {

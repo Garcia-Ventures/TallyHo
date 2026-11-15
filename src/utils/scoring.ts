@@ -50,28 +50,18 @@ export function checkWinCondition(game: GameSession): { hasWinner: boolean; winn
   const totals = calculatePlayerTotals(game);
   const targetScore = game.targetScore;
 
-  if (targetScore) {
-    if (game.scoringMode === 'RACE_HIGH') {
-      const leader = game.players.find((p) => (totals[p.id] || 0) >= targetScore);
-      if (leader) {
-        return { hasWinner: true, winnerId: leader.id };
-      }
-    } else if (game.scoringMode === 'RACE_LOW') {
-      const exceeded = game.players.some((p) => (totals[p.id] || 0) >= targetScore);
-      if (exceeded) {
-        const sorted = getSortedPlayers(game, totals);
-        return { hasWinner: true, winnerId: sorted[0]?.id || '' };
-      }
-    }
-  } else if (game.targetRounds) {
-    const completedRounds = game.rounds.filter((r) => Object.keys(r.scores).length > 0);
-    if (completedRounds.length >= game.targetRounds) {
-      const sorted = getSortedPlayers(game, totals);
-      return { hasWinner: true, winnerId: sorted[0]?.id || '' };
-    }
+  if (!targetScore) {
+    return { hasWinner: false, winnerId: '' };
   }
 
-  return { hasWinner: false, winnerId: '' };
+  const reached = game.players.some((player) => (totals[player.id] || 0) >= targetScore);
+  if (!reached) {
+    return { hasWinner: false, winnerId: '' };
+  }
+
+  // RACE_HIGH sorts highest-first. RACE_LOW sorts lowest-first. The leader is sorted[0] either way.
+  const sorted = getSortedPlayers(game, totals);
+  return { hasWinner: true, winnerId: sorted[0]?.id || '' };
 }
 
 /** Determines whether to advance to the next round after submitting a score. */

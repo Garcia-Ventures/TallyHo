@@ -21,34 +21,27 @@ Scorekeeping apps often fail because they try to be games themselves, with overl
 
 ## 2. Universal Scoring Mechanics
 
-TallyHo abstracts diverse board, card, and dice games into three foundational scoring models:
+TallyHo abstracts board, card, and dice games into two scoring models. Presets choose the model. Setup always stores a target score.
 
 ```mermaid
 flowchart TD
     ModelSelector{"Select Scoring Model"}
 
-    ModelSelector -->|"Race to Target (High)"| HighModel["Winner: First to reach or exceed Target X\ne.g., Rummy 500, Qwirkle, Pass the Pigs"]
-    ModelSelector -->|"Race to Target (Low)"| LowModel["Winner: Lowest points when someone hits Target X\ne.g., Uno, Hearts"]
-    ModelSelector -->|"Fixed Rounds"| FixedModel["Winner: Highest points after N rounds\ne.g., Trivia, Golf, Card Games"]
+    ModelSelector -->|"Race to Target (High)"| HighModel["Winner: Highest total once anyone reaches Target X\ne.g., Rummy 500, Qwirkle, Pass the Pigs"]
+    ModelSelector -->|"Race to Target (Low)"| LowModel["Winner: Lowest total once anyone hits Target X\ne.g., Uno, Hearts"]
 ```
 
 ### Model 1: Race to Target (High Score)
 
-- **Target Condition**: First player whose total score reaches or exceeds $X$ points.
-- **Victory Rule**: Highest cumulative score at the end of the decisive round wins.
-- **Classic Examples**: _Rummy (500)_, _Qwirkle (100)_, _Pass the Pigs (100)_, _Munchkin (10)_.
+- **Target Condition**: Any player's total reaches or exceeds the target.
+- **Victory Rule**: Highest cumulative score wins, including when several players cross the target in the same round.
+- **Classic Examples**: _Rummy (500)_, _Qwirkle_, _Pass the Pigs_.
 
 ### Model 2: Race to Target (Low Score)
 
-- **Target Condition**: Game ends when any player hits or exceeds $X$ points (penalty threshold).
+- **Target Condition**: Game ends when any player hits or exceeds the target (a penalty threshold).
 - **Victory Rule**: Player with the lowest total score wins.
-- **Classic Examples**: _Uno (500 penalty)_, _Hearts (100 penalty)_.
-
-### Model 3: Fixed Rounds
-
-- **Target Condition**: Game plays for exactly $N$ predetermined rounds.
-- **Victory Rule**: Highest cumulative score at round $N$ wins.
-- **Classic Examples**: _Trivia_, _Custom Board Game Rounds_, _Golf_.
+- **Classic Examples**: _Uno_, _Hearts_.
 
 ---
 

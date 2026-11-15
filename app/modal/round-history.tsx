@@ -6,7 +6,8 @@ import { useGameStore } from '../../src/stores/useGameStore';
 
 export default function RoundHistoryModalRoute() {
   const router = useRouter();
-  const { activeGame, updateRounds } = useGameStore();
+  const activeGame = useGameStore((state) => state.activeGame);
+  const updateRounds = useGameStore((state) => state.updateRounds);
 
   if (!activeGame) {
     return null;
@@ -15,8 +16,6 @@ export default function RoundHistoryModalRoute() {
   return (
     <View className="bg-background flex-1">
       <RoundHistoryModal
-        isOpen={true}
-        isRouteModal={true}
         game={activeGame}
         onClose={() => router.back()}
         onUpdateRounds={(updated) => updateRounds(updated)}

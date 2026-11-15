@@ -3,11 +3,11 @@ import type { CustomerInfo, PurchasesOfferings, PurchasesPackage } from 'react-n
 import Purchases, { LOG_LEVEL, PURCHASES_ERROR_CODE } from 'react-native-purchases';
 import RevenueCatUI, { PAYWALL_RESULT } from 'react-native-purchases-ui';
 
-import { useSettingsStore } from '../stores/useSettingsStore';
 import { logError, logInfo, logWarn } from '../utils/logger';
 import { isExpectedBillingError } from '../utils/sentry';
 import { trackEvent } from './analytics';
 import { PRO_ENTITLEMENT_ID } from './purchases.constants';
+import type { ProGrantListener, PurchaseResult } from './purchases.types';
 
 let isInitialized = false;
 /** Latches after a missing key or a failed configure so we do not call the native SDK again (TALLYHO-Y/Z). */
@@ -30,15 +30,11 @@ function purchasesDisabledResult(): PurchaseResult {
   return { success: false, isPro: false, error: 'Purchases are unavailable right now.' };
 }
 
-export interface PurchaseResult {
-  success: boolean;
-  isPro: boolean;
-  userCancelled?: boolean;
-  error?: string;
-  redirected?: boolean;
-  needsEmail?: boolean;
-  /** Store reports the product as already owned — caller should recover via restore. */
-  alreadyOwned?: boolean;
+let onProGranted: ProGrantListener | null = null;
+
+/** Registered from the app root so this module does not import the settings store. */
+export function setProGrantListener(listener: ProGrantListener): void {
+  onProGranted = listener;
 }
 
 /**
@@ -71,7 +67,7 @@ async function ensureConfigured(): Promise<boolean> {
     // Grant-only: never auto-revoke here to avoid flapping on transient states.
     Purchases.addCustomerInfoUpdateListener((customerInfo) => {
       if (checkProEntitlement(customerInfo)) {
-        useSettingsStore.getState().purchaseRemoveAds();
+        onProGranted?.();
       }
     });
 

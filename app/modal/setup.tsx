@@ -15,9 +15,6 @@ export default function SetupModalRoute() {
   return (
     <View className="bg-background flex-1">
       <GameSetupModal
-        isOpen={true}
-        isRouteModal={true}
-        onClose={() => router.back()}
         preset={preset}
         onStartGame={(setup) => {
           createGame(setup);

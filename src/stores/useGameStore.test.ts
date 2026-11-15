@@ -9,12 +9,11 @@ describe('useGameStore', () => {
     useGameStore.setState({
       activeGame: null,
       matchHistory: [],
-      viewMode: 'HOME',
       isPlayMode: false,
     });
   });
 
-  it('creates a new game session and sets viewMode to MATCH', () => {
+  it('creates a new game session and opens play mode', () => {
     const store = useGameStore.getState();
     store.createGame({
       name: 'Test Uno Match',
@@ -32,7 +31,7 @@ describe('useGameStore', () => {
     expect(active?.name).toBe('Test Uno Match');
     expect(active?.players.length).toBe(2);
     expect(active?.rounds.length).toBe(1);
-    expect(useGameStore.getState().viewMode).toBe('MATCH');
+    expect(active?.id.startsWith('game_')).toBe(true);
     expect(useGameStore.getState().isPlayMode).toBe(true);
   });
 
@@ -46,13 +45,12 @@ describe('useGameStore', () => {
     });
 
     // Reset store in-memory state
-    useGameStore.setState({ activeGame: null, matchHistory: [], viewMode: 'HOME' });
+    useGameStore.setState({ activeGame: null, matchHistory: [] });
     expect(useGameStore.getState().activeGame).toBeNull();
 
     // Call loadInitialData
     useGameStore.getState().loadInitialData();
     expect(useGameStore.getState().activeGame?.name).toBe('Persisted Game');
-    expect(useGameStore.getState().viewMode).toBe('MATCH');
   });
 
   it('submits round score and advances round automatically in SINGLE_WINNER mode', () => {
@@ -101,6 +99,7 @@ describe('useGameStore', () => {
     expect(result.hasWinner).toBe(true);
     expect(result.winnerId).toBe('p1');
     expect(useGameStore.getState().activeGame?.status).toBe('COMPLETED');
+    expect(useGameStore.getState().activeGame?.rounds.length).toBe(1);
     expect(useGameStore.getState().matchHistory.length).toBe(1);
   });
 
@@ -242,17 +241,16 @@ describe('useGameStore', () => {
 
     store.clearHistory();
     expect(useGameStore.getState().matchHistory.length).toBe(0);
+    useGameStore.getState().loadInitialData();
+    expect(useGameStore.getState().matchHistory.length).toBe(0);
 
     store.clearActiveGame();
     expect(useGameStore.getState().activeGame).toBeNull();
-    expect(useGameStore.getState().viewMode).toBe('HOME');
+    expect(useGameStore.getState().isPlayMode).toBe(false);
   });
 
-  it('sets viewMode and isPlayMode directly', () => {
+  it('sets isPlayMode directly', () => {
     const store = useGameStore.getState();
-    store.setViewMode('MATCH');
-    expect(useGameStore.getState().viewMode).toBe('MATCH');
-
     store.setIsPlayMode(true);
     expect(useGameStore.getState().isPlayMode).toBe(true);
 
@@ -260,7 +258,7 @@ describe('useGameStore', () => {
     expect(useGameStore.getState().isPlayMode).toBe(false);
   });
 
-  it('handles localStorage errors gracefully during clearHistory', () => {
+  it('keeps the in-memory history empty when storage throws during clearHistory', () => {
     const store = useGameStore.getState();
     store.createGame({
       name: 'Error Handling Match',
@@ -271,23 +269,33 @@ describe('useGameStore', () => {
     store.endMatchManually();
     expect(useGameStore.getState().matchHistory.length).toBe(1);
 
-    // Mock the global localStorage since vitest might be running in an environment without standard Storage prototype
-    let removeCalled = false;
-
-    vi.stubGlobal('localStorage', {
-      removeItem: vi.fn(() => {
-        removeCalled = true;
-        throw new Error('Simulated localStorage error');
-      }),
+    const clearMatchHistory = vi.spyOn(storage, 'clearMatchHistory').mockImplementation(() => {
+      throw new Error('Simulated storage error');
     });
 
-    try {
-      expect(() => store.clearHistory()).not.toThrow();
-      expect(removeCalled).toBe(true);
-      expect(useGameStore.getState().matchHistory.length).toBe(0);
-    } finally {
-      // Restore global localStorage
-      vi.unstubAllGlobals();
-    }
+    expect(() => store.clearHistory()).not.toThrow();
+    expect(clearMatchHistory).toHaveBeenCalled();
+    expect(useGameStore.getState().matchHistory.length).toBe(0);
+    clearMatchHistory.mockRestore();
+  });
+
+  it('clears active game, history, and storage together', () => {
+    const store = useGameStore.getState();
+    store.createGame({
+      name: 'Erase Me',
+      scoringMode: 'RACE_HIGH',
+      roundScoringType: 'EVERY_PLAYER',
+      players: [{ id: 'p1', name: 'Eric', initials: 'E', color: '#E5A93C' }],
+    });
+    store.endMatchManually();
+
+    store.clearSession();
+    expect(useGameStore.getState().activeGame).toBeNull();
+    expect(useGameStore.getState().matchHistory).toEqual([]);
+
+    useGameStore.getState().loadInitialData();
+    expect(useGameStore.getState().activeGame).toBeNull();
+    expect(useGameStore.getState().matchHistory).toEqual([]);
+    expect(storage.getMatchHistory()).toEqual([]);
   });
 });

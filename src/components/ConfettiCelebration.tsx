@@ -96,5 +96,3 @@ export const ConfettiCelebration: React.FC = () => {
     </View>
   );
 };
-
-export const ConfettiCelebrationNative = ConfettiCelebration;

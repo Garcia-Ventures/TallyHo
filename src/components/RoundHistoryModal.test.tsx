@@ -53,17 +53,8 @@ describe('RoundHistoryModal Component', () => {
     ],
   };
 
-  it('returns null when isOpen is false', () => {
-    const html = renderToString(
-      <RoundHistoryModal isOpen={false} onClose={vi.fn()} game={mockGame} onUpdateRounds={vi.fn()} />,
-    );
-    expect(html).toBe('');
-  });
-
-  it('renders round list and player scores when open', () => {
-    const html = renderToString(
-      <RoundHistoryModal isOpen={true} onClose={vi.fn()} game={mockGame} onUpdateRounds={vi.fn()} />,
-    );
+  it('renders round list and player scores', () => {
+    const html = renderToString(<RoundHistoryModal onClose={vi.fn()} game={mockGame} onUpdateRounds={vi.fn()} />);
 
     expect(html).toContain('Alice');
     expect(html).toContain('Bob');

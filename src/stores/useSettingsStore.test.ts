@@ -62,13 +62,6 @@ describe('useSettingsStore', () => {
     expect(settings.isAdFree).toBe(true);
   });
 
-  it('restores purchases correctly', () => {
-    expect(useSettingsStore.getState().restorePurchases()).toBe(false);
-
-    useSettingsStore.getState().purchaseRemoveAds();
-    expect(useSettingsStore.getState().restorePurchases()).toBe(true);
-  });
-
   it('resets ad-free status back to false on resetAdFreeStatus', () => {
     useSettingsStore.getState().purchaseRemoveAds();
     expect(useSettingsStore.getState().settings.isAdFree).toBe(true);

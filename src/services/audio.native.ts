@@ -99,4 +99,3 @@ class NativeSoundService {
 export const soundEffects = new NativeSoundService();
 export const audio = soundEffects;
 export const nativeSound = soundEffects;
-export const soundEffectsNative = soundEffects;

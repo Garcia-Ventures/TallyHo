@@ -11,20 +11,20 @@ Rather than using complex multi-branch models with long-lived staging branches, 
 ```mermaid
 gitGraph
     commit id: "v1.0.0" tag: "v1.0.0"
-    branch develop
-    checkout develop
+    branch dev
+    checkout dev
     commit id: "feat: quick keypad"
     commit id: "fix: margin calc"
     checkout main
-    merge develop id: "release: v1.1.0" tag: "v1.1.0"
-    checkout develop
+    merge dev id: "release: v1.1.0" tag: "v1.1.0"
+    checkout dev
     commit id: "feat: player colors"
 ```
 
 ### Branch Roles
 
 - **`main`**: Production branch. Every commit on `main` represents a released or release-candidate state. Production releases are triggered via annotated Git tags (`v*.*.*`).
-- **`develop`**: Integration and active staging branch. All feature branches (`feat/*`), bug fixes (`fix/*`), and chore branches target `develop`.
+- **`dev`**: Integration and active staging branch. All feature branches (`feat/*`), bug fixes (`fix/*`), and chore branches target `dev`.
 
 ---
 

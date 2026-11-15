@@ -1,6 +1,6 @@
 import { Button, Card, CardContent, Input, Text } from '@gv-tech/ui-native';
 import React, { useState } from 'react';
-import { Modal, Pressable, ScrollView, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 
 import { PALETTE } from '../constants/colors';
 import { nativeSound } from '../services/audio';
@@ -10,8 +10,6 @@ import { generateId } from '../utils/uuid';
 import { ScreenContainer } from './ScreenContainer';
 
 interface GameSetupModalProps {
-  isOpen: boolean;
-  onClose: () => void;
   preset: GamePreset | null;
   onStartGame: (setup: {
     name: string;
@@ -19,19 +17,11 @@ interface GameSetupModalProps {
     scoringMode: ScoringMode;
     roundScoringType: RoundScoringType;
     targetScore?: number;
-    targetRounds?: number;
     players: Player[];
   }) => void;
-  isRouteModal?: boolean;
 }
 
-export const GameSetupModal: React.FC<GameSetupModalProps> = ({
-  isOpen,
-  onClose,
-  preset,
-  onStartGame,
-  isRouteModal = false,
-}) => {
+export const GameSetupModal: React.FC<GameSetupModalProps> = ({ preset, onStartGame }) => {
   const [selectedPresetId, setSelectedPresetId] = useState<string | undefined>(preset?.id);
   const [matchName, setMatchName] = useState(preset?.name || 'Friday Game Night');
   const [scoringMode, setScoringMode] = useState<ScoringMode>(preset?.scoringMode || 'RACE_HIGH');
@@ -46,10 +36,6 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
     { id: 'p2', name: 'Player 2', initials: 'P2', color: PLAYER_COLORS[1].hex },
   ]);
   const [newPlayerName, setNewPlayerName] = useState('');
-
-  if (!isOpen) {
-    return null;
-  }
 
   const handleAddPlayer = () => {
     if (!newPlayerName.trim()) {
@@ -96,14 +82,6 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
 
   const content = (
     <ScreenContainer scrollable={false} className="w-full flex-1">
-      {!isRouteModal && (
-        <View className="flex-row items-center justify-between pb-4">
-          <Text className="text-foreground text-xl font-black">New Game Setup</Text>
-          <Button onPress={onClose} variant="ghost" size="sm" className="p-1">
-            <Text className="text-muted-foreground text-base font-bold">✕</Text>
-          </Button>
-        </View>
-      )}
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
@@ -232,19 +210,5 @@ export const GameSetupModal: React.FC<GameSetupModalProps> = ({
     </ScreenContainer>
   );
 
-  if (isRouteModal) {
-    return content;
-  }
-
-  return (
-    <Modal visible={isOpen} animationType="slide" transparent>
-      <View className="flex-1 justify-end bg-black/60">
-        <View className="border-border bg-background h-[90%] overflow-hidden rounded-t-3xl border-t shadow-2xl">
-          {content}
-        </View>
-      </View>
-    </Modal>
-  );
+  return content;
 };
-
-export const GameSetupModalNative = GameSetupModal;

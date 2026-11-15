@@ -32,6 +32,16 @@ bun x vitest src/stores/useGameStore.test.ts
 bun x vitest src/utils/scoring.test.ts
 ```
 
+### Coverage
+
+```bash
+bun run test:coverage
+```
+
+The report includes `src/` only. The thresholds in `vitest.config.ts` fail the run when coverage drops under the floor.
+
+Route tests may sit next to screens under `app/` (`*.test.tsx`). Metro ignores those files, so they are not routes and they are not part of the web or native bundle. Vitest still runs them.
+
 ---
 
 ## 2. Full Codebase Validation
@@ -91,4 +101,6 @@ curl -fsSL "https://get.maestro.mobile.dev" | bash
 
 ## 4. Continuous Integration (CI)
 
-All PRs and pushes to `main` and `develop` automatically run the validation suite in GitHub Actions ([`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)).
+All PRs and pushes to `main` and `dev` automatically run the validation suite in GitHub Actions ([`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)). CI checks Maestro flow files by parsing their YAML. It does not launch a simulator.
+
+`bun run test:coverage` (and CI) enforces a Vitest coverage floor on `src/`. The floor sits just under the current suite. Raise it when a change covers more of a file. A jump to a round target such as 80% in one pull request adds noise without new tests. Route files under `app/` are not in that coverage include.

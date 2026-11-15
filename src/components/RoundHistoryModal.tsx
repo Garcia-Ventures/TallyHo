@@ -1,6 +1,6 @@
 import { Button, Card, CardContent, Input, Text } from '@gv-tech/ui-native';
 import React, { useState } from 'react';
-import { Modal, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 import { nativeSound } from '../services/audio';
 import type { GameSession, Round } from '../types/game';
@@ -8,25 +8,13 @@ import { ScreenContainer } from './ScreenContainer';
 
 interface RoundHistoryModalProps {
   game: GameSession;
-  isOpen: boolean;
   onClose: () => void;
   onUpdateRounds: (updatedRounds: Round[]) => void;
-  isRouteModal?: boolean;
 }
 
-export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
-  game,
-  isOpen,
-  onClose,
-  onUpdateRounds,
-  isRouteModal = false,
-}) => {
+export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({ game, onClose, onUpdateRounds }) => {
   const [editingRoundIndex, setEditingRoundIndex] = useState<number | null>(null);
   const [editScoreMap, setEditScoreMap] = useState<Record<string, string>>({});
-
-  if (!isOpen) {
-    return null;
-  }
 
   const handleStartEdit = (index: number, round: Round) => {
     nativeSound.playKeypadTap();
@@ -67,33 +55,7 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
   };
 
   const content = (
-    <ScreenContainer
-      scrollable={false}
-      className="w-full flex-1"
-      header={
-        !isRouteModal ? (
-          <View className="flex-row items-center justify-between">
-            <View>
-              <Text className="text-foreground text-xl font-black">Round History & Edit Log</Text>
-              <Text className="text-muted-foreground text-xs font-semibold">
-                Fix mistaken entries or adjust past scores
-              </Text>
-            </View>
-            <Button
-              onPress={() => {
-                nativeSound.playKeypadTap();
-                onClose();
-              }}
-              variant="ghost"
-              size="sm"
-              className="p-1"
-            >
-              <Text className="text-foreground text-base font-bold">✕</Text>
-            </Button>
-          </View>
-        ) : undefined
-      }
-    >
+    <ScreenContainer scrollable={false} className="w-full flex-1">
       <View className="w-full flex-1 justify-between gap-4">
         {/* Content Sheet */}
         <ScrollView
@@ -200,19 +162,5 @@ export const RoundHistoryModal: React.FC<RoundHistoryModalProps> = ({
     </ScreenContainer>
   );
 
-  if (isRouteModal) {
-    return content;
-  }
-
-  return (
-    <Modal visible={isOpen} animationType="slide" transparent>
-      <View className="flex-1 justify-end bg-black/60">
-        <View className="border-border bg-background h-[85%] overflow-hidden rounded-t-3xl border-t shadow-2xl">
-          {content}
-        </View>
-      </View>
-    </Modal>
-  );
+  return content;
 };
-
-export const RoundHistoryModalNative = RoundHistoryModal;

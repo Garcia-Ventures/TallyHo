@@ -16,6 +16,13 @@ export default defineConfig({
         'src/native-types.d.ts',
         'src/vite-env.d.ts',
       ],
+      // Floor under the measured suite. Raise it when a change covers more of a file.
+      thresholds: {
+        statements: 65,
+        branches: 52,
+        functions: 64,
+        lines: 65,
+      },
     },
   },
 });

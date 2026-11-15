@@ -12,7 +12,8 @@ import { calculatePlayerTotals, getSortedPlayers } from '../src/utils/scoring';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { activeGame, matchHistory } = useGameStore();
+  const activeGame = useGameStore((state) => state.activeGame);
+  const matchHistory = useGameStore((state) => state.matchHistory);
 
   const recentMatches = useMemo(() => {
     return matchHistory.slice(0, 3).map((game) => {

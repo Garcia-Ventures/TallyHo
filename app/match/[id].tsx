@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { View } from 'react-native';
 
 import { FlipCardContainer } from '../../src/components/FlipCardContainer';
@@ -11,9 +11,12 @@ import type { Player, RoundScore } from '../../src/types/game';
 
 export default function MatchScreen() {
   const router = useRouter();
-  const { activeGame, isPlayMode, setIsPlayMode, submitRoundScore, reorderPlayers, endMatchManually } = useGameStore();
-
-  const [_, setSelectedKeypadPlayer] = useState<Player | null>(null);
+  const activeGame = useGameStore((state) => state.activeGame);
+  const isPlayMode = useGameStore((state) => state.isPlayMode);
+  const setIsPlayMode = useGameStore((state) => state.setIsPlayMode);
+  const submitRoundScore = useGameStore((state) => state.submitRoundScore);
+  const reorderPlayers = useGameStore((state) => state.reorderPlayers);
+  const endMatchManually = useGameStore((state) => state.endMatchManually);
 
   useEffect(() => {
     if (!activeGame) {
@@ -26,7 +29,6 @@ export default function MatchScreen() {
   }
 
   const handleOpenScoreKeypad = (player: Player) => {
-    setSelectedKeypadPlayer(player);
     router.push({
       pathname: '/modal/keypad',
       params: { playerId: player.id },

@@ -55,22 +55,8 @@ import { GAME_PRESETS } from '../types/game';
 import { GameSetupModal } from './GameSetupModal';
 
 describe('GameSetupModal Component', () => {
-  it('returns null when isOpen is false', () => {
-    const html = renderToString(
-      <GameSetupModal isOpen={false} onClose={vi.fn()} preset={null} onStartGame={vi.fn()} />,
-    );
-    expect(html).toBe('');
-  });
-
-  it('renders presets, player roster, and start button when open', () => {
-    const html = renderToString(
-      <GameSetupModal
-        isOpen={true}
-        onClose={vi.fn()}
-        preset={GAME_PRESETS[0]} // Rummy 500
-        onStartGame={vi.fn()}
-      />,
-    );
+  it('renders presets, player roster, and start button', () => {
+    const html = renderToString(<GameSetupModal preset={GAME_PRESETS[0]} onStartGame={vi.fn()} />);
 
     expect(html).toContain('Rummy 500');
     expect(html).toContain('Player 1');
@@ -79,7 +65,7 @@ describe('GameSetupModal Component', () => {
   });
 
   it('renders custom game configuration when preset is null', () => {
-    const html = renderToString(<GameSetupModal isOpen={true} onClose={vi.fn()} preset={null} onStartGame={vi.fn()} />);
+    const html = renderToString(<GameSetupModal preset={null} onStartGame={vi.fn()} />);
 
     expect(html).toContain('Start Match');
   });
@@ -96,7 +82,7 @@ describe('GameSetupModal Component', () => {
         },
       });
 
-      render(<GameSetupModal isOpen={true} onClose={vi.fn()} preset={GAME_PRESETS[0]} onStartGame={onStartGame} />);
+      render(<GameSetupModal preset={GAME_PRESETS[0]} onStartGame={onStartGame} />);
 
       const input = screen.getByPlaceholderText('Add player name...');
       fireEvent.change(input, { target: { value: 'Charlie' } });
@@ -125,7 +111,7 @@ describe('GameSetupModal Component', () => {
     try {
       vi.stubGlobal('crypto', undefined);
 
-      render(<GameSetupModal isOpen={true} onClose={vi.fn()} preset={GAME_PRESETS[0]} onStartGame={onStartGame} />);
+      render(<GameSetupModal preset={GAME_PRESETS[0]} onStartGame={onStartGame} />);
 
       fireEvent.change(screen.getByPlaceholderText('Add player name...'), { target: { value: 'Dana' } });
       fireEvent.click(screen.getByText('+ Add'));

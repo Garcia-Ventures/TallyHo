@@ -1,26 +1,17 @@
 import { Badge, Button, Card, CardContent, Text } from '@gv-tech/ui-native';
 import React, { useMemo } from 'react';
-import { Modal, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 import type { GameSession } from '../types/game';
 import { calculatePlayerTotals, getSortedPlayers } from '../utils/scoring';
 import { ScreenContainer } from './ScreenContainer';
 
 interface HistoryLogModalProps {
-  isOpen: boolean;
-  onClose: () => void;
   history: GameSession[];
   onClearHistory: () => void;
-  isRouteModal?: boolean;
 }
 
-export const HistoryLogModal: React.FC<HistoryLogModalProps> = ({
-  isOpen,
-  onClose,
-  history,
-  onClearHistory,
-  isRouteModal = false,
-}) => {
+export const HistoryLogModal: React.FC<HistoryLogModalProps> = ({ history, onClearHistory }) => {
   const renderedHistory = useMemo(() => {
     return history.map((game) => {
       const totals = calculatePlayerTotals(game);
@@ -54,25 +45,8 @@ export const HistoryLogModal: React.FC<HistoryLogModalProps> = ({
     });
   }, [history]);
 
-  if (!isOpen) {
-    return null;
-  }
-
   const content = (
-    <ScreenContainer
-      scrollable={false}
-      className="w-full flex-1"
-      header={
-        !isRouteModal ? (
-          <View className="flex-row items-center justify-between">
-            <Text className="text-foreground text-xl font-black">📜 Match History ({history.length})</Text>
-            <Button onPress={onClose} variant="ghost" size="sm" className="p-1">
-              <Text className="text-foreground text-base font-bold">✕</Text>
-            </Button>
-          </View>
-        ) : undefined
-      }
-    >
+    <ScreenContainer scrollable={false} className="w-full flex-1">
       <View className="w-full flex-1 justify-between gap-4">
         <ScrollView
           className="flex-1"
@@ -104,19 +78,5 @@ export const HistoryLogModal: React.FC<HistoryLogModalProps> = ({
     </ScreenContainer>
   );
 
-  if (isRouteModal) {
-    return content;
-  }
-
-  return (
-    <Modal visible={isOpen} animationType="slide" transparent>
-      <View className="flex-1 justify-end bg-black/60">
-        <View className="border-border bg-background h-[85%] overflow-hidden rounded-t-3xl border-t shadow-2xl">
-          {content}
-        </View>
-      </View>
-    </Modal>
-  );
+  return content;
 };
-
-export const HistoryLogModalNative = HistoryLogModal;

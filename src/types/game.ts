@@ -1,6 +1,6 @@
 import { PALETTE } from '../constants/colors';
 
-export type ScoringMode = 'RACE_HIGH' | 'RACE_LOW' | 'FIXED_ROUNDS';
+export type ScoringMode = 'RACE_HIGH' | 'RACE_LOW';
 export type RoundScoringType = 'EVERY_PLAYER' | 'SINGLE_WINNER';
 
 export interface GamePreset {
@@ -11,7 +11,6 @@ export interface GamePreset {
   scoringMode: ScoringMode;
   roundScoringType: RoundScoringType;
   defaultTargetScore?: number;
-  defaultTargetRounds?: number;
   badgeText: string;
 }
 
@@ -44,14 +43,12 @@ export interface GameSession {
   scoringMode: ScoringMode;
   roundScoringType: RoundScoringType;
   targetScore?: number;
-  targetRounds?: number;
   players: Player[];
   rounds: Round[];
   status: 'ACTIVE' | 'COMPLETED';
   createdAt: string;
   updatedAt: string;
   winnerId?: string;
-  currentTurnIndex?: number;
 }
 
 export interface GameHighlight {
@@ -67,11 +64,18 @@ export interface UserSettings {
   soundEnabled: boolean;
   hapticsEnabled: boolean;
   paperGridTexture: boolean;
-  customServerUrl?: string;
   isAdFree?: boolean;
-  devForceShowAds?: boolean;
   isAdBlocked?: boolean;
 }
+
+export const DEFAULT_USER_SETTINGS: UserSettings = {
+  themeMode: 'system',
+  soundEnabled: true,
+  hapticsEnabled: true,
+  paperGridTexture: true,
+  isAdFree: false,
+  isAdBlocked: false,
+};
 
 export const PLAYER_COLORS = [
   { name: 'Mustard', hex: PALETTE.chip.mustard, bg: 'bg-chip-mustard', text: 'text-chip-mustard' },

@@ -4,8 +4,14 @@ import type { CustomerInfo } from '@revenuecat/purchases-js';
 import { logError, logWarn } from '../utils/logger';
 import { generateId } from '../utils/uuid';
 import { trackEvent } from './analytics';
-import type { PurchaseResult, PurchasesOffering, PurchasesOfferings, PurchasesPackage } from './purchases';
 import { PRO_ENTITLEMENT_ID } from './purchases.constants';
+import type {
+  ProGrantListener,
+  PurchaseResult,
+  PurchasesOffering,
+  PurchasesOfferings,
+  PurchasesPackage,
+} from './purchases.types';
 
 export const ANONYMOUS_USER_STORAGE_KEY = 'tallyho_web_app_user_id';
 
@@ -269,4 +275,8 @@ export async function presentCustomerCenter(): Promise<boolean> {
     logError('[Purchases Web] Failed to open customer center:', err);
     return false;
   }
+}
+
+export function setProGrantListener(_listener: ProGrantListener): void {
+  // Web purchases update the settings store at the call site. There is no native customer-info listener.
 }

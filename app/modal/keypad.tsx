@@ -7,7 +7,8 @@ import { useGameStore } from '../../src/stores/useGameStore';
 export default function KeypadModalRoute() {
   const router = useRouter();
   const { playerId } = useLocalSearchParams<{ playerId?: string }>();
-  const { activeGame, submitRoundScore } = useGameStore();
+  const activeGame = useGameStore((state) => state.activeGame);
+  const submitRoundScore = useGameStore((state) => state.submitRoundScore);
 
   const player = activeGame?.players.find((p) => p.id === playerId);
 
@@ -18,8 +19,6 @@ export default function KeypadModalRoute() {
   return (
     <View className="bg-background flex-1">
       <ScoreKeypadModal
-        isOpen={true}
-        isRouteModal={true}
         onClose={() => router.back()}
         player={player}
         onSubmitScore={(score) => {

@@ -147,7 +147,6 @@ describe('storage service', () => {
       hapticsEnabled: true,
       paperGridTexture: false,
       isAdFree: true,
-      customServerUrl: 'https://custom.tallyho.dev',
     };
 
     it('returns default settings when none are stored', () => {
@@ -165,7 +164,50 @@ describe('storage service', () => {
       expect(retrieved.themeMode).toBe('dark');
       expect(retrieved.soundEnabled).toBe(false);
       expect(retrieved.isAdFree).toBe(true);
-      expect(retrieved.customServerUrl).toBe('https://custom.tallyho.dev');
+    });
+  });
+
+  describe('Match history cap and corrupt payloads', () => {
+    it('keeps only the newest 50 archived matches', () => {
+      for (let index = 0; index < 55; index += 1) {
+        storage.archiveMatch({
+          id: `hist_${index}`,
+          name: `Match ${index}`,
+          scoringMode: 'RACE_HIGH',
+          roundScoringType: 'EVERY_PLAYER',
+          status: 'COMPLETED',
+          createdAt: '2026-08-22T00:00:00.000Z',
+          updatedAt: '2026-08-22T00:30:00.000Z',
+          players: [{ id: 'p1', name: 'Alice', initials: 'A', color: '#E5A93C' }],
+          rounds: [],
+        });
+      }
+
+      const history = storage.getMatchHistory();
+      expect(history).toHaveLength(50);
+      expect(history[0].id).toBe('hist_54');
+      expect(history.some((game) => game.id === 'hist_0')).toBe(false);
+    });
+
+    it('ignores a corrupt active game payload', () => {
+      window.localStorage.setItem('tallyho_active_game', JSON.stringify({ nope: true }));
+      expect(storage.getActiveGame()).toBeNull();
+    });
+
+    it('clearMatchHistory removes archived matches', () => {
+      storage.archiveMatch({
+        id: 'hist_clear',
+        name: 'Clear Me',
+        scoringMode: 'RACE_HIGH',
+        roundScoringType: 'EVERY_PLAYER',
+        status: 'COMPLETED',
+        createdAt: '2026-08-22T00:00:00.000Z',
+        updatedAt: '2026-08-22T00:30:00.000Z',
+        players: [],
+        rounds: [],
+      });
+      storage.clearMatchHistory();
+      expect(storage.getMatchHistory()).toEqual([]);
     });
   });
 

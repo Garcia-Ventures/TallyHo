@@ -51,7 +51,7 @@ describe('Game Types & Constants', () => {
         expect(preset).toHaveProperty('roundScoringType');
         expect(preset).toHaveProperty('badgeText');
 
-        expect(['RACE_HIGH', 'RACE_LOW', 'FIXED_ROUNDS']).toContain(preset.scoringMode);
+        expect(['RACE_HIGH', 'RACE_LOW']).toContain(preset.scoringMode);
         expect(['EVERY_PLAYER', 'SINGLE_WINNER']).toContain(preset.roundScoringType);
       });
     });

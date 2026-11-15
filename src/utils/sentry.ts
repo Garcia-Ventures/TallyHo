@@ -59,13 +59,29 @@ function messageOf(error: unknown): string {
   return '';
 }
 
+const EXTRA_IGNORE_PATTERNS = ['findnodehandle is not supported on web'];
+
 /** Returns true when the error represents an expected store/billing state. */
 export function isExpectedBillingError(error: unknown, context?: TelemetryContext): boolean {
   const haystack = `${messageOf(error)} ${typeof context?.message === 'string' ? context.message : ''}`.toLowerCase();
+  return isIgnoredSentryMessage(haystack);
+}
+
+export function isIgnoredSentryMessage(text: string): boolean {
+  const haystack = text.toLowerCase();
   if (!haystack.trim()) {
     return false;
   }
-  return EXPECTED_BILLING_PATTERNS.some((pattern) => haystack.includes(pattern));
+  return [...EXPECTED_BILLING_PATTERNS, ...EXTRA_IGNORE_PATTERNS].some((pattern) => haystack.includes(pattern));
+}
+
+export function shouldDropSentryEvent(event: {
+  exception?: { values?: { value?: string | null; type?: string | null }[] | null } | null;
+  message?: string | null;
+}): boolean {
+  const values = event.exception?.values ?? [];
+  const text = [...values.map((value) => `${value.value ?? ''} ${value.type ?? ''}`), event.message ?? ''].join(' ');
+  return isIgnoredSentryMessage(text);
 }
 
 /** Capture an exception in Sentry with optional extra context data. */

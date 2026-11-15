@@ -7,6 +7,8 @@ export interface AdContent {
   linkUrl?: string;
 }
 
+export const FEEDBACK_ENDPOINT = process.env.EXPO_PUBLIC_FORMSPREE_URL || 'https://formspree.io/f/mqaejddq';
+
 export const AD_CONFIG = {
   // Enabled if explicitly set in env or running in __DEV__ mode
   showTestAds: process.env.EXPO_PUBLIC_SHOW_TEST_ADS !== 'false',

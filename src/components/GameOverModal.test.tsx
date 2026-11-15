@@ -68,13 +68,8 @@ describe('GameOverModal Component', () => {
     ],
   };
 
-  it('returns null when isOpen is false', () => {
-    const html = renderToString(<GameOverModal isOpen={false} onClose={vi.fn()} game={mockGame} onRematch={vi.fn()} />);
-    expect(html).toBe('');
-  });
-
-  it('renders champion banner, podium (1st, 2nd, 3rd), and 4th place standings when open', () => {
-    const html = renderToString(<GameOverModal isOpen={true} onClose={vi.fn()} game={mockGame} onRematch={vi.fn()} />);
+  it('renders champion banner, podium (1st, 2nd, 3rd), and 4th place standings', () => {
+    const html = renderToString(<GameOverModal onClose={vi.fn()} game={mockGame} onRematch={vi.fn()} />);
 
     expect(html).toContain('Winner Alice');
     expect(html).toContain('Second Bob');
@@ -83,10 +78,8 @@ describe('GameOverModal Component', () => {
     expect(html).toContain('🔄 Rematch');
   });
 
-  it('renders correctly as route modal without outer Modal element', () => {
-    const html = renderToString(
-      <GameOverModal isOpen={true} onClose={vi.fn()} game={mockGame} onRematch={vi.fn()} isRouteModal={true} />,
-    );
+  it('renders the match name with the champion', () => {
+    const html = renderToString(<GameOverModal onClose={vi.fn()} game={mockGame} onRematch={vi.fn()} />);
 
     expect(html).toContain('Championship Match');
     expect(html).toContain('Winner Alice');

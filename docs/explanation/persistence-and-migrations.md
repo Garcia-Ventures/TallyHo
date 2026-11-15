@@ -1,43 +1,26 @@
-# Explanation: Persistence, State Stores & Schema Migrations
+# Explanation: Persistence & State Stores
 
-This document explains state persistence, Zustand hydration, and schema migration strategies in **TallyHo**.
+TallyHo is offline-first. Match state, the player library, and settings live on the device. There is no account and no schema-version field. Add a migration only when a stored shape actually changes.
 
----
+## Stores
 
-## 1. Offline-First State Architecture
+- **`useGameStore`**: Active match, round log, and finished match archive.
+- **`usePlayerLibraryStore`**: Reusable player names and colors.
+- **`useSettingsStore`**: Theme, sound, haptics, and ad-free status.
 
-Table games frequently take place in basements, parks, or areas with spotty cellular connection. TallyHo operates 100% offline-first.
+`app/_layout.tsx` calls `hydrateStorage()` before `loadInitialData`, `loadPlayers`, and `loadSettings`.
 
-```mermaid
-flowchart LR
-    subgraph AppState ["Zustand Store (`useGameStore`)"]
-        ActiveGame["Active Game State\n(players, rounds, rules)"]
-        History["Match History Archives"]
-    end
+## Storage adapter
 
-    subgraph StorageLayer ["Storage Adapter (`src/services/storage.ts`)"]
-        NativeAsync["AsyncStorage (Native)"]
-        LocalStorage["localStorage (Web)"]
-    end
+`src/services/storage-core.ts` is the API. The driver underneath it depends on the platform:
 
-    AppState <--> StorageLayer
-```
+- **Web** (`storage.ts`): `localStorage`, with an in-memory fallback when `localStorage` is missing (unit tests and some embedded runtimes).
+- **Native** (`storage.native.ts`): AsyncStorage. Hydration copies the four keys into memory. Later reads and writes stay synchronous against that memory and flush to AsyncStorage.
 
-### Store Structure
+The four keys are `tallyho_active_game`, `tallyho_match_history`, `tallyho_player_library`, and `tallyho_settings`.
 
-- **`useGameStore`**: Manages active match state, round logs, player tallies, and finished match archives.
-- **`usePlayerLibraryStore`**: Maintains quick-select reusable player profiles (names, favorite colors, initials).
-- **`useSettingsStore`**: Manages theme modes, audio toggles, haptic preferences, and Pro entitlement status.
+Corrupt JSON is ignored and logged. Match history keeps the newest 50 games. Clearing history and "Erase Everything" both go through this API and then refresh the Zustand stores, so the home screen does not keep showing deleted matches.
 
----
+## What is not stored
 
-## 2. Schema Evolution & Safe Migrations
-
-As new game modes and features are added, local device state schemas evolve. TallyHo uses guarded versioned migrations:
-
-1. **Schema Versioning**: Stored payloads include a `_schemaVersion: number` metadata field.
-2. **Defensive Hydration**:
-   - Initial state provides explicit fallbacks for missing fields in legacy records.
-   - Corrupted or incompatible records trigger non-destructive schema upgrades rather than crashing the interface.
-3. **User-Controlled Reset**:
-   - Users can safely purge or export corrupted state via **Settings > Reset Local Storage**.
+Game ids come from `generateId`. There is no `_schemaVersion`. Fixed-round games are not part of the stored model. The app records race-to-high and race-to-low matches only.

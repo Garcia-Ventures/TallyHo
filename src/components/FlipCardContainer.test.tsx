@@ -22,16 +22,25 @@ vi.mock('react-native-reanimated', () => ({
 import { FlipCardContainer } from './FlipCardContainer';
 
 describe('FlipCardContainer Component', () => {
-  it('renders front and back components inside animated flip card', () => {
-    const html = renderToString(
+  it('renders only the front face until the card is flipped', () => {
+    const closed = renderToString(
       <FlipCardContainer
         isFlipped={false}
         frontComponent={<div>Front Face View</div>}
         backComponent={<div>Back Face View</div>}
       />,
     );
+    expect(closed).toContain('Front Face View');
+    expect(closed).not.toContain('Back Face View');
 
-    expect(html).toContain('Front Face View');
-    expect(html).toContain('Back Face View');
+    const open = renderToString(
+      <FlipCardContainer
+        isFlipped={true}
+        frontComponent={<div>Front Face View</div>}
+        backComponent={<div>Back Face View</div>}
+      />,
+    );
+    expect(open).toContain('Front Face View');
+    expect(open).toContain('Back Face View');
   });
 });

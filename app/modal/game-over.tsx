@@ -9,7 +9,10 @@ import { useGameStore } from '../../src/stores/useGameStore';
 
 export default function GameOverModalRoute() {
   const router = useRouter();
-  const { activeGame, matchHistory, createGame, clearActiveGame } = useGameStore();
+  const activeGame = useGameStore((state) => state.activeGame);
+  const matchHistory = useGameStore((state) => state.matchHistory);
+  const createGame = useGameStore((state) => state.createGame);
+  const clearActiveGame = useGameStore((state) => state.clearActiveGame);
 
   const gameToDisplay = activeGame || matchHistory[0];
 
@@ -39,8 +42,6 @@ export default function GameOverModalRoute() {
   return (
     <View className="will-change-variable bg-background flex-1">
       <GameOverModal
-        isOpen={true}
-        isRouteModal={true}
         onClose={() => {
           clearActiveGame();
           router.dismissTo('/');
@@ -53,7 +54,6 @@ export default function GameOverModalRoute() {
             scoringMode: gameToDisplay.scoringMode,
             roundScoringType: gameToDisplay.roundScoringType,
             targetScore: gameToDisplay.targetScore,
-            targetRounds: gameToDisplay.targetRounds,
             players: gameToDisplay.players,
           };
           clearActiveGame();

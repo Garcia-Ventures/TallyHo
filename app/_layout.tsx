@@ -15,71 +15,17 @@ import { HeaderBackButton } from '../src/components/HeaderBackButton';
 import { HeaderCloseButton } from '../src/components/HeaderCloseButton';
 import { PALETTE } from '../src/constants/colors';
 import { initAnalytics } from '../src/services/analytics';
+import { setProGrantListener } from '../src/services/purchases';
+import { hydrateStorage } from '../src/services/storage';
 import { useGameStore } from '../src/stores/useGameStore';
 import { usePlayerLibraryStore } from '../src/stores/usePlayerLibraryStore';
 import { useSettingsStore } from '../src/stores/useSettingsStore';
+import { initAppSentry } from '../src/utils/initSentry';
 import { AppToaster } from '../src/utils/toast';
 
-Sentry.init({
-  dsn: 'https://ba35c9ea2c45d64b131f6b854cd5c3ea@o4511873601306624.ingest.us.sentry.io/4511873607991296',
-
-  // Adds more context data to events (IP address, cookies, user, etc.)
-  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
-  sendDefaultPii: true,
-
-  // Enable Logs
-  enableLogs: true,
-
-  // Configure Session Replay
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1,
-  // mobileReplayIntegration calls native serialize fns that don't exist on web dev
-  // (REACT-NATIVE-K: serializeNetworkDetailUrlsForNative is not a function on localhost:8081).
-  integrations:
-    Platform.OS === 'web'
-      ? [Sentry.feedbackIntegration()]
-      : [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
-
-  // Filter known non-fatal native environment quirks & handled edge cases
-  // (TALLYHO-9/Q/R/P/T: Play Store referrer on emulators + expected RevenueCat
-  // billing states that are handled in-app with friendly UI).
-  ignoreErrors: [
-    'General error retrieving the install referrer',
-    'installation referrer API',
-    'Play Store may not be installed',
-    'not allowed to make the purchase',
-    'already active for the user',
-    'already owned',
-    'already purchased',
-    'Error performing request',
-    'unknown backend error',
-    'Failed to fetch Offerings',
-    'findNodeHandle is not supported on web',
-  ],
-
-  beforeSend(event) {
-    const values = event.exception?.values ?? [];
-    const text = [...values.map((v) => `${v.value ?? ''} ${v.type ?? ''}`), event.message ?? '']
-      .join(' ')
-      .toLowerCase();
-    if (
-      text.includes('install referrer') ||
-      text.includes('installation referrer api') ||
-      text.includes('not allowed to make the purchase') ||
-      text.includes('already active') ||
-      text.includes('already owned') ||
-      text.includes('already purchased') ||
-      text.includes('error performing request') ||
-      text.includes('unknown backend error') ||
-      text.includes('failed to fetch offerings')
-    ) {
-      return null;
-    }
-    return event;
-  },
-
-  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
-  // spotlight: __DEV__,
+initAppSentry();
+setProGrantListener(() => {
+  useSettingsStore.getState().purchaseRemoveAds();
 });
 
 function useIsDark(): boolean {
@@ -141,10 +87,20 @@ export default Sentry.wrap(function RootLayout() {
   const tintColor = useHeaderTintColor();
 
   useEffect(() => {
-    initAnalytics();
-    loadInitialData();
-    loadPlayers();
-    loadSettings();
+    let cancelled = false;
+    void (async () => {
+      initAnalytics();
+      await hydrateStorage();
+      if (cancelled) {
+        return;
+      }
+      loadInitialData();
+      loadPlayers();
+      loadSettings();
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [loadInitialData, loadPlayers, loadSettings]);
 
   return (

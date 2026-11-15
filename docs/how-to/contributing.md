@@ -7,11 +7,11 @@ Thank you for contributing to **TallyHo**! This guide outlines our development w
 ## 1. Development Workflow
 
 1. **Fork or Branch**:
-   Always branch off `develop` for new features or bug fixes:
+   Branch off `dev` for new features or bug fixes. CI runs on `main` and `dev`.
 
    ```bash
-   git checkout develop
-   git pull origin develop
+   git checkout dev
+   git pull origin dev
    git checkout -b feat/my-new-feature
    ```
 
@@ -51,6 +51,6 @@ Thank you for contributing to **TallyHo**! This guide outlines our development w
    git push origin feat/my-new-feature
    ```
 
-2. Open a Pull Request targeting the **`develop`** branch.
+2. Open a Pull Request targeting the **`dev`** branch.
 3. Provide a clear description of the change, test coverage, and screenshots for any UI updates.
 4. Ensure all GitHub Actions CI checks pass.

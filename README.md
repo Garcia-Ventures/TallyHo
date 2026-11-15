@@ -147,14 +147,14 @@ Project documentation is structured according to the **[Diátaxis Framework](doc
 ### 💡 Explanation
 
 - **[Architecture & Scoring Mechanics](docs/explanation/architecture-and-scoring.md)** — Paper-and-ink aesthetic design philosophy and scoring models.
-- **[Branching & Versioning](docs/explanation/branching-and-versioning.md)** — Two-branch Git Flow (`main` / `develop`) and SemVer 2.0.0 rationale.
+- **[Branching & Versioning](docs/explanation/branching-and-versioning.md)** — Two-branch Git Flow (`main` / `dev`) and SemVer 2.0.0 rationale.
 - **[Persistence & Migrations](docs/explanation/persistence-and-migrations.md)** — Offline-first Zustand state stores and schema migration design.
 
 ---
 
 ## Branching Model
 
-This repository follows a two-branch git strategy (`main` & `develop`). For detailed guidelines, refer to **[Branching Strategy & Versioning](docs/explanation/branching-and-versioning.md)**.
+This repository follows a two-branch git strategy (`main` & `dev`). For detailed guidelines, refer to **[Branching Strategy & Versioning](docs/explanation/branching-and-versioning.md)**.
 
 ---
 

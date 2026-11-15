@@ -1,6 +1,6 @@
 import { Badge, Button, Card, CardContent, Text } from '@gv-tech/ui-native';
 import React, { useEffect } from 'react';
-import { Modal, View } from 'react-native';
+import { View } from 'react-native';
 
 import { nativeSound } from '../services/audio';
 import type { GameSession } from '../types/game';
@@ -9,29 +9,15 @@ import { AdBannerCard } from './AdBannerCard';
 import { ScreenContainer } from './ScreenContainer';
 
 interface GameOverModalProps {
-  isOpen: boolean;
   onClose: () => void;
   game: GameSession;
   onRematch: () => void;
-  isRouteModal?: boolean;
 }
 
-export const GameOverModal: React.FC<GameOverModalProps> = ({
-  isOpen,
-  onClose,
-  game,
-  onRematch,
-  isRouteModal = false,
-}) => {
+export const GameOverModal: React.FC<GameOverModalProps> = ({ onClose, game, onRematch }) => {
   useEffect(() => {
-    if (isOpen) {
-      nativeSound.playVictoryFanfare();
-    }
-  }, [isOpen]);
-
-  if (!isOpen) {
-    return null;
-  }
+    nativeSound.playVictoryFanfare();
+  }, []);
 
   const totals = game?.players ? calculatePlayerTotals(game) : {};
   const sortedPlayers = game?.players ? getSortedPlayers(game, totals) : [];
@@ -42,21 +28,7 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
   const { highlights } = game?.rounds ? calculateGameHighlights(game) : { highlights: [] };
 
   const content = (
-    <ScreenContainer
-      scrollable={true}
-      className="w-full flex-1"
-      padding="normal"
-      header={
-        !isRouteModal ? (
-          <View className="flex-row items-center justify-between">
-            <Text className="text-foreground text-xl font-black">🏆 Game Night Champion</Text>
-            <Button onPress={onClose} variant="ghost" size="sm" className="p-1">
-              <Text className="text-foreground text-base font-bold">✕</Text>
-            </Button>
-          </View>
-        ) : undefined
-      }
-    >
+    <ScreenContainer scrollable={true} className="w-full flex-1" padding="normal">
       <View className="w-full gap-5">
         {/* Banner Card */}
         <View className="border-border bg-card items-center gap-1 rounded-2xl border p-5 shadow-sm">
@@ -194,17 +166,5 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
     </ScreenContainer>
   );
 
-  if (isRouteModal) {
-    return content;
-  }
-
-  return (
-    <Modal visible={isOpen} animationType="slide" transparent>
-      <View className="flex-1 justify-end bg-black/70">
-        <View className="border-border bg-background h-[85%] overflow-hidden rounded-t-3xl border-t shadow-2xl">
-          {content}
-        </View>
-      </View>
-    </Modal>
-  );
+  return content;
 };

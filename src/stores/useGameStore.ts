@@ -3,18 +3,26 @@ import { create } from 'zustand';
 import { trackEvent } from '../services/analytics';
 import { storage } from '../services/storage';
 import type { GameSession, Player, Round, RoundScore, RoundScoringType, ScoringMode } from '../types/game';
+import { logError } from '../utils/logger';
 import { checkWinCondition, shouldAdvanceRound } from '../utils/scoring';
 import { trackMatchEvent } from '../utils/sentry';
+import { generateId } from '../utils/uuid';
+
+function dropTrailingEmptyRound(rounds: Round[]): Round[] {
+  const last = rounds[rounds.length - 1];
+  if (!last || Object.keys(last.scores).length > 0) {
+    return rounds;
+  }
+  return rounds.slice(0, -1);
+}
 
 interface GameState {
   activeGame: GameSession | null;
   matchHistory: GameSession[];
-  viewMode: 'HOME' | 'MATCH';
   isPlayMode: boolean;
 
   // Actions
   loadInitialData: () => void;
-  setViewMode: (mode: 'HOME' | 'MATCH') => void;
   setIsPlayMode: (isPlay: boolean) => void;
   createGame: (setup: {
     name: string;
@@ -22,7 +30,6 @@ interface GameState {
     scoringMode: ScoringMode;
     roundScoringType: RoundScoringType;
     targetScore?: number;
-    targetRounds?: number;
     players: Player[];
   }) => void;
   submitRoundScore: (score: RoundScore) => { hasWinner: boolean; winnerId: string };
@@ -32,12 +39,12 @@ interface GameState {
   deleteMatchFromHistory: (gameId: string) => void;
   clearHistory: () => void;
   clearActiveGame: () => void;
+  clearSession: () => void;
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
   activeGame: null,
   matchHistory: [],
-  viewMode: 'HOME',
   isPlayMode: false,
 
   loadInitialData: () => {
@@ -46,11 +53,9 @@ export const useGameStore = create<GameState>((set, get) => ({
     set({
       activeGame: savedActive,
       matchHistory: savedHistory,
-      viewMode: savedActive ? 'MATCH' : 'HOME',
     });
   },
 
-  setViewMode: (mode) => set({ viewMode: mode }),
   setIsPlayMode: (isPlay) => set({ isPlayMode: isPlay }),
 
   createGame: (setup) => {
@@ -61,19 +66,17 @@ export const useGameStore = create<GameState>((set, get) => ({
     };
 
     const newGame: GameSession = {
-      id: `game_${Date.now()}`,
+      id: generateId('game'),
       name: setup.name,
       presetId: setup.presetId,
       scoringMode: setup.scoringMode,
       roundScoringType: setup.roundScoringType,
       targetScore: setup.targetScore,
-      targetRounds: setup.targetRounds,
       players: setup.players,
       rounds: [initialRound],
       status: 'ACTIVE',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      currentTurnIndex: 0,
     };
 
     storage.saveActiveGame(newGame);
@@ -92,7 +95,6 @@ export const useGameStore = create<GameState>((set, get) => ({
 
     set({
       activeGame: newGame,
-      viewMode: 'MATCH',
       isPlayMode: true,
     });
   },
@@ -143,6 +145,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     if (winResult.hasWinner) {
       const completedGame: GameSession = {
         ...updatedGame,
+        rounds: dropTrailingEmptyRound(currentRounds),
         status: 'COMPLETED',
         winnerId: winResult.winnerId,
       };
@@ -204,6 +207,7 @@ export const useGameStore = create<GameState>((set, get) => ({
 
     const completedGame: GameSession = {
       ...activeGame,
+      rounds: dropTrailingEmptyRound(activeGame.rounds),
       status: 'COMPLETED',
       winnerId: winResult.winnerId || activeGame.winnerId,
     };
@@ -227,20 +231,21 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   clearHistory: () => {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      try {
-        window.localStorage.removeItem('tallyho_match_history');
-      } catch {}
-    } else if (typeof localStorage !== 'undefined') {
-      try {
-        localStorage.removeItem('tallyho_match_history');
-      } catch {}
+    try {
+      storage.clearMatchHistory();
+    } catch (error) {
+      logError('Failed to clear match history', error);
     }
     set({ matchHistory: [] });
   },
 
   clearActiveGame: () => {
     storage.clearActiveGame();
-    set({ activeGame: null, viewMode: 'HOME' });
+    set({ activeGame: null, isPlayMode: false });
+  },
+
+  clearSession: () => {
+    storage.clearAll();
+    set({ activeGame: null, matchHistory: [], isPlayMode: false });
   },
 }));

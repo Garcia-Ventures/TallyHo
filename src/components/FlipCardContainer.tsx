@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import Animated, { Easing, interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
@@ -15,7 +15,14 @@ export const FlipCardContainer: React.FC<FlipCardContainerProps> = ({
   backComponent,
   duration = 500,
 }) => {
+  const [backMounted, setBackMounted] = useState(isFlipped);
   const flipProgress = useSharedValue(isFlipped ? 1 : 0);
+
+  useEffect(() => {
+    if (isFlipped) {
+      setBackMounted(true);
+    }
+  }, [isFlipped]);
 
   useEffect(() => {
     flipProgress.value = withTiming(isFlipped ? 1 : 0, {
@@ -59,10 +66,8 @@ export const FlipCardContainer: React.FC<FlipCardContainerProps> = ({
         style={[backAnimatedStyle]}
         pointerEvents={!isFlipped ? 'none' : 'auto'}
       >
-        {backComponent}
+        {backMounted ? backComponent : null}
       </Animated.View>
     </View>
   );
 };
-
-export const FlipCardContainerNative = FlipCardContainer;

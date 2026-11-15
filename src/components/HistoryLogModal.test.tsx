@@ -29,17 +29,8 @@ import type { GameSession } from '../types/game';
 import { HistoryLogModal } from './HistoryLogModal';
 
 describe('HistoryLogModal Component', () => {
-  it('returns null when isOpen is false', () => {
-    const html = renderToString(
-      <HistoryLogModal isOpen={false} onClose={vi.fn()} history={[]} onClearHistory={vi.fn()} />,
-    );
-    expect(html).toBe('');
-  });
-
   it('renders empty history placeholder when no matches are archived', () => {
-    const html = renderToString(
-      <HistoryLogModal isOpen={true} onClose={vi.fn()} history={[]} onClearHistory={vi.fn()} />,
-    );
+    const html = renderToString(<HistoryLogModal history={[]} onClearHistory={vi.fn()} />);
 
     expect(html).toContain('No completed matches archived yet.');
   });
@@ -61,9 +52,7 @@ describe('HistoryLogModal Component', () => {
       },
     ];
 
-    const html = renderToString(
-      <HistoryLogModal isOpen={true} onClose={vi.fn()} history={mockHistory} onClearHistory={vi.fn()} />,
-    );
+    const html = renderToString(<HistoryLogModal history={mockHistory} onClearHistory={vi.fn()} />);
 
     expect(html).toContain('Grand Final Match');
     expect(html).toContain('Champion Alice');

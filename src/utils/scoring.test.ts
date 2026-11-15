@@ -215,6 +215,26 @@ describe('scoring utility', () => {
       expect(winResult.winnerId).toBe('p1');
     });
 
+    it('crowns the higher total when several players reach a RACE_HIGH target in the same round', () => {
+      const photoFinish: GameSession = {
+        ...mockGame,
+        targetScore: 500,
+        rounds: [
+          {
+            roundNumber: 1,
+            timestamp: new Date().toISOString(),
+            scores: {
+              p1: { playerId: 'p1', points: 500 },
+              p2: { playerId: 'p2', points: 620 },
+            },
+          },
+        ],
+      };
+      const winResult = checkWinCondition(photoFinish);
+      expect(winResult.hasWinner).toBe(true);
+      expect(winResult.winnerId).toBe('p2');
+    });
+
     it('returns no winner when target score is not yet met in RACE_HIGH', () => {
       const ongoingGame: GameSession = {
         ...mockGame,
@@ -234,22 +254,6 @@ describe('scoring utility', () => {
         ],
       };
       const winResult = checkWinCondition(farGame);
-      expect(winResult.hasWinner).toBe(false);
-      expect(winResult.winnerId).toBe('');
-    });
-
-    it('returns no winner when targetScore is set but scoringMode is FIXED_ROUNDS (fallthrough)', () => {
-      // Tests the fallthrough branch where targetScore is truthy but scoringMode is not RACE_HIGH or RACE_LOW.
-      const invalidStateGame: GameSession = {
-        ...mockGame,
-        targetScore: 100,
-        scoringMode: 'FIXED_ROUNDS',
-        targetRounds: 1, // Even though targetRounds is met, it should fall through due to targetScore
-        rounds: [
-          { roundNumber: 1, timestamp: new Date().toISOString(), scores: { p1: { playerId: 'p1', points: 100 } } },
-        ],
-      };
-      const winResult = checkWinCondition(invalidStateGame);
       expect(winResult.hasWinner).toBe(false);
       expect(winResult.winnerId).toBe('');
     });
@@ -278,49 +282,10 @@ describe('scoring utility', () => {
       expect(winResult.winnerId).toBe('');
     });
 
-    it('detects win condition when targetRounds (FIXED_ROUNDS) limit is met', () => {
-      const fixedRoundsGame: GameSession = {
-        ...mockGame,
-        targetScore: undefined,
-        targetRounds: 2,
-        scoringMode: 'FIXED_ROUNDS',
-      };
-      const winResult = checkWinCondition(fixedRoundsGame);
-      expect(winResult.hasWinner).toBe(true);
-      expect(winResult.winnerId).toBe('p1');
-    });
-
-    it('returns no winner when completed rounds are fewer than targetRounds', () => {
-      const fixedRoundsGame: GameSession = {
-        ...mockGame,
-        targetScore: undefined,
-        targetRounds: 5,
-        scoringMode: 'FIXED_ROUNDS',
-      };
-      const winResult = checkWinCondition(fixedRoundsGame);
-      expect(winResult.hasWinner).toBe(false);
-      expect(winResult.winnerId).toBe('');
-    });
-
-    it('ignores empty rounds when counting completed rounds against targetRounds', () => {
-      const fixedRoundsGame: GameSession = {
-        ...mockGame,
-        targetScore: undefined,
-        targetRounds: 2,
-        rounds: [
-          { roundNumber: 1, timestamp: new Date().toISOString(), scores: { p1: { playerId: 'p1', points: 10 } } },
-          { roundNumber: 2, timestamp: new Date().toISOString(), scores: {} }, // empty round
-        ],
-      };
-      const winResult = checkWinCondition(fixedRoundsGame);
-      expect(winResult.hasWinner).toBe(false);
-    });
-
-    it('returns no winner when neither targetScore nor targetRounds is specified', () => {
+    it('returns no winner when targetScore is not specified', () => {
       const endlessGame: GameSession = {
         ...mockGame,
         targetScore: undefined,
-        targetRounds: undefined,
       };
       const winResult = checkWinCondition(endlessGame);
       expect(winResult.hasWinner).toBe(false);

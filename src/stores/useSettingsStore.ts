@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { trackEvent } from '../services/analytics';
 import { storage } from '../services/storage';
 import type { UserSettings } from '../types/game';
+import { DEFAULT_USER_SETTINGS } from '../types/game';
 
 interface SettingsState {
   settings: UserSettings;
@@ -10,27 +11,16 @@ interface SettingsState {
   updateSettings: (newSettings: Partial<UserSettings>) => void;
   resetSettings: () => void;
   purchaseRemoveAds: () => void;
-  restorePurchases: () => boolean;
   setAdBlockedState: (blocked: boolean) => void;
   resetAdFreeStatus: () => void;
 }
 
-const DEFAULT_SETTINGS: UserSettings = {
-  themeMode: 'system',
-  soundEnabled: true,
-  hapticsEnabled: true,
-  paperGridTexture: true,
-  isAdFree: false,
-  devForceShowAds: true,
-  isAdBlocked: false,
-};
-
 export const useSettingsStore = create<SettingsState>((set, get) => ({
-  settings: DEFAULT_SETTINGS,
+  settings: DEFAULT_USER_SETTINGS,
 
   loadSettings: () => {
     const loaded = storage.getSettings();
-    set({ settings: { ...DEFAULT_SETTINGS, ...loaded } });
+    set({ settings: { ...DEFAULT_USER_SETTINGS, ...loaded } });
   },
 
   updateSettings: (newSettings) => {
@@ -41,19 +31,14 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   },
 
   resetSettings: () => {
-    storage.saveSettings(DEFAULT_SETTINGS);
-    set({ settings: DEFAULT_SETTINGS });
+    storage.saveSettings(DEFAULT_USER_SETTINGS);
+    set({ settings: DEFAULT_USER_SETTINGS });
   },
 
   purchaseRemoveAds: () => {
     const updated: UserSettings = { ...get().settings, isAdFree: true };
     storage.saveSettings(updated);
     set({ settings: updated });
-  },
-
-  restorePurchases: () => {
-    const isPro = get().settings.isAdFree ?? false;
-    return isPro;
   },
 
   setAdBlockedState: (blocked: boolean) => {

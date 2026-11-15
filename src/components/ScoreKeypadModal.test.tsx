@@ -45,34 +45,12 @@ describe('ScoreKeypadModal Component', () => {
     initials: 'A',
   };
 
-  it('returns null when isOpen is false', () => {
-    const html = renderToString(
-      <ScoreKeypadModal isOpen={false} onClose={vi.fn()} player={mockPlayer} onSubmitScore={vi.fn()} />,
-    );
-    expect(html).toBe('');
-  });
-
-  it('renders modal tree when isOpen is true', () => {
+  it('renders the score pad for the selected player', () => {
     const handleClose = vi.fn();
     const handleSubmit = vi.fn();
 
     const html = renderToString(
-      <ScoreKeypadModal isOpen={true} onClose={handleClose} player={mockPlayer} onSubmitScore={handleSubmit} />,
-    );
-
-    expect(html).toContain('Alice');
-    expect(html).toContain('Save Round Score');
-  });
-
-  it('renders correctly as route modal without Modal wrapper', () => {
-    const html = renderToString(
-      <ScoreKeypadModal
-        isOpen={true}
-        onClose={vi.fn()}
-        player={mockPlayer}
-        onSubmitScore={vi.fn()}
-        isRouteModal={true}
-      />,
+      <ScoreKeypadModal onClose={handleClose} player={mockPlayer} onSubmitScore={handleSubmit} />,
     );
 
     expect(html).toContain('Alice');

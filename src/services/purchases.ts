@@ -1,47 +1,21 @@
+import type { ProGrantListener, PurchaseResult, PurchasesOfferings } from './purchases.types';
+
 export { PRO_ENTITLEMENT_ID } from './purchases.constants';
-
-export interface PurchaseResult {
-  success: boolean;
-  isPro: boolean;
-  userCancelled?: boolean;
-  error?: string;
-  redirected?: boolean;
-  needsEmail?: boolean;
-  /** Store reports the product as already owned — caller should recover via restore. */
-  alreadyOwned?: boolean;
-}
-
-export interface PurchasesProduct {
-  identifier: string;
-  description: string;
-  title: string;
-  price: number;
-  priceString: string;
-  currencyCode: string;
-}
-
-export interface PurchasesPackage {
-  identifier: string;
-  packageType: string;
-  product: PurchasesProduct;
-}
-
-export interface PurchasesOffering {
-  identifier: string;
-  serverDescription: string;
-  availablePackages: PurchasesPackage[];
-  lifetime?: PurchasesPackage | null;
-  annual?: PurchasesPackage | null;
-  monthly?: PurchasesPackage | null;
-}
-
-export interface PurchasesOfferings {
-  all: Record<string, PurchasesOffering>;
-  current: PurchasesOffering | null;
-}
+export type {
+  ProGrantListener,
+  PurchaseResult,
+  PurchasesOffering,
+  PurchasesOfferings,
+  PurchasesPackage,
+  PurchasesProduct,
+} from './purchases.types';
 
 export async function initPurchases(): Promise<void> {
   // Base fallback for non-platform runtimes (unit tests) — intentionally a no-op.
+}
+
+export function setProGrantListener(_listener: ProGrantListener): void {
+  // Native RevenueCat registers the real listener. Tests and web no-op unless purchases.web overrides it.
 }
 
 export async function getCustomerInfo(): Promise<null> {

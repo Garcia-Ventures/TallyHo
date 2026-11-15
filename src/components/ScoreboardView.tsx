@@ -204,5 +204,3 @@ export const ScoreboardView: React.FC<ScoreboardViewProps> = ({
     </ScreenContainer>
   );
 };
-
-export const ScoreboardViewNative = ScoreboardView;

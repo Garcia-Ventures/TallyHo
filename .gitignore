@@ -3,30 +3,7 @@
 # The following is an exhaustive list of standard things to ignore for the following project types
 # osx, linux, go, react
 
-# Created by https://www.toptal.com/developers/gitignore/api/osx,linux,go,react
-# Edit at https://www.toptal.com/developers/gitignore?templates=osx,linux,go,react
-
-### Go ###
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-
-# Test binary, built with `go test -c`
-*.test
-coverage/
-
-# Output of the go coverage tool, specifically when used with LiteIDE
-*.out
-
-# Dependency directories (remove the comment below to include it)
-vendor/
-
-### Go Patch ###
-/vendor/
-/Godeps/
+# OS, editor, and Expo ignores. Coverage and native project output stay local.
 
 ### Linux ###
 *~
@@ -114,3 +91,4 @@ revenucat-key.json
 # Code Quality
 .codacy/
 build/
+coverage/

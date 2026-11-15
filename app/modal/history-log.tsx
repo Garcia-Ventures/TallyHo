@@ -6,14 +6,12 @@ import { useGameStore } from '../../src/stores/useGameStore';
 
 export default function HistoryLogModalRoute() {
   const router = useRouter();
-  const { matchHistory, clearHistory } = useGameStore();
+  const matchHistory = useGameStore((state) => state.matchHistory);
+  const clearHistory = useGameStore((state) => state.clearHistory);
 
   return (
     <View className="bg-background flex-1">
       <HistoryLogModal
-        isOpen={true}
-        isRouteModal={true}
-        onClose={() => router.back()}
         history={matchHistory}
         onClearHistory={() => {
           clearHistory();
