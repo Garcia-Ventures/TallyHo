@@ -82,7 +82,6 @@ export const useGameStore = create<GameState>((set, get) => ({
     storage.saveActiveGame(newGame);
     trackMatchEvent('match_created', {
       gameId: newGame.id,
-      name: newGame.name,
       presetId: newGame.presetId,
       playerCount: newGame.players.length,
     });

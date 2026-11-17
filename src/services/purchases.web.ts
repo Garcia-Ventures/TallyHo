@@ -174,7 +174,7 @@ export async function purchasePackageByIdentifier(
       return { success: false, isPro: false, error: `Package not found for tier: ${tier}` };
     }
 
-    trackEvent('web_checkout_started', { tier, package: targetPkg.identifier, email: cleanEmail });
+    trackEvent('web_checkout_started', { tier, package: targetPkg.identifier, hasEmail: Boolean(cleanEmail) });
 
     const result = await p.purchase({
       rcPackage: targetPkg,

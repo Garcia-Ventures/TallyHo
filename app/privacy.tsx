@@ -55,10 +55,10 @@ export default function PrivacyPolicyScreen() {
             </Text>
             <View className="flex-row items-center gap-2 pt-1">
               <Badge className="bg-chip-sage/20 border-chip-sage/30 border">
-                <Text className="text-chip-sage text-[10px] font-black">Effective: August 2026</Text>
+                <Text className="text-chip-sage text-[10px] font-black">Effective: November 2026</Text>
               </Badge>
               <Badge className="border-border bg-popover border">
-                <Text className="text-muted-foreground text-[10px] font-bold">Version 1.1.0</Text>
+                <Text className="text-muted-foreground text-[10px] font-bold">Version 1.2.0</Text>
               </Badge>
             </View>
           </CardContent>
@@ -207,8 +207,9 @@ export default function PrivacyPolicyScreen() {
               </View>
               <Text className="text-muted-foreground text-xs leading-5 font-medium">
                 TallyHo incorporates Sentry (<Text className="text-foreground font-bold">https://sentry.io</Text>) to
-                catch unhandled exceptions, inspect diagnostic stack traces, and monitor release health. Sentry reports
-                contain zero personal identifiers and are strictly used to diagnose and fix application crashes.
+                catch unhandled exceptions, inspect diagnostic stack traces, and monitor release health. Reports include
+                the stack trace, OS version, and device diagnostics. They do not include IP addresses, screen
+                recordings, player names, scores, or email addresses, and are used only to diagnose and fix crashes.
               </Text>
             </View>
 

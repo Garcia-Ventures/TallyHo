@@ -177,7 +177,7 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
       tier: selectedTier,
       price: selectedPlan.price,
       product: `tallyho_pro_${selectedTier}`,
-      email: cleanEmail || undefined,
+      hasEmail: Boolean(cleanEmail),
     });
 
     const result = await purchasePackageByIdentifier(selectedTier, cleanEmail || undefined);

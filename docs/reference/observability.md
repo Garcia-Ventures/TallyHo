@@ -10,10 +10,10 @@ TallyHo integrates `@sentry/react-native` with the Expo Sentry config plugin.
 
 ### Configuration
 
-- **Initialization**: Configured in `src/utils/sentry.ts` via `Sentry.init()`.
+- **Initialization**: Configured in `src/utils/initSentry.ts` via `Sentry.init()`.
 - **Environment**: Automatically captures `production`, `preview`, or `development`.
 - **Release Tracking**: Tagged with format `com.gventureshq.tallyho@<version>+<versionCode>`.
-- **Privacy & Sanitization**: Sentry strips PII (Personal Identifiable Information) before transmission.
+- **Privacy & Sanitization**: `sendDefaultPii` is off, session replay is off, and `beforeSend` drops any attached user. Crash reports are stack traces and device diagnostics. Analytics events do not include email addresses or player names.
 
 ### Crash Boundary
 

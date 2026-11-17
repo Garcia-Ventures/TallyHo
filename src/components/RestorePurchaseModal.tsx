@@ -32,7 +32,7 @@ export function RestorePurchaseModal({ isOpen, onClose, onSuccess }: RestorePurc
 
     setErrorMessage('');
     setIsProcessing(true);
-    trackEvent('restore_email_attempt', { email: cleanEmail });
+    trackEvent('restore_email_attempt', { method: 'email' });
 
     try {
       const result = await restoreAdFreePurchases(cleanEmail);
