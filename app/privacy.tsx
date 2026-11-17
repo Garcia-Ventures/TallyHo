@@ -64,6 +64,88 @@ export default function PrivacyPolicyScreen() {
           </CardContent>
         </Card>
 
+        {/* Play listing deletion URL: https://tallyho.gventureshq.com/privacy */}
+        <Card className="border-border bg-card p-6 shadow-sm">
+          <CardHeader className="mb-4 gap-1 p-0">
+            <View className="flex-row items-center gap-2.5">
+              <View className="bg-status-error-bg h-8 w-8 items-center justify-center rounded-full">
+                <Mail size={18} color={PALETTE.status.errorText} />
+              </View>
+              <CardTitle className="text-foreground text-lg font-black">
+                Request deletion of your TallyHo data
+              </CardTitle>
+            </View>
+          </CardHeader>
+          <CardContent className="gap-3 p-0">
+            <Text className="text-muted-foreground text-xs leading-5 font-medium">
+              This is the deletion request for <Text className="text-foreground font-bold">TallyHo</Text> (Tally Ho -
+              Digital Scorekeeper), published by <Text className="text-foreground font-bold">Garcia Ventures</Text>.
+            </Text>
+
+            <View className="border-border bg-popover gap-2 rounded-xl border p-4">
+              <Text className="text-foreground text-xs font-bold">How to request deletion</Text>
+              <Text className="text-muted-foreground text-xs leading-5 font-medium">
+                1. Email <Text className="text-foreground font-bold select-all">privacy.tallyho@gventureshq.com</Text>.
+              </Text>
+              <Text className="text-muted-foreground text-xs leading-5 font-medium">
+                2. Use the subject line <Text className="text-foreground font-bold">TallyHo data deletion request</Text>
+                .
+              </Text>
+              <Text className="text-muted-foreground text-xs leading-5 font-medium">
+                3. Send it from the address you used for a Pro restore, a web purchase, or in-app feedback, and say
+                which of those it was.
+              </Text>
+              <Text className="text-muted-foreground text-xs leading-5 font-medium">
+                4. We reply within 5 business days. We delete the matched records we hold within 30 days of verifying
+                the request.
+              </Text>
+            </View>
+
+            <View className="border-border bg-popover gap-2 rounded-xl border p-4">
+              <Text className="text-foreground text-xs font-bold">Data we delete</Text>
+              <Text className="text-muted-foreground text-xs leading-5 font-medium">
+                The email address and the RevenueCat customer record used to restore or buy TallyHo Pro.
+              </Text>
+              <Text className="text-muted-foreground text-xs leading-5 font-medium">
+                Feedback messages and the optional reply email sent through Formspree.
+              </Text>
+            </View>
+
+            <View className="border-border bg-popover gap-2 rounded-xl border p-4">
+              <Text className="text-foreground text-xs font-bold">Data we keep</Text>
+              <Text className="text-muted-foreground text-xs leading-5 font-medium">
+                Google Play order and subscription records stay with Google for tax, fraud prevention, and legal
+                compliance. TallyHo never receives your card number. Canceling a subscription in Google Play does not
+                delete Google’s order record.
+              </Text>
+              <Text className="text-muted-foreground text-xs leading-5 font-medium">
+                Anonymous crash diagnostics and product-usage events are not stored with your name or email, so a
+                deletion email cannot be matched to them. They are not kept as a customer profile.
+              </Text>
+              <Text className="text-muted-foreground text-xs leading-5 font-medium">
+                Scores, player names, presets, and settings stay on your device. Delete them immediately in the app at
+                Settings &gt; Reset Local Storage &amp; Settings. Uninstalling the app removes them as well.
+              </Text>
+            </View>
+
+            <View className="border-border bg-popover gap-2 rounded-xl border p-4">
+              <Text className="text-foreground text-xs font-bold">How long data is retained</Text>
+              <Text className="text-muted-foreground text-xs leading-5 font-medium">
+                Matched email addresses, RevenueCat customer records, and Formspree submissions are deleted within 30
+                days after we verify the request.
+              </Text>
+              <Text className="text-muted-foreground text-xs leading-5 font-medium">
+                Google Play billing records are kept by Google for the period Google requires for tax, fraud prevention,
+                and legal compliance.
+              </Text>
+              <Text className="text-muted-foreground text-xs leading-5 font-medium">
+                Anonymous diagnostics and analytics are not tied to your email and are not retained as a profile we can
+                look up.
+              </Text>
+            </View>
+          </CardContent>
+        </Card>
+
         {/* SECTION 1: CORE DATA PRINCIPLES */}
         <Card className="border-border bg-card p-6 shadow-sm">
           <CardHeader className="mb-4 gap-1 p-0">
@@ -340,9 +422,8 @@ export default function PrivacyPolicyScreen() {
                 <Text className="text-foreground text-xs font-bold">Permanent Erasure of Submitted Data</Text>
               </View>
               <Text className="text-muted-foreground text-xs leading-5 font-medium">
-                Per Google Play and GDPR Data Deletion requirements, if you provided an email address during support
-                feedback or cross-device restore and wish to request permanent deletion of your customer record, email
-                us directly at:
+                To delete an email address, a RevenueCat customer record, or a feedback submission, use the request
+                steps at the top of this page. Email:
               </Text>
               <View className="bg-card border-border mt-1 flex-row items-center justify-between rounded-lg border p-3">
                 <Text className="text-foreground text-xs font-black select-all">privacy.tallyho@gventureshq.com</Text>
