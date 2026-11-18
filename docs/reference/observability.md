@@ -30,6 +30,8 @@ TallyHo uses self-hosted OpenPanel instances via `@openpanel/react-native` and `
 - `EXPO_PUBLIC_OPENPANEL_CLIENT_ID`: Client application identifier.
 - `EXPO_PUBLIC_OPENPANEL_API_URL`: Self-hosted OpenPanel ingestion endpoint (`https://openpanel.gventureshq.com/api`).
 
+Web analytics does not start when the page hostname is `localhost`, `127.0.0.1`, `::1`, `0.0.0.0`, or a `*.localhost` name. Local `expo start --web` then does not POST to OpenPanel, so a failed fetch is not reported through Sentry's fetch wrapper. Deployed hosts still send events. Native builds are unchanged.
+
 ### Tracked Event Taxonomy
 
 | Event Name           | Trigger                          | Payload                                       |

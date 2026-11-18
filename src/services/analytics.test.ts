@@ -1,14 +1,22 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const mockTrack = vi.fn();
-const mockOpenPanelInstance = {
-  track: mockTrack,
-};
+const { mockTrack, mockOpenPanel, mockIsLocalWebHost } = vi.hoisted(() => {
+  const trackFn = vi.fn();
+  return {
+    mockTrack: trackFn,
+    mockOpenPanel: vi.fn(function () {
+      return { track: trackFn };
+    }),
+    mockIsLocalWebHost: vi.fn(() => false),
+  };
+});
 
 vi.mock('@openpanel/web', () => ({
-  OpenPanel: vi.fn(function () {
-    return mockOpenPanelInstance;
-  }),
+  OpenPanel: mockOpenPanel,
+}));
+
+vi.mock('./analyticsHost', () => ({
+  isLocalWebHost: mockIsLocalWebHost,
 }));
 
 import { initAnalytics, trackEvent } from './analytics';
@@ -16,6 +24,7 @@ import { initAnalytics, trackEvent } from './analytics';
 describe('analytics service', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockIsLocalWebHost.mockReturnValue(false);
   });
 
   it('tracks events safely before or after initialization', () => {
@@ -51,5 +60,20 @@ describe('analytics service', () => {
     });
 
     expect(() => initAnalytics()).not.toThrow();
+  });
+
+  it('does not construct OpenPanel or send events on localhost', () => {
+    initAnalytics();
+    expect(mockOpenPanel).toHaveBeenCalled();
+
+    mockIsLocalWebHost.mockReturnValue(true);
+    mockOpenPanel.mockClear();
+    mockTrack.mockClear();
+
+    initAnalytics();
+    trackEvent('match_started', { preset: 'uno' });
+
+    expect(mockOpenPanel).not.toHaveBeenCalled();
+    expect(mockTrack).not.toHaveBeenCalled();
   });
 });
