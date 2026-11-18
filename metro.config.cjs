@@ -1,5 +1,6 @@
 const path = require('node:path');
 
+const { inlineVariables } = require('@gv-tech/design-tokens/native-preset');
 const { withNativewind } = require('nativewind/metro');
 const { getSentryExpoConfig } = require('@sentry/react-native/metro');
 
@@ -18,4 +19,7 @@ function escapeForRegExp(value) {
   return value.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&');
 }
 
-module.exports = withNativewind(config, { input: './src/global.css' });
+module.exports = withNativewind(config, {
+  input: './src/global.css',
+  inlineVariables,
+});
