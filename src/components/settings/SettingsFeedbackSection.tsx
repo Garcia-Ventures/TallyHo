@@ -140,7 +140,9 @@ export function SettingsFeedbackSection() {
         )}
 
         <Button
-          onPress={handleFeedbackSubmit}
+          onPress={() => {
+            void handleFeedbackSubmit();
+          }}
           disabled={isSubmitting || !feedback.trim()}
           className={`h-12 min-h-[48px] flex-row items-center justify-center gap-2 rounded-xl ${
             isSubmitting || !feedback.trim() ? 'bg-chip-sage/50' : 'bg-chip-sage'

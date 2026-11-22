@@ -1,5 +1,18 @@
 import { storage } from './storage';
 
+function isAudioContextConstructor(value: unknown): value is typeof AudioContext {
+  return typeof value === 'function';
+}
+
+/** Safari still exposes the prefixed constructor on some WebKit builds. */
+function prefixedAudioContext(host: Window): typeof AudioContext | undefined {
+  if (!('webkitAudioContext' in host)) {
+    return undefined;
+  }
+  const candidate: unknown = Reflect.get(host, 'webkitAudioContext');
+  return isAudioContextConstructor(candidate) ? candidate : undefined;
+}
+
 class SoundService {
   private ctx: AudioContext | null = null;
 
@@ -8,8 +21,7 @@ class SoundService {
       return null;
     }
     if (!this.ctx) {
-      const AudioCtx =
-        window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const AudioCtx = window.AudioContext || prefixedAudioContext(window);
       if (AudioCtx) {
         this.ctx = new AudioCtx();
       }

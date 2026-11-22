@@ -31,6 +31,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === 'object';
 }
 
+function isSettingsPatch(value: unknown): value is Partial<UserSettings> {
+  return isRecord(value);
+}
+
 function isMissing(value: unknown): value is null | undefined {
   return value === null || value === undefined;
 }
@@ -223,9 +227,10 @@ export function createStorage(driver: StorageDriver, isReady: () => boolean = ()
         if (cachedSettings && cachedSettingsRaw === data) {
           return cachedSettings;
         }
-        const parsed = data ? (JSON.parse(data) as Partial<UserSettings>) : null;
-        const value: UserSettings =
-          parsed && typeof parsed === 'object' ? { ...DEFAULT_USER_SETTINGS, ...parsed } : { ...DEFAULT_USER_SETTINGS };
+        const parsed: unknown = data ? JSON.parse(data) : null;
+        const value: UserSettings = isSettingsPatch(parsed)
+          ? { ...DEFAULT_USER_SETTINGS, ...parsed }
+          : { ...DEFAULT_USER_SETTINGS };
         cachedSettingsRaw = data;
         cachedSettings = value;
         return value;

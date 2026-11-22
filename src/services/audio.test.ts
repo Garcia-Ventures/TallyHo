@@ -75,7 +75,7 @@ describe('audio service', () => {
     });
 
     // Reset cached audio context on singleton for clean test isolation
-    (audio as unknown as { ctx: typeof mockAudioContext }).ctx = mockAudioContext;
+    Reflect.set(audio, 'ctx', mockAudioContext);
 
     vi.spyOn(storage, 'getSettings').mockReturnValue({
       soundEnabled: true,

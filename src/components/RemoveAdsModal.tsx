@@ -393,7 +393,9 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
                 ) : null}
 
                 <Button
-                  onPress={handlePurchase}
+                  onPress={() => {
+                    void handlePurchase();
+                  }}
                   disabled={isProcessing}
                   className="bg-chip-mustard h-13 flex-row items-center justify-center rounded-xl shadow"
                 >
@@ -403,7 +405,9 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
                 </Button>
 
                 <Button
-                  onPress={handleRestore}
+                  onPress={() => {
+                    void handleRestore();
+                  }}
                   disabled={isProcessing}
                   variant="outline"
                   className="border-border h-11 items-center justify-center rounded-xl bg-transparent"
@@ -416,7 +420,9 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
             ) : (
               <View className="gap-3 pt-2">
                 <Button
-                  onPress={handlePresentCustomerCenter}
+                  onPress={() => {
+                    void handlePresentCustomerCenter();
+                  }}
                   variant="outline"
                   className="border-border h-12 flex-row items-center justify-center gap-2 rounded-xl bg-transparent"
                 >

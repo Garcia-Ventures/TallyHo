@@ -2,6 +2,7 @@ import { PackageType, Purchases } from '@revenuecat/purchases-js';
 import type { CustomerInfo } from '@revenuecat/purchases-js';
 
 import { logError, logWarn } from '../utils/logger';
+import { readErrorFields, textOf } from '../utils/sentry';
 import { generateId } from '../utils/uuid';
 import { trackEvent } from './analytics';
 import { PRO_ENTITLEMENT_ID } from './purchases.constants';
@@ -100,13 +101,13 @@ export async function getOfferings(): Promise<PurchasesOfferings | null> {
     });
 
     const lifetimePkg = availablePackages.find(
-      (pkg) => pkg.identifier === '$rc_lifetime' || pkg.packageType === PackageType.Lifetime,
+      (pkg) => pkg.identifier === '$rc_lifetime' || pkg.packageType === textOf(PackageType.Lifetime),
     );
     const annualPkg = availablePackages.find(
-      (pkg) => pkg.identifier === '$rc_annual' || pkg.packageType === PackageType.Annual,
+      (pkg) => pkg.identifier === '$rc_annual' || pkg.packageType === textOf(PackageType.Annual),
     );
     const monthlyPkg = availablePackages.find(
-      (pkg) => pkg.identifier === '$rc_monthly' || pkg.packageType === PackageType.Monthly,
+      (pkg) => pkg.identifier === '$rc_monthly' || pkg.packageType === textOf(PackageType.Monthly),
     );
 
     const mappedOffering: PurchasesOffering = {
@@ -190,7 +191,7 @@ export async function purchasePackageByIdentifier(
 
     return { success: false, isPro: false };
   } catch (err: unknown) {
-    const error = err as { userCancelled?: boolean; message?: string };
+    const error = readErrorFields(err);
     if (error.userCancelled) {
       trackEvent('purchase_cancelled', { tier, platform: 'web' });
       return { success: false, isPro: false, userCancelled: true };
@@ -240,7 +241,7 @@ export async function restoreAdFreePurchases(email?: string): Promise<PurchaseRe
         : 'No prior purchases found on this browser session.',
     };
   } catch (err: unknown) {
-    const error = err as { message?: string };
+    const error = readErrorFields(err);
     logError('[Purchases Web] Failed to restore purchases:', err);
     return { success: false, isPro: false, error: error.message || 'Unable to restore purchases at this time.' };
   }

@@ -4,7 +4,6 @@ import { ThemeProvider } from '@gv-tech/ui-native';
 import * as Sentry from '@sentry/react-native';
 import { Stack } from 'expo-router';
 import { useEffect } from 'react';
-import type { ImageSourcePropType } from 'react-native';
 import { Image, Platform, useColorScheme } from 'react-native';
 
 import logoHorizontalDark from '../assets/logo-horizontal-dark.png';
@@ -48,7 +47,7 @@ function AppLogoTitle() {
   const isDark = useIsDark();
   return (
     <Image
-      source={(isDark ? logoHorizontalDark : logoHorizontal) as ImageSourcePropType}
+      source={isDark ? logoHorizontalDark : logoHorizontal}
       style={{ width: 140, height: 40 }}
       resizeMode="contain"
       accessibilityLabel="TallyHo Logo"

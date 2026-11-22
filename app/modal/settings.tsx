@@ -1,6 +1,5 @@
 import { Text } from '@gv-tech/ui-native';
 import { useState } from 'react';
-import type { ImageSourcePropType } from 'react-native';
 import { Image, ScrollView, useColorScheme, View } from 'react-native';
 
 import logoHorizontalDark from '../../assets/logo-horizontal-dark.png';
@@ -35,7 +34,7 @@ export default function SettingsModal() {
 
         <View className="items-center justify-center gap-2 pt-2 pb-6">
           <Image
-            source={(isDark ? logoHorizontalDark : logoHorizontal) as ImageSourcePropType}
+            source={isDark ? logoHorizontalDark : logoHorizontal}
             style={{ width: 140, height: 40 }}
             resizeMode="contain"
             accessibilityLabel="TallyHo Logo"

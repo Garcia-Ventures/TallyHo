@@ -1,26 +1,21 @@
+import type { ImpactFeedbackStyle, NotificationFeedbackType } from 'expo-haptics';
 import { NativeModules } from 'react-native';
 
 import { storage } from './storage';
 
-interface HapticsModuleType {
-  impactAsync?: (style: unknown) => Promise<unknown>;
-  notificationAsync?: (type: unknown) => Promise<unknown>;
-  ImpactFeedbackStyle?: {
-    Light?: string;
-    Medium?: string;
-    Heavy?: string;
-  };
-  NotificationFeedbackType?: {
-    Success?: string;
-  };
+interface LoadedHaptics {
+  impactAsync: (style?: ImpactFeedbackStyle) => Promise<void>;
+  notificationAsync: (type?: NotificationFeedbackType) => Promise<void>;
+  ImpactFeedbackStyle: typeof ImpactFeedbackStyle;
+  NotificationFeedbackType: typeof NotificationFeedbackType;
 }
 
 /** Native Haptic Feedback Service using expo-haptics with safe native guards. */
 class NativeHapticsService {
-  private hapticsModule: HapticsModuleType | null = null;
+  private hapticsModule: LoadedHaptics | null = null;
   private isAvailable = true;
 
-  private async getHapticsModule(): Promise<HapticsModuleType | null> {
+  private async getHapticsModule(): Promise<LoadedHaptics | null> {
     if (!this.isAvailable) {
       return null;
     }
@@ -34,8 +29,7 @@ class NativeHapticsService {
         this.isAvailable = false;
         return null;
       }
-      const Haptics = await import('expo-haptics');
-      this.hapticsModule = Haptics as unknown as HapticsModuleType;
+      this.hapticsModule = await import('expo-haptics');
       return this.hapticsModule;
     } catch {
       this.isAvailable = false;
@@ -52,7 +46,7 @@ class NativeHapticsService {
     try {
       const Haptics = await this.getHapticsModule();
       if (Haptics?.impactAsync) {
-        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle?.Light || 'light');
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       }
     } catch {
       // Hardware fallback
@@ -68,7 +62,7 @@ class NativeHapticsService {
     try {
       const Haptics = await this.getHapticsModule();
       if (Haptics?.impactAsync) {
-        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle?.Medium || 'medium');
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       }
     } catch {
       // Hardware fallback
@@ -84,7 +78,7 @@ class NativeHapticsService {
     try {
       const Haptics = await this.getHapticsModule();
       if (Haptics?.impactAsync) {
-        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle?.Heavy || 'heavy');
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
       }
     } catch {
       // Hardware fallback
@@ -100,7 +94,7 @@ class NativeHapticsService {
     try {
       const Haptics = await this.getHapticsModule();
       if (Haptics?.notificationAsync) {
-        await Haptics.notificationAsync(Haptics.NotificationFeedbackType?.Success || 'success');
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       }
     } catch {
       // Hardware fallback

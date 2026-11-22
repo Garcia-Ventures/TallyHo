@@ -1,16 +1,15 @@
-import type { ImageSourcePropType } from 'react-native';
-
+// Metro serves these as numeric asset ids. That id is a valid React Native image source.
 declare module '*.png' {
-  const value: ImageSourcePropType;
+  const value: number;
   export default value;
 }
 
 declare module '*.jpg' {
-  const value: ImageSourcePropType;
+  const value: number;
   export default value;
 }
 
 declare module '*.jpeg' {
-  const value: ImageSourcePropType;
+  const value: number;
   export default value;
 }

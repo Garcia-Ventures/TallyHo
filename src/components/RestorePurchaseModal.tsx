@@ -126,7 +126,9 @@ export function RestorePurchaseModal({ isOpen, onClose, onSuccess }: RestorePurc
           {/* Action Buttons */}
           <View className="gap-2 pt-1">
             <Button
-              onPress={handleDirectEmailRestore}
+              onPress={() => {
+                void handleDirectEmailRestore();
+              }}
               disabled={isProcessing}
               className="bg-chip-mustard h-11 flex-row items-center justify-center rounded-xl shadow-sm"
             >

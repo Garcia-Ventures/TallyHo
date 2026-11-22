@@ -1,6 +1,18 @@
 import { describe, expect, it } from 'vitest';
 
-import type { GameSession, Player, RoundScore } from '../types/game';
+import type { GameSession, Player } from '../types/game';
+
+function isGameSession(value: unknown): value is GameSession {
+  return typeof value === 'object' && value !== null && 'rounds' in value && 'players' in value;
+}
+
+/** Accepts a fixture that deliberately omits score fields the type normally requires. */
+function gameSessionFrom(value: unknown): GameSession {
+  if (!isGameSession(value)) {
+    throw new Error('expected a game session fixture');
+  }
+  return value;
+}
 import {
   calculateGameHighlights,
   calculatePlayerTotals,
@@ -383,19 +395,19 @@ describe('scoring utility', () => {
     });
 
     it('handles games with undefined or missing score objects', () => {
-      const missingScoresGame: GameSession = {
+      const missingScoresGame = gameSessionFrom({
         ...mockGame,
         rounds: [
           {
             roundNumber: 1,
             timestamp: new Date().toISOString(),
             scores: {
-              p1: undefined as unknown as RoundScore,
-              p2: null as unknown as RoundScore,
+              p1: undefined,
+              p2: null,
             },
           },
         ],
-      };
+      });
       const highlights = calculateGameHighlights(missingScoresGame);
       expect(highlights.maxSingleRoundScore).toBe(0);
       expect(highlights.winningMargin).toBe(0);
@@ -403,19 +415,19 @@ describe('scoring utility', () => {
     });
 
     it('handles games with missing or zero points gracefully', () => {
-      const zeroPointsGame: GameSession = {
+      const zeroPointsGame = gameSessionFrom({
         ...mockGame,
         rounds: [
           {
             roundNumber: 1,
             timestamp: new Date().toISOString(),
             scores: {
-              p1: { playerId: 'p1' } as unknown as RoundScore, // Missing points field entirely
+              p1: { playerId: 'p1' },
               p2: { playerId: 'p2', points: 0, bonusPoints: 0, penaltyPoints: 0 },
             },
           },
         ],
-      };
+      });
       const highlights = calculateGameHighlights(zeroPointsGame);
       expect(highlights.maxSingleRoundScore).toBe(0);
       expect(highlights.winningMargin).toBe(0);

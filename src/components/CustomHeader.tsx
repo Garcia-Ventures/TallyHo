@@ -1,6 +1,6 @@
 import React from 'react';
-import type { ColorValue, ImageSourcePropType, StyleProp, ViewStyle } from 'react-native';
-import { Image, Platform, Text, useColorScheme, View } from 'react-native';
+import type { ColorValue, StyleProp, ViewStyle } from 'react-native';
+import { Image, Platform, StyleSheet, Text, useColorScheme, View } from 'react-native';
 
 import logoHorizontalDark from '../../assets/logo-horizontal-dark.png';
 import logoHorizontal from '../../assets/logo-horizontal.png';
@@ -38,8 +38,8 @@ export function CustomHeader({ options, route, back }: CustomHeaderProps) {
   const isHome = route.name === 'index';
   const title = options.title || route.name;
   const maxWidthClass = options.maxWidthClass || 'max-w-4xl';
-  const headerStyleObj = (options.headerStyle || {}) as { backgroundColor?: string };
-  const backgroundColor = headerStyleObj.backgroundColor || (isDark ? PALETTE.dark.card : PALETTE.paper[100]);
+  const headerStyleObj = StyleSheet.flatten(options.headerStyle);
+  const backgroundColor = headerStyleObj?.backgroundColor || (isDark ? PALETTE.dark.card : PALETTE.paper[100]);
 
   return (
     <View className="border-border w-full border-b" style={{ backgroundColor }}>
@@ -51,7 +51,7 @@ export function CustomHeader({ options, route, back }: CustomHeaderProps) {
         {isHome ? (
           <View className="items-center justify-center">
             <Image
-              source={logoSource as ImageSourcePropType}
+              source={logoSource}
               style={{ width: 165, height: 48 }}
               resizeMode="contain"
               accessibilityLabel="TallyHo Logo"

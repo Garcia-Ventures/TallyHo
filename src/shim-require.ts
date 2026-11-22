@@ -20,19 +20,24 @@ if (typeof String.prototype.at !== 'function') {
   };
 }
 
+function requireModule(mod: string): unknown {
+  if (mod === 'react') {
+    return React;
+  }
+  if (mod === 'react-dom') {
+    return ReactDOM;
+  }
+  if (mod === 'react/jsx-runtime') {
+    return ReactJsxRuntime;
+  }
+  if (typeof window === 'undefined') {
+    return {};
+  }
+  const value: unknown = Reflect.get(window, mod);
+  return value || {};
+}
+
 if (typeof window !== 'undefined') {
-  const win = window as unknown as Record<string, unknown>;
-  win.require = (mod: string) => {
-    if (mod === 'react') {
-      return React;
-    }
-    if (mod === 'react-dom') {
-      return ReactDOM;
-    }
-    if (mod === 'react/jsx-runtime') {
-      return ReactJsxRuntime;
-    }
-    return win[mod] || {};
-  };
-  (globalThis as unknown as Record<string, unknown>).require = win.require;
+  Object.assign(window, { require: requireModule });
+  Object.assign(globalThis, { require: requireModule });
 }

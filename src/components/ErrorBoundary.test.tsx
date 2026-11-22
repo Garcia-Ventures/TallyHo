@@ -1,5 +1,10 @@
+import type { ReactElement, ReactNode } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
+
+function isReactElement(node: ReactNode): node is ReactElement {
+  return typeof node === 'object' && node !== null && 'props' in node;
+}
 
 vi.mock('@gv-tech/ui-native', () => ({
   Button: ({ children, onPress, ...props }: React.ComponentProps<'button'> & { onPress?: () => void }) => (
@@ -39,7 +44,10 @@ describe('ErrorBoundary Component', () => {
     boundary.state = { hasError: true, error: new Error('Simulated crash') };
 
     const rendered = boundary.render();
-    const html = renderToString(rendered as React.ReactElement);
+    if (!isReactElement(rendered)) {
+      throw new Error('Expected the error boundary to render an element');
+    }
+    const html = renderToString(rendered);
 
     expect(html).toContain('Oops! Something went wrong');
     expect(html).toContain('Try Again');
@@ -53,7 +61,10 @@ describe('ErrorBoundary Component', () => {
     boundary.state = { hasError: true, error: new Error('Simulated crash') };
 
     const rendered = boundary.render();
-    const html = renderToString(rendered as React.ReactElement);
+    if (!isReactElement(rendered)) {
+      throw new Error('Expected the error boundary to render an element');
+    }
+    const html = renderToString(rendered);
 
     expect(html).toContain('Custom Crash View');
   });

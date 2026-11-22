@@ -20,6 +20,11 @@ const { mockNativePurchases, mockRevenueCatUI } = vi.hoisted(() => {
 vi.mock('react-native-purchases', () => ({
   default: mockNativePurchases,
   LOG_LEVEL: { DEBUG: 'DEBUG' },
+  PACKAGE_TYPE: {
+    LIFETIME: 'LIFETIME',
+    ANNUAL: 'ANNUAL',
+    MONTHLY: 'MONTHLY',
+  },
   PURCHASES_ERROR_CODE: {
     PURCHASE_CANCELLED_ERROR: '1',
     PRODUCT_ALREADY_PURCHASED_ERROR: 'PRODUCT_ALREADY_PURCHASED_ERROR',

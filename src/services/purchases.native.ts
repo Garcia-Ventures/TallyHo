@@ -1,10 +1,10 @@
 import { Linking, Platform } from 'react-native';
 import type { CustomerInfo, PurchasesOfferings, PurchasesPackage } from 'react-native-purchases';
-import Purchases, { LOG_LEVEL, PURCHASES_ERROR_CODE } from 'react-native-purchases';
+import Purchases, { LOG_LEVEL, PACKAGE_TYPE, PURCHASES_ERROR_CODE } from 'react-native-purchases';
 import RevenueCatUI, { PAYWALL_RESULT } from 'react-native-purchases-ui';
 
 import { logError, logInfo, logWarn } from '../utils/logger';
-import { isExpectedBillingError, textOf } from '../utils/sentry';
+import { isExpectedBillingError, readErrorFields, textOf } from '../utils/sentry';
 import { trackEvent } from './analytics';
 import { PRO_ENTITLEMENT_ID } from './purchases.constants';
 import type { ProGrantListener, PurchaseResult } from './purchases.types';
@@ -146,8 +146,8 @@ export async function purchasePackage(pkg: PurchasesPackage): Promise<PurchaseRe
     trackEvent('purchase_success', { package: pkg.identifier, isPro });
     return { success: true, isPro };
   } catch (err: unknown) {
-    const error = err as { code?: PURCHASES_ERROR_CODE; userCancelled?: boolean; message?: string };
-    if (error.userCancelled || error.code === PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR) {
+    const error = readErrorFields(err);
+    if (error.userCancelled || textOf(error.code) === textOf(PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR)) {
       return { success: false, isPro: false, userCancelled: true };
     }
     if (isBillingNotAllowedError(error)) {
@@ -230,11 +230,11 @@ export async function purchasePackageByIdentifier(
     if (current) {
       let targetPkg: PurchasesPackage | undefined;
       if (tier === 'lifetime') {
-        targetPkg = current.lifetime || current.availablePackages.find((p) => p.packageType === 'LIFETIME');
+        targetPkg = current.lifetime || current.availablePackages.find((p) => p.packageType === PACKAGE_TYPE.LIFETIME);
       } else if (tier === 'yearly') {
-        targetPkg = current.annual || current.availablePackages.find((p) => p.packageType === 'ANNUAL');
+        targetPkg = current.annual || current.availablePackages.find((p) => p.packageType === PACKAGE_TYPE.ANNUAL);
       } else if (tier === 'monthly') {
-        targetPkg = current.monthly || current.availablePackages.find((p) => p.packageType === 'MONTHLY');
+        targetPkg = current.monthly || current.availablePackages.find((p) => p.packageType === PACKAGE_TYPE.MONTHLY);
       }
 
       if (!targetPkg && current.availablePackages.length > 0) {
@@ -247,7 +247,7 @@ export async function purchasePackageByIdentifier(
     }
     return purchaseAdFreePackage();
   } catch (err: unknown) {
-    const error = err as { message?: string };
+    const error = readErrorFields(err);
     return { success: false, isPro: false, error: error.message || 'Purchase failed' };
   }
 }
@@ -266,7 +266,7 @@ export async function purchaseAdFreePackage(): Promise<PurchaseResult> {
     }
     return { success: false, isPro: false, error: 'No offering packages available' };
   } catch (err: unknown) {
-    const error = err as { message?: string };
+    const error = readErrorFields(err);
     return { success: false, isPro: false, error: error.message || 'Purchase failed' };
   }
 }
@@ -301,7 +301,7 @@ export async function restoreAdFreePurchases(email?: string): Promise<PurchaseRe
 
     return { success: true, isPro };
   } catch (err: unknown) {
-    const error = err as { message?: string };
+    const error = readErrorFields(err);
     if (!isExpectedBillingError(err, { message: '[RevenueCat] Restore failed:' })) {
       logError('[RevenueCat] Restore failed:', err);
     } else {
