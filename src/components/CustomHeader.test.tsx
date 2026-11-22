@@ -7,6 +7,14 @@ vi.mock('react-native', () => ({
   Text: ({ children, ...props }: React.ComponentProps<'span'>) => <span {...props}>{children}</span>,
   Image: ({ alt = '', ...props }: React.ComponentProps<'img'>) => <img alt={alt} {...props} />,
   useColorScheme: () => 'light',
+  StyleSheet: {
+    flatten: (style: unknown) => {
+      if (Array.isArray(style)) {
+        return Object.assign({}, ...style.filter((item) => item && typeof item === 'object'));
+      }
+      return style && typeof style === 'object' ? style : undefined;
+    },
+  },
 }));
 
 import { CustomHeader } from './CustomHeader';
