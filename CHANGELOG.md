@@ -5,6 +5,35 @@ All notable changes to the TallyHo project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.5.2...tally-ho-v1.6.0) (2026-11-22)
+
+
+### Features
+
+* **admob:** integrate Google AdMob for non-personalized ads and enhance privacy policy ([2dce37f](https://github.com/Garcia-Ventures/TallyHo/commit/2dce37f866f3b10ecbf736fcda8def593ef59d5e))
+* **analytics:** prevent OpenPanel initialization on local hosts ([9a4a71c](https://github.com/Garcia-Ventures/TallyHo/commit/9a4a71c863e809021ec3178d65689745662ab382))
+* enhance privacy policy with data deletion request details ([998270f](https://github.com/Garcia-Ventures/TallyHo/commit/998270f3f29f110a8e29a6028dd549f15f6ed3b1))
+
+
+### Code Refactoring
+
+* **admob:** centralize AdMob configuration in CommonJS module ([316495e](https://github.com/Garcia-Ventures/TallyHo/commit/316495eb80d757c3a7671d9e38bb95d19d3a9603))
+* remove unused type imports and improve error handling ([e725201](https://github.com/Garcia-Ventures/TallyHo/commit/e7252012dcf9586f41d1d58157880b4b80fa02ab))
+
+
+### Tests
+
+* add StyleSheet flatten mock for improved testing of CustomHeader component ([a85cd91](https://github.com/Garcia-Ventures/TallyHo/commit/a85cd911150a01f537e0223f63e91ea82a33ed21))
+
+
+### Miscellaneous Chores
+
+* **dependencies:** update package versions and configuration ([464a102](https://github.com/Garcia-Ventures/TallyHo/commit/464a102a1d24ec7f2fb1b41fab661d44d1c31f2b))
+* **dependencies:** update package versions and enhance configuration ([0a2f80b](https://github.com/Garcia-Ventures/TallyHo/commit/0a2f80b4017c221e5348134f1c3935b9491ee417))
+* **dependencies:** update package versions in bun.lock and package.json ([8002f30](https://github.com/Garcia-Ventures/TallyHo/commit/8002f30e6a59f7a591b6277f351b5c86212af073))
+* **dependencies:** update package versions in bun.lock and package.json ([16d15fb](https://github.com/Garcia-Ventures/TallyHo/commit/16d15fb7159e215116a7229ebccd2c13ae435d41))
+* update privacy policy and observability documentation ([f85ece3](https://github.com/Garcia-Ventures/TallyHo/commit/f85ece372d4dc59a4a79ef02075cfdc5122f76ac))
+
 ## [1.5.2](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.5.1...tally-ho-v1.5.2) (2026-11-15)
 
 
