@@ -1,7 +1,17 @@
+import {
+  GOOGLE_TEST_ANDROID_APP_ID as testAndroidAppId,
+  GOOGLE_TEST_BANNER_UNIT_ID as testBannerUnitId,
+  GOOGLE_TEST_IOS_APP_ID as testIosAppId,
+  resolveAndroidAppId as resolveAndroidAppIdFromConfig,
+  resolveAndroidBannerUnitId as resolveAndroidBannerUnitIdFromConfig,
+  resolveIosAppId as resolveIosAppIdFromConfig,
+  showTestAds as showTestAdsFromConfig,
+} from '../../scripts/admob-config.cjs';
+
 /** Google's public demo IDs. Safe to ship only in development and preview builds. */
-export const GOOGLE_TEST_ANDROID_APP_ID = 'ca-app-pub-3940256099942544~3347511713';
-export const GOOGLE_TEST_IOS_APP_ID = 'ca-app-pub-3940256099942544~1458002511';
-export const GOOGLE_TEST_BANNER_UNIT_ID = 'ca-app-pub-3940256099942544/9214589741';
+export const GOOGLE_TEST_ANDROID_APP_ID: string = testAndroidAppId;
+export const GOOGLE_TEST_IOS_APP_ID: string = testIosAppId;
+export const GOOGLE_TEST_BANNER_UNIT_ID: string = testBannerUnitId;
 
 export interface AdMobEnv {
   EXPO_PUBLIC_SHOW_TEST_ADS?: string;
@@ -12,15 +22,7 @@ export interface AdMobEnv {
 }
 
 export function showTestAds(env: AdMobEnv): boolean {
-  return env.EXPO_PUBLIC_SHOW_TEST_ADS !== 'false';
-}
-
-function isAndroidAppId(value: string): boolean {
-  return /^ca-app-pub-\d+~\d+$/.test(value);
-}
-
-function isBannerUnitId(value: string): boolean {
-  return /^ca-app-pub-\d+\/\d+$/.test(value);
+  return showTestAdsFromConfig(env);
 }
 
 /**
@@ -28,30 +30,15 @@ function isBannerUnitId(value: string): boolean {
  * Test builds always use Google's demo ID. A production build refuses the demo ID.
  */
 export function resolveAndroidAppId(env: AdMobEnv): string {
-  if (showTestAds(env)) {
-    return GOOGLE_TEST_ANDROID_APP_ID;
-  }
-
-  const configured = env.EXPO_PUBLIC_ADMOB_ANDROID_APP_ID?.trim() ?? '';
-  if (!isAndroidAppId(configured) || configured === GOOGLE_TEST_ANDROID_APP_ID) {
-    throw new Error(
-      'Production Android builds require EXPO_PUBLIC_ADMOB_ANDROID_APP_ID from the AdMob Android app (ca-app-pub-…~…). Refusing to embed Google’s test App ID.',
-    );
-  }
-
-  return configured;
+  return resolveAndroidAppIdFromConfig(env);
 }
 
 /**
  * The Expo plugin requires an iOS App ID even though TallyHo does not request iOS ads.
- * Google’s sample ID is the placeholder until an Apple Developer account exists.
+ * Google's sample ID is the placeholder until an Apple Developer account exists.
  */
 export function resolveIosAppId(env: AdMobEnv): string {
-  const configured = env.EXPO_PUBLIC_ADMOB_IOS_APP_ID?.trim() ?? '';
-  if (isAndroidAppId(configured) && configured !== GOOGLE_TEST_IOS_APP_ID) {
-    return configured;
-  }
-  return GOOGLE_TEST_IOS_APP_ID;
+  return resolveIosAppIdFromConfig(env);
 }
 
 /**
@@ -59,13 +46,5 @@ export function resolveIosAppId(env: AdMobEnv): string {
  * Production never falls back to Google's demo unit.
  */
 export function resolveAndroidBannerUnitId(env: AdMobEnv): string | null {
-  if (showTestAds(env)) {
-    return GOOGLE_TEST_BANNER_UNIT_ID;
-  }
-
-  const unit = env.EXPO_PUBLIC_ADMOB_BANNER_ANDROID?.trim() ?? '';
-  if (!isBannerUnitId(unit) || unit === GOOGLE_TEST_BANNER_UNIT_ID) {
-    return null;
-  }
-  return unit;
+  return resolveAndroidBannerUnitIdFromConfig(env);
 }

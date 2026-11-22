@@ -1,7 +1,7 @@
 import type { ConfigContext, ExpoConfig } from 'expo/config';
 
 import packageJson from './package.json';
-import { resolveAndroidAppId, resolveIosAppId } from './src/constants/admob';
+import { resolveAndroidAppId, resolveIosAppId } from './scripts/admob-config.cjs';
 
 /**
  * Package.json is the only version release-please edits. Reading it here keeps app.json out of that rewrite, which

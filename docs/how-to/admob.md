@@ -38,6 +38,8 @@ Put the two IDs on the Expo **production** environment (same place as the Revenu
 
 `eas.json` sets `EXPO_PUBLIC_SHOW_TEST_ADS=true` for development and preview, and `false` for production. Test builds always embed Google's demo App ID and demo banner unit. A production config with the demo App ID, or with no App ID, throws during `expo` config evaluation so the binary cannot ship the demo ID.
 
+The selectors live in `scripts/admob-config.cjs`. `app.config.ts` and `src/constants/admob.ts` both load that file. Expo compiles the config to a Node `require` and does not compile a TypeScript import from the config, which is why this helper is CommonJS.
+
 The banner unit is JavaScript. If it is missing in production, the app shows house ads and does not call AdMob. The App ID is native. Changing it needs a new Play binary. `app.json` uses `runtimeVersion.policy: appVersion`, so that binary is also a version bump. Expo Go cannot load the SDK.
 
 Development and preview builds must be new EAS binaries (or a local prebuild) after this change. `android/` and `ios/` are gitignored. EAS runs prebuild from `app.config.ts`.
