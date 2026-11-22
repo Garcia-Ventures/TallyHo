@@ -99,7 +99,7 @@
     "zustand": "^5.1.0"
   },
   "devDependencies": {
-    "@gv-tech/oxc-config": "^1.4.0",
+    "@gv-tech/oxc-config": "^1.6.0",
     "@tailwindcss/postcss": "^4.3.5",
     "@testing-library/react": "^16.3.3",
     "@types/canvas-confetti": "^1.9.0",

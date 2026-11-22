@@ -48,7 +48,7 @@
         "zustand": "^5.1.0",
       },
       "devDependencies": {
-        "@gv-tech/oxc-config": "^1.4.0",
+        "@gv-tech/oxc-config": "^1.6.0",
         "@tailwindcss/postcss": "^4.3.5",
         "@testing-library/react": "^16.3.3",
         "@types/canvas-confetti": "^1.9.0",
@@ -318,7 +318,7 @@
 
     "@gv-tech/design-tokens": ["@gv-tech/design-tokens@2.30.0", "", {}, "sha512-FAo5O3JDsdVY5xWZRd6FHJOzBm2tjPJ0eBQtRcoL+zsIeOedi88GUf9Qqq4cpfp9c0/wDE+onwf5VrVOVw6zfQ=="],
 
-    "@gv-tech/oxc-config": ["@gv-tech/oxc-config@1.4.0", "", { "peerDependencies": { "oxfmt": ">=0.68.0", "oxlint": ">=1.83.0", "typescript": ">=6.0.0" }, "optionalPeers": ["typescript"], "bin": { "gv-oxfmt": "bin/gv-oxfmt.js" } }, "sha512-WNp5vb6YL09S83plV/8N74cFfAtdvEsDhIS/+/eb76hdrrBLQjcZ9CNeKKPM6WEjreiiN5r5+6h6hkJLSIapnQ=="],
+    "@gv-tech/oxc-config": ["@gv-tech/oxc-config@1.6.0", "", { "peerDependencies": { "oxfmt": ">=0.79.0", "oxlint": ">=1.94.0", "oxlint-tsgolint": ">=7.0.2007", "typescript": ">=6.0.0" }, "optionalPeers": ["oxlint-tsgolint", "typescript"], "bin": { "gv-oxfmt": "bin/gv-oxfmt.js" } }, "sha512-MBStus2EIfIbUtsBtjUYPRD07S3T2KobQ1BTIdN9KWEEWB+95DKM32ao0TQrJ9UGEhFuxKbUliJ1T16UOoaxfQ=="],
 
     "@gv-tech/ui-core": ["@gv-tech/ui-core@2.30.0", "", { "dependencies": { "class-variance-authority": "^0.7.1" }, "peerDependencies": { "react": ">=18" } }, "sha512-svyI4Xq6Chd55KvQm72Pwc8IyzHOgt9z9/7JTn8wMhUPs85pixBzCsJ8e74jxHP7ZlcU8uECjIG8ugIRc74k4A=="],
 

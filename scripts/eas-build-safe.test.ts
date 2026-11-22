@@ -38,7 +38,7 @@ describe('eas-build-safe utility', () => {
 
     it('handles empty or null output gracefully', () => {
       expect(isQuotaLimitError('')).toBe(false);
-      expect(isQuotaLimitError(null as unknown as string)).toBe(false);
+      expect(isQuotaLimitError(null)).toBe(false);
     });
   });
 
