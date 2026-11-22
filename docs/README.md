@@ -31,6 +31,7 @@ Step-by-step guides helping you solve specific real-world tasks and problems:
 - **[Testing & Quality Assurance](how-to/testing-guide.md)** — Run Vitest unit tests, type-checking, and execute automated Maestro UI flows.
 - **[Release & Deployment](how-to/release-and-deployment.md)** — Semantic version bumping, changelog compilation, and automated EAS cloud builds.
 - **[Contributing Guide](how-to/contributing.md)** — Branching off `dev`, Conventional Commits, code style, and submitting Pull Requests.
+- **[AdMob banners](how-to/admob.md)** — Android AdMob setup, `app-ads.txt`, and the iOS checklist for when an Apple Developer account exists.
 
 ---
 
@@ -41,7 +42,7 @@ Technical descriptions, API signatures, dictionaries, and command catalogs:
 - **[CLI Scripts & Tooling](reference/cli-scripts.md)** — Complete catalog of all `package.json` scripts, validation flags, and EAS commands.
 - **[Store Metadata & Assets](reference/store-metadata.md)** — App Store & Google Play listing copy, keywords, and screenshot specifications.
 - **[Observability & Telemetry](reference/observability.md)** — Sentry crash reporting, Error Boundaries, and OpenPanel analytics event taxonomy.
-- **[House Ad Rotation](reference/house-ads.md)** — Own-brand cards shown before any external ad network.
+- **[House Ad Rotation](reference/house-ads.md)** — Own-brand cards, and the fallback when an Android banner cannot load.
 - **[Release Notes Template](RELEASE_NOTES.md)** — Generated release notes from conventional commits.
 
 ---

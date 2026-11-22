@@ -1,6 +1,6 @@
 # Reference: House Ad Rotation
 
-TallyHo shows a single sponsored card on the home screen and again on the game-over sheet. Until an external ad network is connected, that card rotates through **house ads** only: Garcia Ventures properties.
+TallyHo shows a single sponsored card on the home screen and again on the game-over sheet. On Android, that slot is a non-personalized AdMob banner when consent and a production unit allow it. Everywhere else, and whenever the banner cannot load, the card rotates through **house ads**: Garcia Ventures properties. Setup, the iOS checklist, and `app-ads.txt` are in [AdMob banners](../how-to/admob.md).
 
 The catalog lives in `AD_CONFIG.houseAds` (`src/constants/config.ts`). `AdBannerCard` asks `nextHouseAd` for the next entry.
 

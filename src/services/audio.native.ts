@@ -25,7 +25,7 @@ class NativeSoundService {
         const expoAudio = await import('expo-audio');
         if (expoAudio && typeof expoAudio.createAudioPlayer === 'function') {
           const player = expoAudio.createAudioPlayer(sourceUri);
-          this.playerCache[key] = player as unknown as ExpoAudioPlayer;
+          this.playerCache[key] = player;
         }
       }
       const player = this.playerCache[key];
@@ -38,53 +38,53 @@ class NativeSoundService {
   }
 
   public playKeypadTap(): void {
-    nativeHaptics.triggerLightImpact();
-    this.playAudioFile('keypad_tap');
+    void nativeHaptics.triggerLightImpact();
+    void this.playAudioFile('keypad_tap');
   }
 
   public playKeypadClear(): void {
-    nativeHaptics.triggerMediumImpact();
-    this.playAudioFile('keypad_clear');
+    void nativeHaptics.triggerMediumImpact();
+    void this.playAudioFile('keypad_clear');
   }
 
   public playRoundSubmit(): void {
-    nativeHaptics.triggerHeavyImpact();
-    this.playAudioFile('round_submit');
+    void nativeHaptics.triggerHeavyImpact();
+    void this.playAudioFile('round_submit');
   }
 
   public playPresetSelect(): void {
-    nativeHaptics.triggerLightImpact();
-    this.playAudioFile('preset_select');
+    void nativeHaptics.triggerLightImpact();
+    void this.playAudioFile('preset_select');
   }
 
   public playGameStart(): void {
-    nativeHaptics.triggerHeavyImpact();
-    this.playAudioFile('game_start');
+    void nativeHaptics.triggerHeavyImpact();
+    void this.playAudioFile('game_start');
   }
 
   public playPlayerSwitch(): void {
-    nativeHaptics.triggerLightImpact();
-    this.playAudioFile('player_switch');
+    void nativeHaptics.triggerLightImpact();
+    void this.playAudioFile('player_switch');
   }
 
   public playNavigationTap(): void {
-    nativeHaptics.triggerLightImpact();
-    this.playAudioFile('nav_tap');
+    void nativeHaptics.triggerLightImpact();
+    void this.playAudioFile('nav_tap');
   }
 
   public playToggle(enabled = true): void {
-    nativeHaptics.triggerLightImpact();
-    this.playAudioFile(enabled ? 'toggle_on' : 'toggle_off');
+    void nativeHaptics.triggerLightImpact();
+    void this.playAudioFile(enabled ? 'toggle_on' : 'toggle_off');
   }
 
   public playVictoryFanfare(): void {
-    nativeHaptics.triggerVictoryNotification();
-    this.playAudioFile('victory_fanfare');
+    void nativeHaptics.triggerVictoryNotification();
+    void this.playAudioFile('victory_fanfare');
   }
 
   public playUndo(): void {
-    nativeHaptics.triggerMediumImpact();
-    this.playAudioFile('undo');
+    void nativeHaptics.triggerMediumImpact();
+    void this.playAudioFile('undo');
   }
 
   public playPenClick(): void {

@@ -55,10 +55,10 @@ export default function PrivacyPolicyScreen() {
             </Text>
             <View className="flex-row items-center gap-2 pt-1">
               <Badge className="bg-chip-sage/20 border-chip-sage/30 border">
-                <Text className="text-chip-sage text-[10px] font-black">Effective: November 2026</Text>
+                <Text className="text-chip-sage text-[10px] font-black">Effective: November 21, 2026</Text>
               </Badge>
               <Badge className="border-border bg-popover border">
-                <Text className="text-muted-foreground text-[10px] font-bold">Version 1.2.0</Text>
+                <Text className="text-muted-foreground text-[10px] font-bold">Version 1.3.0</Text>
               </Badge>
             </View>
           </CardContent>
@@ -172,10 +172,13 @@ export default function PrivacyPolicyScreen() {
             <View className="border-border bg-popover/50 flex-row items-start gap-3 rounded-xl border p-3.5">
               <CheckCircle2 size={18} color={PALETTE.chip.sage} className="mt-0.5" />
               <View className="flex-1">
-                <Text className="text-foreground mb-1 text-xs font-bold">Zero Cross-App Ad Tracking</Text>
+                <Text className="text-foreground mb-1 text-xs font-bold">No Cross-App Ad Profile</Text>
                 <Text className="text-muted-foreground text-xs leading-5 font-medium">
-                  TallyHo contains zero third-party advertising brokers, zero ad tracking SDKs, and zero cross-app
-                  tracking tools. We do not collect, request, or transmit your device Advertising ID (GAID or IDFA).
+                  The Android app may show a non-personalized banner from Google AdMob on the home screen and the
+                  game-over sheet. The scoring table does not show ads. We do not request your Advertising ID (GAID or
+                  IDFA), we do not show an App Tracking prompt, and we do not build a cross-app ad profile. iOS and web
+                  do not request network ads. TallyHo Pro and the ad-blocker setting hide network ads. Scores, players,
+                  and presets stay on this device and are not sent to AdMob.
                 </Text>
               </View>
             </View>
@@ -234,6 +237,13 @@ export default function PrivacyPolicyScreen() {
                 <Text className="text-muted-foreground w-1/4 text-xs">Crash Traces, OS Version</Text>
                 <Text className="text-muted-foreground w-1/4 text-xs">Crash Mitigation &amp; QA</Text>
                 <Text className="text-chip-sage w-1/4 text-xs font-bold">Sentry Telemetry (No PII)</Text>
+              </View>
+
+              <View className="border-border/60 flex-row border-b p-3">
+                <Text className="text-foreground w-1/4 text-xs font-bold">Advertising</Text>
+                <Text className="text-muted-foreground w-1/4 text-xs">Device info, coarse location</Text>
+                <Text className="text-muted-foreground w-1/4 text-xs">Non-personalized Android banner</Text>
+                <Text className="text-chip-sage w-1/4 text-xs font-bold">Google AdMob. No Advertising ID</Text>
               </View>
 
               <View className="flex-row p-3">
@@ -330,6 +340,28 @@ export default function PrivacyPolicyScreen() {
                 optional reply email, and app version are transmitted securely to Formspree (
                 <Text className="text-foreground font-bold">https://formspree.io</Text>) over TLS 1.3 encryption solely
                 to process your inquiry.
+              </Text>
+            </View>
+
+            {/* Google AdMob */}
+            <View className="border-border bg-popover gap-2 rounded-xl border p-4">
+              <View className="flex-row items-center justify-between">
+                <View className="flex-row items-center gap-2">
+                  <Globe size={16} color={PALETTE.chip.mustard} />
+                  <Text className="text-foreground text-xs font-bold">Google AdMob (Android banners)</Text>
+                </View>
+                <Badge className="border-chip-mustard/40 bg-chip-mustard/20 border">
+                  <Text className="text-chip-mustard text-[10px] font-black">Non-personalized ads</Text>
+                </Badge>
+              </View>
+              <Text className="text-muted-foreground text-xs leading-5 font-medium">
+                On Android, TallyHo asks Google AdMob (
+                <Text className="text-foreground font-bold">https://policies.google.com/privacy</Text>) for a
+                non-personalized banner. Google may use device details and coarse location to choose that ad, measure
+                it, and limit fraud. We do not send scores, player names, or the device Advertising ID. Ad choices are
+                explained at{' '}
+                <Text className="text-foreground font-bold">https://policies.google.com/technologies/ads</Text>. iOS and
+                the website do not request these ads.
               </Text>
             </View>
           </CardContent>
@@ -446,13 +478,13 @@ export default function PrivacyPolicyScreen() {
           <CardContent className="gap-3 p-0">
             <Text className="text-muted-foreground text-xs leading-5 font-medium">
               <Text className="text-foreground font-bold">COPPA Compliance:</Text> TallyHo is built for general
-              audiences and table scorekeeping. We do not knowingly solicit or collect personal information from
-              children under 13 years of age.
+              audiences and table scorekeeping. It is not a child-directed app. Android ads are non-personalized. We do
+              not knowingly solicit or collect personal information from children under 13 years of age.
             </Text>
             <Text className="text-muted-foreground text-xs leading-5 font-medium">
               <Text className="text-foreground font-bold">Transit Security:</Text> All network communications (feedback
-              forms, purchase verifications, analytics, and diagnostics) strictly enforce HTTPS and TLS 1.3 encryption.
-              Cleartext HTTP traffic is completely disabled.
+              forms, purchase verifications, analytics, diagnostics, and Android ad requests) strictly enforce HTTPS and
+              TLS 1.3 encryption. Cleartext HTTP traffic is completely disabled.
             </Text>
           </CardContent>
         </Card>

@@ -37,7 +37,7 @@ describe('AD_CONFIG', () => {
     expect(AD_CONFIG.productId).toBe('tallyho_ad_free_lifetime');
     expect(AD_CONFIG.entitlementId).toBe('TallyHo Pro');
 
-    // House Ads — own-brand rotation before any external network.
+    // House ads — fallback catalog when an Android banner is not shown.
     expect(Array.isArray(AD_CONFIG.houseAds)).toBe(true);
     expect(AD_CONFIG.houseAds.map((ad: AdContent) => ad.id)).toEqual([
       'house_ad_pro',

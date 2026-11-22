@@ -220,6 +220,7 @@ describe('purchases.native service', () => {
       mockNativePurchases.getCustomerInfo.mockResolvedValueOnce({ managementURL: null });
 
       await presentCustomerCenter();
+      // oxlint-disable-next-line typescript/unbound-method -- the matcher inspects the mock; it does not call the method
       expect(Linking.openURL).toHaveBeenCalledWith(
         expect.stringContaining('play.google.com/store/account/subscriptions'),
       );

@@ -34,13 +34,13 @@ Web analytics does not start when the page hostname is `localhost`, `127.0.0.1`,
 
 ### Tracked Event Taxonomy
 
-| Event Name           | Trigger                          | Payload                                       |
-| :------------------- | :------------------------------- | :-------------------------------------------- |
-| `match_started`      | New game initialized             | `{ scoringModel, playerCount, targetScore }`  |
-| `round_completed`    | Round points submitted           | `{ roundNumber, leaderMargin }`               |
-| `match_completed`    | Winner declared / match finished | `{ totalRounds, winnerId, durationMinutes }`  |
-| `paywall_viewed`     | Pro modal opened                 | `{ source }`                                  |
-| `purchase_success`   | In-app purchase verified         | `{ package, isPro }`                          |
-| `purchases_restored` | Restore purchases button tapped  | `{ isPro }`                                   |
-| `ad_impression`      | House ad card shown              | `{ adId, placement, badge }`                  |
-| `ad_click`           | House ad action tapped           | `{ adId, placement, badge, hasExternalLink }` |
+| Event Name           | Trigger                            | Payload                                                           |
+| :------------------- | :--------------------------------- | :---------------------------------------------------------------- |
+| `match_started`      | New game initialized               | `{ scoringModel, playerCount, targetScore }`                      |
+| `round_completed`    | Round points submitted             | `{ roundNumber, leaderMargin }`                                   |
+| `match_completed`    | Winner declared / match finished   | `{ totalRounds, winnerId, durationMinutes }`                      |
+| `paywall_viewed`     | Pro modal opened                   | `{ source }`                                                      |
+| `purchase_success`   | In-app purchase verified           | `{ package, isPro }`                                              |
+| `purchases_restored` | Restore purchases button tapped    | `{ isPro }`                                                       |
+| `ad_impression`      | House card or Android banner shown | `{ adId, placement, badge }` (`adId` is `admob_banner` for AdMob) |
+| `ad_click`           | House action or banner tap         | `{ adId, placement, badge, hasExternalLink }`                     |

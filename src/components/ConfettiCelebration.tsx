@@ -71,13 +71,13 @@ export const ConfettiCelebration: React.FC = () => {
       import('canvas-confetti')
         .then((confettiModule) => {
           const confetti = confettiModule.default || confettiModule;
-          confetti({
+          void confetti({
             particleCount: 60,
             angle: 60,
             spread: 55,
             origin: { x: 0, y: 0.6 },
           });
-          confetti({
+          void confetti({
             particleCount: 60,
             angle: 120,
             spread: 55,

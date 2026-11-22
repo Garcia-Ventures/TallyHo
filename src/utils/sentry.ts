@@ -45,6 +45,19 @@ const EXPECTED_BILLING_PATTERNS = [
   'usercancelled',
 ];
 
+/** Stringifies primitives only. Objects must not become "[object Object]". */
+export function textOf(value: unknown): string {
+  switch (typeof value) {
+    case 'string':
+    case 'number':
+    case 'boolean':
+    case 'bigint':
+      return String(value);
+    default:
+      return '';
+  }
+}
+
 function messageOf(error: unknown): string {
   if (typeof error === 'string') {
     return error;
@@ -54,7 +67,7 @@ function messageOf(error: unknown): string {
   }
   if (error && typeof error === 'object') {
     const maybe = error as { message?: unknown; code?: unknown };
-    return `${String(maybe.message ?? '')} ${String(maybe.code ?? '')}`;
+    return `${textOf(maybe.message)} ${textOf(maybe.code)}`;
   }
   return '';
 }

@@ -137,7 +137,7 @@ export function RemoveAdsModal({ isOpen, onClose }: RemoveAdsModalProps) {
 
     if (isOpen) {
       setErrorMessage('');
-      loadDynamicOfferings();
+      void loadDynamicOfferings();
     }
 
     return () => {

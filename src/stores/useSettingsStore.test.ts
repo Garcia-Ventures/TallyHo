@@ -23,10 +23,12 @@ if (typeof globalThis.localStorage === 'undefined') {
 describe('useSettingsStore', () => {
   beforeEach(() => {
     localStorage.clear();
+    useSettingsStore.setState({ settingsLoaded: false });
     useSettingsStore.getState().resetSettings();
   });
 
   it('initializes with default state', () => {
+    expect(useSettingsStore.getState().settingsLoaded).toBe(false);
     const settings = useSettingsStore.getState().settings;
     expect(settings.isAdFree).toBe(false);
     expect(settings.isAdBlocked).toBe(false);
@@ -54,6 +56,7 @@ describe('useSettingsStore', () => {
     // Re-trigger loadSettings
     useSettingsStore.getState().loadSettings();
     expect(useSettingsStore.getState().settings.paperGridTexture).toBe(false);
+    expect(useSettingsStore.getState().settingsLoaded).toBe(true);
   });
 
   it('updates isAdFree to true when purchaseRemoveAds is called', () => {

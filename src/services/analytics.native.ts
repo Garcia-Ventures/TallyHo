@@ -32,7 +32,7 @@ export function initAnalytics(): void {
       sdkVersion: Constants?.expoConfig?.version || '1.0.0',
     });
 
-    opInstance.track('app_opened', {
+    void opInstance.track('app_opened', {
       platform: Platform.OS,
       appVersion: Constants?.expoConfig?.version || '1.0.0',
     });
@@ -53,7 +53,7 @@ export function trackEvent(name: string, payload?: Record<string, unknown>): voi
     return;
   }
   try {
-    opInstance.track(name, payload);
+    void opInstance.track(name, payload);
   } catch (err) {
     if (typeof __DEV__ !== 'undefined' && __DEV__) {
       logInfo(`[Analytics] Error tracking event "${name}":`, err);

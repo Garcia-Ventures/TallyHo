@@ -1,32 +1,47 @@
 import { Badge, Button, Card, CardContent, Text } from '@gv-tech/ui-native';
 import { ExternalLink, Megaphone, Sparkles } from 'lucide-react-native';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Linking, View } from 'react-native';
 
+import { resolveAndroidBannerUnitId } from '../constants/admob';
 import { PALETTE } from '../constants/colors';
 import type { AdContent } from '../constants/config';
 import { AD_CONFIG } from '../constants/config';
 import { nextHouseAd } from '../constants/houseAdRotation';
 import { trackEvent } from '../services/analytics';
 import { useSettingsStore } from '../stores/useSettingsStore';
+import type { AdBannerPlacement } from './adBannerPlacement';
+import { NativeAdSlot, nativeAdsSupported } from './NativeAdSlot';
 import { RemoveAdsModal } from './RemoveAdsModal';
 
 interface AdBannerCardProps {
-  placement?: 'home' | 'game-over' | 'settings';
+  placement?: AdBannerPlacement;
   className?: string;
 }
 
 export function AdBannerCard({ placement = 'home', className = '' }: AdBannerCardProps) {
-  const { settings } = useSettingsStore();
+  const settings = useSettingsStore((state) => state.settings);
+  const settingsLoaded = useSettingsStore((state) => state.settingsLoaded);
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
+  const [networkUnavailable, setNetworkUnavailable] = useState(false);
   const [adContent, setAdContent] = useState<AdContent>(AD_CONFIG.houseAds[0]);
   const impressionKey = useRef<string | null>(null);
+  const onNetworkUnavailable = useCallback(() => setNetworkUnavailable(true), []);
+
+  const unitId = nativeAdsSupported ? resolveAndroidBannerUnitId(process.env) : null;
+  const showNetwork =
+    settingsLoaded &&
+    !settings.isAdFree &&
+    !settings.isAdBlocked &&
+    nativeAdsSupported &&
+    Boolean(unitId) &&
+    !networkUnavailable;
 
   // Select ad content on mount & track impression.
   // The ref skips a second run of the same placement (React strict mode)
   // so the rotation advances once per real impression.
   useEffect(() => {
-    if (settings.isAdFree) {
+    if (!settingsLoaded || settings.isAdFree || showNetwork) {
       return;
     }
 
@@ -58,21 +73,36 @@ export function AdBannerCard({ placement = 'home', className = '' }: AdBannerCar
 
     setAdContent(selectedAd);
 
-    // Track OpenPanel ad impression
     trackEvent('ad_impression', {
       adId: selectedAd.id,
       placement,
       badge: selectedAd.badge,
     });
-  }, [placement, settings.isAdBlocked, settings.isAdFree]);
+  }, [placement, settings.isAdBlocked, settings.isAdFree, settingsLoaded, showNetwork]);
 
-  // If user has purchased Ad-Free, do NOT render ads anywhere
-  if (settings.isAdFree) {
+  if (!settingsLoaded || settings.isAdFree) {
     return null;
   }
 
+  if (showNetwork && unitId) {
+    return (
+      <View className={className}>
+        <Card className="border-border bg-card overflow-visible rounded-2xl border p-5 shadow-xs">
+          <CardContent className="gap-3.5 p-0">
+            <View className="flex-row items-center justify-between">
+              <Badge variant="secondary" className="bg-chip-mustard/20 px-2.5 py-0.5">
+                <Text className="text-chip-mustard text-[9px] font-black tracking-wider uppercase">Ad</Text>
+              </Badge>
+              <Text className="text-muted-foreground text-[10px] font-medium">Supports Free TallyHo</Text>
+            </View>
+            <NativeAdSlot unitId={unitId} placement={placement} onUnavailable={onNetworkUnavailable} />
+          </CardContent>
+        </Card>
+      </View>
+    );
+  }
+
   const handleAction = () => {
-    // Track OpenPanel ad click
     trackEvent('ad_click', {
       adId: adContent.id,
       placement,
@@ -81,7 +111,7 @@ export function AdBannerCard({ placement = 'home', className = '' }: AdBannerCar
     });
 
     if (adContent.linkUrl) {
-      Linking.openURL(adContent.linkUrl);
+      void Linking.openURL(adContent.linkUrl);
     } else {
       setIsUpgradeModalOpen(true);
     }

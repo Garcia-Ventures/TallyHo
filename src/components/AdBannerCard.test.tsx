@@ -41,6 +41,7 @@ vi.mock('../constants/houseAdRotation', () => ({
 }));
 
 let mockStoreState = {
+  settingsLoaded: true,
   settings: {
     isAdFree: false,
     isAdBlocked: false,
@@ -68,6 +69,7 @@ import { AdBannerCard } from './AdBannerCard';
 describe('AdBannerCard Component', () => {
   beforeEach(() => {
     mockStoreState = {
+      settingsLoaded: true,
       settings: {
         isAdFree: false,
         isAdBlocked: false,
@@ -87,6 +89,12 @@ describe('AdBannerCard Component', () => {
   it('shows the next house ad in the rotation after mount', () => {
     render(<AdBannerCard placement="home" />);
     expect(screen.getByText('PARABLE BLOOM')).toBeDefined();
+  });
+
+  it('returns null until on-device settings have loaded', () => {
+    mockStoreState.settingsLoaded = false;
+    const html = renderToString(<AdBannerCard placement="home" />);
+    expect(html).toBe('');
   });
 
   it('returns null and does not render when user isAdFree', () => {

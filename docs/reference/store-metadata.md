@@ -24,7 +24,7 @@ KEY FEATURES:
 • Live Dynamic Margins: Real-time leaderboard highlighting point margins to the leader.
 • Full Round History: Edit or correct past turns with a single tap.
 • Quick Player Profiles: Customize colors and initials for your regular game night crew.
-• Ad-Free Table Experience: Clean scorekeeping interface without intrusive mid-game banners.
+• Quiet Table: The score table has no banners. Home and game-over may show a small banner. TallyHo Pro removes ads.
 
 Ditch the scrap paper. Upgrade your game night with TallyHo.
 ```

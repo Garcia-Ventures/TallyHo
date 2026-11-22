@@ -38,7 +38,7 @@ export function initAnalytics(): void {
       trackOutgoingLinks: true,
     });
 
-    opInstance.track('app_opened', {
+    void opInstance.track('app_opened', {
       platform: 'web',
     });
 
@@ -58,7 +58,7 @@ export function trackEvent(name: string, payload?: Record<string, unknown>): voi
     return;
   }
   try {
-    opInstance.track(name, payload);
+    void opInstance.track(name, payload);
   } catch (err) {
     if (typeof __DEV__ !== 'undefined' && __DEV__) {
       logInfo(`[Analytics] Error tracking event "${name}":`, err);

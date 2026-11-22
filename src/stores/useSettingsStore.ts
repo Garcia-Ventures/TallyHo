@@ -7,6 +7,8 @@ import { DEFAULT_USER_SETTINGS } from '../types/game';
 
 interface SettingsState {
   settings: UserSettings;
+  /** False until the on-device settings snapshot has been read. Ads wait so Pro does not flash a banner. */
+  settingsLoaded: boolean;
   loadSettings: () => void;
   updateSettings: (newSettings: Partial<UserSettings>) => void;
   resetSettings: () => void;
@@ -17,16 +19,17 @@ interface SettingsState {
 
 export const useSettingsStore = create<SettingsState>((set, get) => ({
   settings: DEFAULT_USER_SETTINGS,
+  settingsLoaded: false,
 
   loadSettings: () => {
     const loaded = storage.getSettings();
-    set({ settings: { ...DEFAULT_USER_SETTINGS, ...loaded } });
+    set({ settings: { ...DEFAULT_USER_SETTINGS, ...loaded }, settingsLoaded: true });
   },
 
   updateSettings: (newSettings) => {
     const updated = { ...get().settings, ...newSettings };
     storage.saveSettings(updated);
-    trackEvent('settings_updated', newSettings as Record<string, unknown>);
+    trackEvent('settings_updated', newSettings);
     set({ settings: updated });
   },
 

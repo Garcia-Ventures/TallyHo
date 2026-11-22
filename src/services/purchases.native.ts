@@ -4,7 +4,7 @@ import Purchases, { LOG_LEVEL, PURCHASES_ERROR_CODE } from 'react-native-purchas
 import RevenueCatUI, { PAYWALL_RESULT } from 'react-native-purchases-ui';
 
 import { logError, logInfo, logWarn } from '../utils/logger';
-import { isExpectedBillingError } from '../utils/sentry';
+import { isExpectedBillingError, textOf } from '../utils/sentry';
 import { trackEvent } from './analytics';
 import { PRO_ENTITLEMENT_ID } from './purchases.constants';
 import type { ProGrantListener, PurchaseResult } from './purchases.types';
@@ -59,7 +59,7 @@ async function ensureConfigured(): Promise<boolean> {
 
   try {
     if (typeof __DEV__ !== 'undefined' && __DEV__) {
-      Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+      void Purchases.setLogLevel(LOG_LEVEL.DEBUG);
     }
     Purchases.configure({ apiKey });
     isInitialized = true;
@@ -201,7 +201,7 @@ function isAlreadyOwnedError(error: { code?: unknown; message?: string }): boole
 
 /** Detects devices/users that are not allowed to make purchases (TALLYHO-Q). */
 function isBillingNotAllowedError(error: { code?: unknown; message?: string }): boolean {
-  const code = String(error.code ?? '').toUpperCase();
+  const code = textOf(error.code).toUpperCase();
   if (
     code.includes('NOT_ALLOWED') ||
     code.includes('PAYMENT_NOT_ALLOWED') ||

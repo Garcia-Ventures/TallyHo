@@ -35,7 +35,7 @@ export function initAnalytics(): void {
       trackOutgoingLinks: true,
     });
 
-    opInstance.track('app_opened', {
+    void opInstance.track('app_opened', {
       platform: 'web',
     });
   } catch {
@@ -48,7 +48,7 @@ export function trackEvent(name: string, payload?: Record<string, unknown>): voi
     return;
   }
   try {
-    opInstance.track(name, payload);
+    void opInstance.track(name, payload);
   } catch {
     // Silent fallback
   }

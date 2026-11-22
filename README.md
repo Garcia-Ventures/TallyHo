@@ -21,7 +21,7 @@
 - **Dynamic Leaderboard & Live Stats:** Real-time point tallies, point margins to the lead, and end-of-game highlight summaries (e.g., "Biggest Comeback").
 - **Round History & Transparent Edits:** Complete visibility into past rounds with one-tap score corrections.
 - **Player Profiles & Avatars:** Customizable colors, initials, and quick-add player profiles for your regular game night group.
-- **Zero Distractions:** Clean, unobtrusive table utility with no ad banners or intrusive popups during gameplay.
+- **Quiet Table:** No ad banners and no popups on the scoring screen. Android home and game-over may show a non-personalized banner. TallyHo Pro removes it.
 
 ---
 
@@ -137,6 +137,7 @@ Project documentation is structured according to the **[Diátaxis Framework](doc
 - **[Testing & Quality Assurance](docs/how-to/testing-guide.md)** — Executing Vitest unit tests, type-checking, and Maestro E2E flows.
 - **[Release & Deployment](docs/how-to/release-and-deployment.md)** — Version bumps, changelog generation, and automated EAS builds.
 - **[Contributing Guide](docs/how-to/contributing.md)** — Git workflow, Conventional Commits, code standards, and PR guidelines.
+- **[AdMob banners](docs/how-to/admob.md)** — Android banner setup and the iOS steps to take after an Apple Developer account is active.
 
 ### 📖 Reference
 
