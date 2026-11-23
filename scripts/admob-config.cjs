@@ -21,19 +21,34 @@ function isBannerUnitId(value) {
   return /^ca-app-pub-\d+\/\d+$/.test(value);
 }
 
+/**
+ * EAS CLI evaluates app.config once to discover the project id, with only the eas.json env block.
+ * That pass sets EXPO_PUBLIC_SHOW_TEST_ADS=false and has not downloaded the production App ID yet.
+ * A later pass includes the other production variables. Those markers mean the real env is loaded.
+ */
+const EAS_ENV_MARKERS = ['EXPO_PUBLIC_OPENPANEL_CLIENT_ID', 'EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID'];
+
+function easEnvironmentLoaded(env) {
+  return EAS_ENV_MARKERS.some((key) => Boolean(env[key]?.trim()));
+}
+
 function resolveAndroidAppId(env) {
   if (showTestAds(env)) {
     return GOOGLE_TEST_ANDROID_APP_ID;
   }
 
   const configured = env.EXPO_PUBLIC_ADMOB_ANDROID_APP_ID?.trim() ?? '';
-  if (!isAndroidAppId(configured) || configured === GOOGLE_TEST_ANDROID_APP_ID) {
-    throw new Error(
-      'Production Android builds require EXPO_PUBLIC_ADMOB_ANDROID_APP_ID from the AdMob Android app (ca-app-pub-…~…). Refusing to embed Google’s test App ID.',
-    );
+  if (isAndroidAppId(configured) && configured !== GOOGLE_TEST_ANDROID_APP_ID) {
+    return configured;
   }
 
-  return configured;
+  if (!easEnvironmentLoaded(env)) {
+    return GOOGLE_TEST_ANDROID_APP_ID;
+  }
+
+  throw new Error(
+    'Production Android builds require EXPO_PUBLIC_ADMOB_ANDROID_APP_ID from the AdMob Android app (ca-app-pub-…~…). Refusing to embed Google’s test App ID.',
+  );
 }
 
 function resolveIosAppId(env) {

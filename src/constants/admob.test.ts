@@ -34,11 +34,25 @@ describe('AdMob ID resolution', () => {
     expect(resolveAndroidBannerUnitId(env)).toBe(REAL_UNIT_ID);
   });
 
+  it('allows the EAS project-id read before production env vars are downloaded', () => {
+    expect(resolveAndroidAppId({ EXPO_PUBLIC_SHOW_TEST_ADS: 'false' })).toBe(GOOGLE_TEST_ANDROID_APP_ID);
+  });
+
   it('refuses a production Android build that still has the demo App ID', () => {
     expect(() =>
       resolveAndroidAppId({
         EXPO_PUBLIC_SHOW_TEST_ADS: 'false',
+        EXPO_PUBLIC_OPENPANEL_CLIENT_ID: 'client',
         EXPO_PUBLIC_ADMOB_ANDROID_APP_ID: GOOGLE_TEST_ANDROID_APP_ID,
+      }),
+    ).toThrow(/EXPO_PUBLIC_ADMOB_ANDROID_APP_ID/);
+  });
+
+  it('refuses a loaded production environment that is missing the App ID', () => {
+    expect(() =>
+      resolveAndroidAppId({
+        EXPO_PUBLIC_SHOW_TEST_ADS: 'false',
+        EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID: 'goog_test',
       }),
     ).toThrow(/EXPO_PUBLIC_ADMOB_ANDROID_APP_ID/);
   });

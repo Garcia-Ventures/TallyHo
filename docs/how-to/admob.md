@@ -36,7 +36,7 @@ Put the two IDs on the Expo **production** environment (same place as the Revenu
 - `EXPO_PUBLIC_ADMOB_ANDROID_APP_ID`
 - `EXPO_PUBLIC_ADMOB_BANNER_ANDROID`
 
-`eas.json` sets `EXPO_PUBLIC_SHOW_TEST_ADS=true` for development and preview, and `false` for production. Test builds always embed Google's demo App ID and demo banner unit. A production config with the demo App ID, or with no App ID, throws during `expo` config evaluation so the binary cannot ship the demo ID.
+`eas.json` sets `EXPO_PUBLIC_SHOW_TEST_ADS=true` for development and preview, and `false` for production. Test builds always embed Google's demo App ID and demo banner unit. EAS reads `app.config.ts` once before it downloads environment variables, with only the `eas.json` env block. That pass may still see the demo App ID. The pass that is uploaded with the build includes the production environment. If that pass has the demo App ID, or no App ID, config evaluation throws so the binary cannot ship the demo ID.
 
 The selectors live in `scripts/admob-config.cjs`. `app.config.ts` and `src/constants/admob.ts` both load that file. Expo compiles the config to a Node `require` and does not compile a TypeScript import from the config, which is why this helper is CommonJS.
 
