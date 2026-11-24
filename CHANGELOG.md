@@ -5,6 +5,13 @@ All notable changes to the TallyHo project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.6.1...tally-ho-v1.7.0) (2026-11-24)
+
+
+### Features
+
+* **android:** add optional Android hardware features for improved installation flexibility ([683dd3d](https://github.com/Garcia-Ventures/TallyHo/commit/683dd3d982ccadbc81fa77769d4ca3279bfc00a8))
+
 ## [1.6.1](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.6.0...tally-ho-v1.6.1) (2026-11-24)
 
 
