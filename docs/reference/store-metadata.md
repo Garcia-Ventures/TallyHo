@@ -31,6 +31,15 @@ Ditch the scrap paper. Upgrade your game night with TallyHo.
 
 ---
 
+### Device availability
+
+The scorekeeper stays portrait, and NetInfo may read Wi-Fi state when a radio is present. Neither is required to install the app. `scripts/android-optional-features.cjs` writes these to the Android manifest with `android:required="false"`:
+
+- `android.hardware.screen.portrait`
+- `android.hardware.wifi`
+
+Play reads that from the Android App Bundle. An EAS Update does not change it.
+
 ## 2. Graphic Assets Specifications
 
 | Asset                  | Platform                 | Dimensions                                          | Format                        |
