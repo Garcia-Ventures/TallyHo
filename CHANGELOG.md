@@ -5,6 +5,13 @@ All notable changes to the TallyHo project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.1](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.6.0...tally-ho-v1.6.1) (2026-11-24)
+
+
+### Code Refactoring
+
+* **admob:** improve AdMob ID resolution logic and documentation ([db21b80](https://github.com/Garcia-Ventures/TallyHo/commit/db21b80cebe7ecf0b8f064b542276fe804cb63c7))
+
 ## [1.6.0](https://github.com/Garcia-Ventures/TallyHo/compare/tally-ho-v1.5.2...tally-ho-v1.6.0) (2026-11-22)
 
 
